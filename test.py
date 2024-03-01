@@ -16,4 +16,5 @@ def test():
             print(GAWA.get_text().strip())
 
         except Exception as e:
-            print(f'出錯: {str(e)}')
+            print(f'出錯: {str(e)}').
+            0.0
