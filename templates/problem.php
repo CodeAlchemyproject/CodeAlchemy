@@ -18,10 +18,20 @@
             })
             .catch(error => console.error('Error fetching nav.html:', error));
     </script>
-
-    a001.哈囉
-    學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
-    比如：輸入字串 "world", 則請輸出 "hello, world"
+    <div style="display:flex;">
+    <div style="color:white;width:10vw;height:100vh;display:flex;flex-direction: column;">
+        <div style="background-color: #6A7FC1;height:15.6vh">測試</div>
+        <div>提交答案</div>
+        <div>排行</div>
+        <div>分析</div>
+        <div>切換程式語言</div>
+    </div>
+    <div>
+        a001.哈囉
+        學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
+        比如：輸入字串 "world", 則請輸出 "hello, world"
+    </div>
+    </div>
 </body>
 
 </html>
