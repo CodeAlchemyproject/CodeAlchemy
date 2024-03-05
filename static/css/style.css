@@ -1,11 +1,10 @@
 body {
     margin: 0;
 }
-
+/* for desktop */
 .index_btn {
     margin: 0 45vw;
     width: 9.5vw;
-    min-width: 109px;
     height: auto;
     border: none;
     border-radius: 5px;
