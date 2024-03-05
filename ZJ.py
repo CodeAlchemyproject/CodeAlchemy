@@ -1,7 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://zerojudge.tw/ShowProblem?problemid=a001'
+# 讓使用者輸入problemid
+problem_id = input('請輸入problemid: ')
+
+# 構建完整的URL
+url = f'https://zerojudge.tw/ShowProblem?problemid={problem_id}'
 
 # 發送GET請求
 response = requests.get(url)
@@ -21,6 +25,7 @@ if response.status_code == 200:
         print(f'題目標題: {problem_title}')
     else:
         print('未找到指定的span元素')
+
     # 找到所有的p元素
     p_elements = soup.find_all('p')
 
@@ -31,7 +36,7 @@ if response.status_code == 200:
             print(f'段落 {index}: {p_element.text.strip()}')
     else:
         print('未找到任何p元素')
-    
+
     # 找到所有的pre元素
     pre_elements = soup.find_all('pre')
 

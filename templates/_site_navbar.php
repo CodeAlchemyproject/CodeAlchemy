@@ -5,6 +5,5 @@
         <li><a href="#">排行榜</a></li>
         <li><a href="#">競賽</a></li>
         <li><a href="#">登入</a></li>
-        <!-- <img src="./imgs/icon.svg"> -->
     </ul>
 </nav>
