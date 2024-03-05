@@ -5,15 +5,15 @@ body {
 .index_btn {
     margin: 0 45vw;
     width: 9.5vw;
+    min-width: 109px;
     height: auto;
     border: none;
     border-radius: 5px;
     outline: 3px solid #6A7FC1;
     background-color: #6A7FC1;
     color: white;
-    font-size: 3em;
+    font-size: 3vw;
     cursor: pointer;
-    transition: 400ms;
 }
 
 .index_btn:hover {
