@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_圖層_1" data-name="圖層 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 365 327">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #12415d;
+      }
+
+      .cls-1, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-2, .cls-4 {
+        stroke: #12415d;
+        stroke-miterlimit: 10;
+        stroke-width: 6px;
+      }
+
+      .cls-3 {
+        fill: #06aeb9;
+      }
+
+      .cls-4 {
+        fill: #2e3192;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="163.5" cy="111.5" r="44.5"/>
+  <circle class="cls-1" cx="320.5" cy="173.5" r="44.5"/>
+  <line class="cls-4" x1="203" y1="127" x2="280" y2="157"/>
+  <line class="cls-2" x1="310.7" y1="214.41" x2="297" y2="275"/>
+  <circle class="cls-3" cx="291.5" cy="299.5" r="27.5"/>
+  <line class="cls-2" x1="34" y1="181" x2="126" y2="129"/>
+  <circle class="cls-1" cx="31" cy="183" r="31"/>
+  <line class="cls-2" x1="80" y1="79" x2="163.54" y2="111.61"/>
+  <circle class="cls-3" cx="60.5" cy="70.5" r="27.5"/>
+  <line class="cls-4" x1="261" y1="10" x2="163" y2="111"/>
+  <circle class="cls-3" cx="254" cy="17" r="17"/>
+</svg>

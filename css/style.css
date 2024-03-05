@@ -1,0 +1,132 @@
+body {
+    margin: 0;
+}
+
+.index_btn {
+    margin: 0 45vw;
+    width: 9.5vw;
+    height: auto;
+    border: none;
+    border-radius: 5px;
+    outline: 3px solid #6A7FC1;
+    background-color: #6A7FC1;
+    color: white;
+    font-size: 3em;
+    cursor: pointer;
+    transition: 400ms;
+}
+
+.index_btn:hover {
+    background-color: white;
+    color: #6A7FC1;
+    transition: 400ms;
+}
+
+.nav_bar {
+    width: 97.4vw;
+    height: 7vh;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    list-style: none;
+    background-color: #6A7FC1;
+}
+
+.nav_bar img {
+    width: auto;
+    height: 6vh;
+}
+
+.nav_bar a {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.nav_bar a:link {
+    color: white;
+    text-decoration: none;
+}
+
+.login_box {
+    width: 25vw;
+    height: 50vh;
+    margin: 10vh 37.5vw;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login_box input {
+    width: 15vw;
+    height: 4vh;
+    margin: 2vh 10vw;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+.login_box:nth-child(4) {
+    padding: 10vh 0vw;
+}
+
+.submit_btn {
+    margin-top: 2vh;
+    width: 15vw;
+    height: auto;
+    border: none;
+    border-radius: 5px;
+    outline: 3px solid #6A7FC1;
+    background-color: #6A7FC1;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: 400ms;
+}
+
+.submit_btn:hover {
+    background-color: white;
+    color: #6A7FC1;
+    transition: 400ms;
+}
+
+.search_bar {
+    width: 80vh;
+    height: auto;
+    padding: 2vh 10vw;
+    display: flex;
+    justify-content: space-around;
+}
+
+.search_input {
+    border: none;
+    border-radius: 5px;
+    background-color: #eee;
+    margin: 0;
+}
+
+.search_input:focus {
+    outline: none;
+    background-color: #ddd;
+}
+
+.serach_select {
+    padding: 2px;
+    background-color: #eee;
+    border: 0;
+    border-radius: 5px;
+}
+
+.problem_list {
+    width: 70vw;
+    height: auto;
+    background-color: #e7f0f8;
+    border: none;
+    margin: 0;
+    text-align: center;
+}
+.problem_list tr{
+    cursor: pointer;
+}
