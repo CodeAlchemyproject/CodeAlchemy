@@ -14,13 +14,7 @@ body {
     font-size: 3vw;
     cursor: pointer;
 }
-/* for phone */
-@media screen and (min-width<1024px) {
-    .index_btn {
-        min-width: 720px;
 
-    }
-}
 .index_btn:hover {
     background-color: white;
     color: #6A7FC1;
