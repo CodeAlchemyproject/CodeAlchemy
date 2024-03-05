@@ -31,5 +31,16 @@ if response.status_code == 200:
             print(f'段落 {index}: {p_element.text.strip()}')
     else:
         print('未找到任何p元素')
+    
+    # 找到所有的pre元素
+    pre_elements = soup.find_all('pre')
+
+    # 檢查是否找到
+    if pre_elements:
+        # 逐一印出每個pre元素的內容
+        for index, pre_element in enumerate(pre_elements, 1):
+            print(f'Pre {index}: {pre_element.text.strip()}')
+    else:
+        print('未找到任何pre元素')
 else:
     print(f'網頁請求失敗，狀態碼: {response.status_code}')
