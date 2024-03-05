@@ -39,7 +39,7 @@ def unauthorized():
 #---------------------------
 @user_bp.route('/login/form')
 def login_form():
-    return render_template('login_form.html')
+    return render_template('login.php')
 
 #--------------------------
 # 使用者登入
