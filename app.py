@@ -22,11 +22,11 @@ app.config['SECRET_KEY'] = 'itismysecretkey'
 def index():
     try:
         if session['username']:
-            return render_template('index.html', name=session['username']) 
+            return render_template('problem_list.php', name=session['username']) 
         else:
-            return render_template('index.html', name='尚未登入')
+            return render_template('problem_list.php', name='尚未登入')
     except:
-        return render_template('index.html', name='尚未登入')
+        return render_template('problem_list.php', name='尚未登入')
 
 #-------------------------
 # 在主程式註冊各個服務
