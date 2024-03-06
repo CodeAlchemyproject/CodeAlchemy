@@ -10,7 +10,15 @@
 </head>
 
 <body>
-    <?php include("_site_navbar.php") ?>
+    <script>
+        fetch('./nav.html')
+            .then(response => response.text())
+            .then(data => {
+                // 插入到指定位置
+                document.body.innerHTML = data + document.body.innerHTML;
+            })
+            .catch(error => console.error('Error fetching nav.html:', error));
+    </script>
     <div class="login_box">
         <div style="margin-top: 5vh;margin-bottom: 2vh;">
             <h1>登入</h1>

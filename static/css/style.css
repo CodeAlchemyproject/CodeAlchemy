@@ -1,6 +1,7 @@
 body {
     margin: 0;
 }
+
 .index_btn {
     margin: 0 45vw;
     width: 9.5vw;
@@ -22,7 +23,7 @@ body {
 
 .nav_bar {
     width: 97.4vw;
-    height: 7vh;
+    height: 6vh;
     margin: 0;
     display: flex;
     flex-direction: row;
@@ -125,6 +126,26 @@ body {
     margin: 0;
     text-align: center;
 }
-.problem_list tr{
+
+.problem_list tr {
     cursor: pointer;
+}
+
+.problem_bar {
+    color: white;
+    width: 9vw;
+    height: 94vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 1vw;
+    counter-reset: listCounter;
+}
+.problem_bar_item {
+    width: auto;
+    height: calc(100% / var(--count));
+    display: flex;
+    background-color: #6A7FC1;
+    justify-content: center;
+    align-items: center;
+    counter-increment: listCounter;
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login-CodeAlchemy</title>
+    <title>Reset-CodeAlchemy</title>
     <?php include("_site_header.php"); ?>
 </head>
 
@@ -22,9 +22,10 @@
         <div style="margin-top: 5vh;margin-bottom: 2vh;">
             <h1>忘記密碼</h1>
         </div>
-        <div><input type="text" placeholder="輸入電子郵件"></div>
-        <div><a href="./resect_password.php">
-                <button class="submit_btn">驗證</button>
+        <div><input type="password" placeholder="新密碼"></div>
+        <div><input type="password" placeholder="確認新密碼"></div>
+        <div><a href="./login.php">
+                <button class="submit_btn">送出</button>
             </a>
         </div>
     </div>
