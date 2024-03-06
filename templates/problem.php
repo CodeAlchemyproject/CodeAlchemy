@@ -32,10 +32,10 @@
             <div class="problem_bar_item">提交答案</div>
             <div class="problem_bar_item">排行</div>
             <div class="problem_bar_item">分析</div>
-            <div class="problem_bar_item">切換程式語言</div>
-            <div class="problem_bar_item">Python</div>
-            <div class="problem_bar_item">C++</div>
-            <div class="problem_bar_item">Java</div>
+            <div class="problem_bar_item show">切換程式語言</div>
+            <div class="problem_bar_item hide">Python</div>
+            <div class="problem_bar_item hide">C++</div>
+            <div class="problem_bar_item hide">Java</div>
         </div>
         <div>
             a001.哈囉

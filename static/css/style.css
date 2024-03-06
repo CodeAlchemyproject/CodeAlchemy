@@ -140,6 +140,7 @@ body {
     font-size: 1vw;
     counter-reset: listCounter;
 }
+
 .problem_bar_item {
     width: auto;
     height: calc(100% / var(--count));
@@ -148,4 +149,5 @@ body {
     justify-content: center;
     align-items: center;
     counter-increment: listCounter;
+    cursor: pointer;
 }
