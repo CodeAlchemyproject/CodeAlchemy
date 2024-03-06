@@ -36,25 +36,32 @@
             })
             .catch(error => console.error('Error fetching nav.html:', error));
     </script>
-    <!-- <div style="display:flex;"> -->
-    <h1 class="display-6 ml-3">a001.哈囉</h1>
-    <h3 class="w-25 ml-3 overflow-auto">學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
-        比如：輸入字串 "world", 則請輸出 "hello, world"</h3>
-    <h5 class="w-25 ml-3 overflow-auto">範例輸入1</h5>
-    <h6 class="w-25 ml-3 overflow-auto">world</h6>
-    <h5 class="w-25 ml-3 overflow-auto">範例輸出1</h5>
-    <h6 class="w-25 ml-3 overflow-auto">hello, world</h6>
-    <!-- <div class="problem_bar">
-            <div class="problem_bar_item">測試</div>
-            <div class="problem_bar_item">提交答案</div>
-            <div class="problem_bar_item">排行</div>
-            <div class="problem_bar_item">分析</div>
-            <div class="problem_bar_item show">切換程式語言</div>
-            <div class="problem_bar_item hide">Python</div>
-            <div class="problem_bar_item hide">C++</div>
-            <div class="problem_bar_item hide">Java</div>
-        </div> -->
-    <!-- </div> -->
+    <div class="ms-4">
+        <h1 class="display-6 mt-4">a001.哈囉</h1>
+        <h3 class="w-25  mt-4 overflow-auto">學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
+            比如：輸入字串 "world", 則請輸出 "hello, world"</h3>
+        <h5 class="w-25 mt-4 overflow-auto">範例1</h5>
+        <div class="border-start border-4">
+            <h6 class="w-25 ms-2 mt-4 overflow-auto">輸入</h6>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">world</h6>
+            <h5 class="w-25 ms-2 mt-4 overflow-auto">輸出</h5>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">hello, world</h6>
+        </div>
+        <h5 class="w-25 mt-4 overflow-auto">範例2</h5>
+        <div class="border-start border-4">
+            <h6 class="w-25 ms-2 mt-4 overflow-auto">輸入</h6>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">world</h6>
+            <h5 class="w-25 ms-2 mt-4 overflow-auto">輸出</h5>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">hello, world</h6>
+        </div>
+        <h5 class="w-25 mt-4 overflow-auto">範例3</h5>
+        <div class="border-start border-4">
+            <h6 class="w-25 ms-2 mt-4 overflow-auto">輸入</h6>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">world</h6>
+            <h5 class="w-25 ms-2 mt-4 overflow-auto">輸出</h5>
+            <h6 class="w-25 ms-2 mt-4 overflow-auto code-font">hello, world</h6>
+        </div>
+    </div>
 </body>
 
 </html>
