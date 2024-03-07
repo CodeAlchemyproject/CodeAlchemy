@@ -35,26 +35,26 @@
 /* button */
 /* --------------------- */
 .Btn {
-    width: 140px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    border: none;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.089);
-    cursor: pointer;
-    background-color: transparent;
+    width: 140px !important;
+    height: 35px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    border: none !important;
+    border-radius: 5px !important;
+    overflow: hidden !important;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.089) !important;
+    cursor: pointer !important;
+    background-color: transparent !important;
 }
 
 .leftContainer {
-    width: 60%;
-    height: 100%;
-    background-color: rgb(238, 0, 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 60% !important;
+    height: 100% !important;
+    background-color: rgb(238, 0, 0) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 8px;
 }
 
@@ -86,14 +86,14 @@
 }
 
 .Btn:hover .leftContainer {
-    background-color: rgb(219, 0, 0);
+    background-color: rgb(219, 0, 0) !important;
 }
 
 .Btn:active .leftContainer {
-    background-color: rgb(201, 0, 0);
+    background-color: rgb(201, 0, 0) !important;
 }
 
 .Btn:active .leftContainer svg {
-    transform: scale(1.15);
-    transform-origin: top;
+    transform: scale(1.15) !important;
+    transform-origin: top !important;
 }
