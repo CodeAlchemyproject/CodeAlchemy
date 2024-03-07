@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--CSS -->
+    <script>
+        fetch('./_site_header.html')
+            .then(response => response.text())
+            .then(data => {
+                // 插入到指定位置
+                document.body.innerHTML = data + document.body.innerHTML;
+            })
+            .catch(error => console.error('Error fetching nav.html:', error));
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <script>
+        fetch('./nav.html')
+            .then(response => response.text())
+            .then(data => {
+                // 插入到指定位置
+                document.body.innerHTML = data + document.body.innerHTML;
+            })
+            .catch(error => console.error('Error fetching nav.html:', error));
+    </script>
+    <div class="container">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="mt-5 border border-dark border-3 rounded">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <h1 class="d-flex justify-content-center">登入</h1>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" placeholder="Password" aria-label="Username"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><a href="./forget_password.html" class="link-dark d-flex justify-content-end">忘記密碼</a></div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                        </div>
+                        <div class="col-8">
+                            <a class="w-100 mt-3 btn btn-outline-primary" href="./problem_list.html" role="button">登入</a>
+                        </div>
+                        <div class="col-2">
+                        </div>
+
+                    </div>
+                    <!-- Google登入按鈕 -->
+                    <div style="margin: 10px;">
+                        <div id="g_id_onload"
+                            data-client_id="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com"
+                            data-context="signin" data-ux_mode="popup"
+                            data-login_uri="http://localhost/problem_list.php" data-nonce="" data-auto_prompt="false">
+                        </div>
+
+                        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                            data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="50%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>
