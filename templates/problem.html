@@ -17,15 +17,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
         crossorigin="anonymous"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 获取所有 .problem_bar_item 元素
-            var items = document.querySelectorAll('.problem_bar_item');
-            // 设置全局 CSS 变量 --count 的值为元素的数量
-            document.documentElement.style.setProperty('--count', items.length);
-        });
-    </script>
 </head>
 
 <body>
@@ -45,15 +36,19 @@
                     <div class="col-6">
                         <h1 class="display-6 mt-4">a001.哈囉</h1>
                     </div>
+                    <!-- 收藏按鈕 -->
                     <div class="col-6 d-flex justify-content-center  align-items-center mx-auto">
-                        <button type="button" class="btn btn-danger" data-bs-toggle="button" autocomplete="off">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
-                                <path
-                                    d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1" />
-                            </svg>
-                        </button>
+                        <button class="Btn">
+                            <span class="leftContainer">
+                              <svg fill="white" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"></path></svg>
+                              <span class="like">Like</span>
+                            </span>
+                            <span class="likeCount">
+                              2,050
+                            </span>
+                          </button>
                     </div>
+
                     <div class="col-12">
                         <h3 class="mt-4 overflow-auto">學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
                             比如：輸入字串 "world", 則請輸出 "hello, world"</h3>
