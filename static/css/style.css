@@ -59,30 +59,30 @@
 }
 
 .leftContainer .like {
-    color: white;
-    font-weight: 600;
+    color: white !important;
+    font-weight: 600 !important;
 }
 
 .likeCount {
-    width: 40%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgb(238, 0, 0);
-    font-weight: 600;
-    position: relative;
-    background-color: white;
+    width: 40% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: rgb(238, 0, 0) !important;
+    font-weight: 600 !important;
+    position: relative !important;
+    background-color: white !important;
 }
 
 .likeCount::before {
-    height: 8px;
-    width: 8px;
-    position: absolute;
-    content: "";
-    background-color: rgb(255, 255, 255);
-    transform: rotate(45deg);
-    left: -4px;
+    height: 8px !important;
+    width: 8px !important;
+    position: absolute !important;
+    content: "" !important;
+    background-color: rgb(255, 255, 255) !important;
+    transform: rotate(45deg) !important;
+    left: -4px !important;
 }
 
 .Btn:hover .leftContainer {
