@@ -2,8 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import psycopg2
 
-# 讓使用者輸入 problemid
-problem_id = input('請輸入 problemid: ')
+problem_id = input()
 print(f'題目編號: {problem_id}')
 
 # 構建完整的 URL
@@ -18,7 +17,7 @@ if response.status_code == 200:
     soup = BeautifulSoup(response.text, 'html.parser')
 
     # 找到特定的 div 元素
-    problem_content_div = soup.find('div', {'id': 'problem_content', 'class': 'problembox'})
+    problem_content_div = soup.find('div', {'id': 'problem_content'})
     problem_theinput_div = soup.find('div', {'id': 'problem_theinput'})
     problem_theoutput_div = soup.find('div', {'id': 'problem_theoutput'})
     pre_elements = soup.find_all('pre')
