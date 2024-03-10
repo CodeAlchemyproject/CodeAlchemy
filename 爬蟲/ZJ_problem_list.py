@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
+import os
 
 # 存放所有問題編號的列表
 problem_ids = []
@@ -29,5 +31,18 @@ for page in range(1, 33):
     else:
         print(f'網頁請求失敗，狀態碼: {response.status_code}')
 
-# 一次性打印所有問題編號
-print('所有問題編號:', problem_ids)
+# 清除CSV文件內容
+csv_file_path = 'ZJ_problem_list.csv'
+if os.path.exists(csv_file_path):
+    with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        pass  # 清空文件內容
+else:
+    open(csv_file_path, 'w').close()  # 如果文件不存在，則新建一個空文件
+
+# 寫入CSV文件
+with open(csv_file_path, 'a', newline='', encoding='utf-8') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    for problem_id in problem_ids:
+        csv_writer.writerow([problem_id])
+
+print('已將問題編號寫入 ZJ_problem_list.csv 文件')
