@@ -118,19 +118,28 @@
                 </div>
             </div>
             <div class="col mt-5">
-                <textarea id="editor">
+                <div class="row d-flex justify-content-center">
+                    <div class="btn-group w-50" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-outline-warning">測試</button>
+                        <button type="button" class="btn btn-outline-success">上傳</button>
+                        
+                    </div>
+                </div>
+                <div class="row border border-2 mt-5"><textarea id="editor">
 year=int(input())+1911
 if (year%4!=0) or (year%100==0 and year%400!=0):
     print(False)
 else:
     print(True)
                 </textarea>
-                <script>
-                    var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-                        lineNumbers: true
-                    });
+                    <script>
+                        var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                            lineNumbers: true
+                        });
 
-                </script>
+                    </script>
+                </div>
+
             </div>
         </div>
     </div>
