@@ -117,7 +117,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col mt-5">
                 <textarea id="editor">
 year=int(input())+1911
 if (year%4!=0) or (year%100==0 and year%400!=0):
@@ -126,10 +126,10 @@ else:
     print(True)
                 </textarea>
                 <script>
-                    var editor = CodeMirror.fromTextArea(document.getElementById('editor'),{
+                    var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
                         lineNumbers: true
                     });
-                    
+
                 </script>
             </div>
         </div>
