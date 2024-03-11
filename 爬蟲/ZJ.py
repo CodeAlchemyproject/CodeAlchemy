@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import psycopg2
+from datetime import datetime
 
 def scrape_problem_content_and_save_to_postgres(problem_id):
 
@@ -21,14 +22,15 @@ def scrape_problem_content_and_save_to_postgres(problem_id):
         problem_theinput_div = soup.find('div', {'id': 'problem_theinput'})
         problem_theoutput_div = soup.find('div', {'id': 'problem_theoutput'})
         pre_elements = soup.find_all('pre')
-
+        span_element = soup.find('span', {'id': 'problem_title'})
         # 檢查是否找到
-        if problem_content_div and problem_theinput_div and problem_theoutput_div:
+        if span_element and problem_content_div and problem_theinput_div and problem_theoutput_div:
             # 獲取內容、輸入說明和輸出說明
+            
             problem_content = problem_content_div.text.strip()
             problem_theinput = problem_theinput_div.text.strip()
             problem_theoutput = problem_theoutput_div.text.strip()
-
+            problem_title=span_element.text.strip()
            # 找到所有的 pre 元素
             pre_contents = [pre_element.text.strip() for pre_element in pre_elements]
 
@@ -40,16 +42,12 @@ def scrape_problem_content_and_save_to_postgres(problem_id):
             examples_combined_input = '|||'.join(example_inputs)
             examples_combined_output = '|||'.join(example_outputs)
 
-            # 打印範例輸入和範例輸出
-            print(f'範例輸入: {examples_combined_input}')
-            print(f'範例輸出: {examples_combined_output}')
-
             # 連接到 PostgreSQL 資料庫
             conn = psycopg2.connect(
                 host="satao.db.elephantsql.com",
-                database="你的資料庫名稱",
-                user="你的使用者名稱",
-                password="你的密碼"
+                database="fbpqrmgt",
+                user="fbpqrmgt",
+                password="IZcDUf83bFRRjw3nNallm6TBd6Wugcyp"
             )
 
             # 創建一個遊標對象
@@ -57,12 +55,20 @@ def scrape_problem_content_and_save_to_postgres(problem_id):
 
             # 執行 SQL 插入語句
             sql_insert = """
-                INSERT INTO problems (problem_id, title, content, enter_description, output_description, example_input, example_output)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO problems (problem_id, title, content, enter_description, output_description, example_input, example_output, difficulty, tag, solved, submission, update_time)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
+            # 提供預設值
+            default_difficulty = 'N/A'
+            default_tag = 'N/A'
+            default_solved = 0
+            default_submission = 0
+            default_update_time = datetime.now()  # 如果不提供值，則預設為 NULL
+
             # 使用整數值插入
-            values = (problem_id, title, problem_content, problem_theinput, problem_theoutput, examples_combined)
+            values = (problem_id, problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
+                    examples_combined_output,default_difficulty, default_tag, default_solved, default_submission, default_update_time)
 
             # 執行 SQL 插入
             cursor.execute(sql_insert, values)
@@ -85,7 +91,6 @@ def scrape_problem_content_and_save_to_postgres(problem_id):
 csv_file_path = 'ZJ_problem_list.csv'
 with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
     csv_reader = csv.reader(csvfile)
-    next(csv_reader)  # 跳過標題行
     for row in csv_reader:
         problem_id = row[0]
         scrape_problem_content_and_save_to_postgres(problem_id)
