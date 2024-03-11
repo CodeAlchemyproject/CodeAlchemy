@@ -32,9 +32,10 @@ def scrape_problem_ids(url_pattern, start_page, end_page, csv_file_path):
         else:
             print(f'網頁請求失敗，狀態碼: {response.status_code}')
 
-    # 寫入 CSV 文件
-    with open(csv_file_path, 'a', newline='', encoding='utf-8') as csvfile:
+    # 寫入 CSV 文件，先插入一個換行
+    with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(['Problem ID'])  # 標題行
         for problem_id in problem_ids:
             csv_writer.writerow([problem_id])
 
@@ -51,4 +52,4 @@ scrape_problem_ids('https://zerojudge.tw/Problems?&tabid=TOI&page=', 1, 29, 'ZJ_
 
 # 爬取 UVA 分類的問題
 scrape_problem_ids('https://zerojudge.tw/Problems?&tabid=UVA&page=', 1, 29, 'ZJ_problem_list.csv')
-
+print("All DONE")
