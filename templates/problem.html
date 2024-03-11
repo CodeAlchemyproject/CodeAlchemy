@@ -120,7 +120,7 @@
             <div class="col mt-5">
                 <div class="row d-flex justify-content-center">
                     <div class="btn-group w-50" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-outline-warning">
+                        <button type="button" class="btn btn-outline-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-code-slash" viewBox="0 0 16 16">
                                 <path
@@ -137,7 +137,9 @@
 
                     </div>
                 </div>
-                <div class="row border border-2 mt-5"><textarea id="editor">
+                <!-- 程式輸入框 -->
+                <div class="row border border-3 round rounded-2 mt-5">
+                    <textarea id="editor">
 year=int(input())+1911
 if (year%4!=0) or (year%100==0 and year%400!=0):
     print(False)
@@ -151,7 +153,9 @@ else:
 
                     </script>
                 </div>
-
+                <div class="mt-5 bg-success p-2 text-white round rounded-2">
+                    通過
+                </div>
             </div>
         </div>
     </div>
