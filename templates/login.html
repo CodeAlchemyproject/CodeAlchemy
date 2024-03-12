@@ -18,8 +18,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
-
-
+    <!-- Google第三方登入 -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com">
 </head>
 
 <body>
@@ -100,7 +101,15 @@
                         </div>
                         <div class="col-2">
                         </div>
-
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                        </div>
+                        <div class="col-8">
+                            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        </div>
+                        <div class="col-2">
+                        </div>
                     </div>
                     <!-- Google登入按鈕 -->
                     <div style="margin: 10px;">
