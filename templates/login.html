@@ -63,7 +63,7 @@
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col">
-                            <h1 class="d-flex justify-content-center">登入</h1>
+                            <h1 class="d-flex justify-content-center mt-5">登入</h1>
                         </div>
                         <div class="col-2"></div>
                     </div>
@@ -113,7 +113,32 @@
                     </div>
                     <!-- Google登入按鈕 -->
                     <div style="margin: 10px;">
-                        <div id="g_id_onload"
+                        <script setup>
+                            import { ref } from 'vue'
+                            import { googleTokenLogin } from 'vue3-google-login'
+                            
+                            const GOOGLE_CLIENT_ID = '這邊放上你的 Google Client ID'
+                            
+                            const data = ref()
+                            
+                            const handleGoogleAccessTokenLogin = () => {
+                              googleTokenLogin({
+                                clientId: GOOGLE_CLIENT_ID
+                              }).then((response) => {
+                                data.value = response
+                              })
+                            }
+                            </script>
+                            <template>
+                                <div>
+                                  <button
+                                    type="button"
+                                    @click="handleGoogleAccessTokenLogin"
+                                  >
+                                    使用 Google 進行登入
+                                  </button>
+                              </template>
+                        <!-- <div id="g_id_onload"
                             data-client_id="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com"
                             data-context="signin" data-ux_mode="popup"
                             data-login_uri="http://localhost/problem_list.php" data-nonce="" data-auto_prompt="false">
@@ -121,7 +146,7 @@
 
                         <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
                             data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="50%">
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
