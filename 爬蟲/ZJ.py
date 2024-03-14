@@ -41,7 +41,8 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
             examples_combined_output = '|||'.join(example_outputs)
 
             # 連接到 SQL Server 資料庫
-            conn = pyodbc.connect('DRIVER={SQL Server};SERVER=123.192.165.145;DATABASE=CodeAlchemy;UID=sa;PWD=10956CodeAlchemy')
+            conn = pyodbc.connect('DRIVER={SQL Server};SERVER=123.192.165.145;DATABASE=CodeAlchemy;UID=sa;PWD=10956CodeAlchemy;CHARSET=UTF8')
+
 
             # 創建一個游標對象
             cursor = conn.cursor()
