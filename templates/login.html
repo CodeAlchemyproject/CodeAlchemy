@@ -5,35 +5,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--CSS -->
-    <script>
-        fetch('./_site_header.html')
-            .then(response => response.text())
-            .then(data => {
-                // 插入到指定位置
-                document.body.innerHTML = data + document.body.innerHTML;
-            })
-            .catch(error => console.error('Error fetching nav.html:', error));
-    </script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
         crossorigin="anonymous"></script>
+    <!-- logo -->
+    <link rel="shortcut icon" href="./imgs/icon_test.svg" type="image/x-icon">
+    <!-- Google Web Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <!-- Google第三方登入 -->
+    <meta name="google-signin-client_id"
+        content="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com">
+    <!--  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <script>
-        fetch('./nav.html')
-            .then(response => response.text())
-            .then(data => {
-                // 插入到指定位置
-                document.body.innerHTML = data + document.body.innerHTML;
-            })
-            .catch(error => console.error('Error fetching nav.html:', error));
-    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #839DD1;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="../static/imgs/icon.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                CodeAlchemy
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./problem_list.html">題目</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">排行榜</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">競賽</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./login.html">登入</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="container">
         <div class="row">
             <div class="col-4"></div>
             <div class="col-4">
-                <div class="mt-5 border border-dark border-3 rounded">
+                <div class="mt-5 border border-3 rounded shadow-lg p-3 mb-5 bg-body rounded">
                     <div class="row">
                         <div class="col-2"></div>
                         <div class="col">
@@ -62,40 +91,45 @@
                         <div class="col-2"></div>
                     </div>
                     <div class="row">
-                        <div class="col-10"><a href="./forget_password.html" class="link-dark d-flex justify-content-end">忘記密碼</a></div>
+                        <div class="col-10"><a href="./forget_password.html"
+                                class="link-dark d-flex justify-content-end">忘記密碼</a></div>
                         <div class="col-2"></div>
                     </div>
                     <div class="row">
                         <div class="col-2">
                         </div>
                         <div class="col-8">
-                            <a class="w-100 mt-3 btn btn-outline-primary" href="./problem_list.html" role="button">登入</a>
+                            <a class="w-100 mt-3 btn btn-outline-primary" href="./problem_list.html"
+                                role="button">登入</a>
                         </div>
                         <div class="col-2">
                         </div>
-
                     </div>
-                    <!-- Google登入按鈕 -->
-                    <div style="margin: 10px;">
-                        <div id="g_id_onload"
-                            data-client_id="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com"
-                            data-context="signin" data-ux_mode="popup"
-                            data-login_uri="http://localhost/problem_list.php" data-nonce="" data-auto_prompt="false">
+                    <div class="row">
+                        <div class="col-2">
                         </div>
+                        <div class="col-8 mt-3 d-flex justify-content-center">
+                            <!-- Google登入按鈕 -->
+                            <div id="g_id_onload"
+                                data-client_id="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com"
+                                data-context="signin" data-ux_mode="popup"
+                                data-login_uri="http://localhost/CodeAlchemy/templates/login.html"
+                                data-auto_prompt="false" data-callback="handleCredentialResponse">
+                            </div>
 
-                        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
-                            data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="50%">
+                            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                                data-text="signin_with" data-size="large" data-logo_alignment="left" data-ca>
+                            </div>
+                        </div>
+                        <div class="col-2">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-4"></div>
         </div>
-
-
+        <script src="../static/js/login.js"></script>
     </div>
-
-
 </body>
 
 </html>
