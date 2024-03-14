@@ -51,3 +51,6 @@ scrape_problem_ids('https://zerojudge.tw/Problems?&tabid=TOI&page=', 1, 29, 'ZJ_
 
 # 爬取 UVA 分類的問題
 scrape_problem_ids('https://zerojudge.tw/Problems?&tabid=UVA&page=', 1, 29, 'ZJ_problem_list.csv')
+
+# 爬取 ORIGINAL 分類的問題
+scrape_problem_ids('https://zerojudge.tw/Problems?&tabid=ORIGINAL&page=', 1, 47, 'ZJ_problem_list.csv')
