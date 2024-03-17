@@ -73,8 +73,35 @@
                 </form>
             </div>
         </div>
+        <!-- 不知道有沒有用 -->
+        <!-- <script>
+            const table = document.querySelector('table'); // 取得表格元素
+            const selects = document.querySelectorAll('.dropdown-menu'); // 取得所有下拉式選單
 
+            selects.forEach(select => {
+                select.addEventListener('change', () => {
+                    const selectedValue = select.querySelector('.dropdown-item.active').textContent; // 取得使用者选择的選項文字
+                    const rows = table.querySelectorAll('tbody tr');
 
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        let isVisible = true; // 假設該資料列是可見的
+
+                        // 檢查每個資料列中的資料是否符合篩選條件
+                        for (const cell of cells) {
+                            const cellText = cell.textContent.toLowerCase();
+                            if (selectedValue !== '全部' && !cellText.includes(selectedValue.toLowerCase())) {
+                                isVisible = false;
+                                break;
+                            }
+                        }
+
+                        // 根據篩選結果顯示或隱藏資料列
+                        row.style.display = isVisible ? '' : 'none';
+                    });
+                });
+            });
+        </script> -->
 
         <table class="table table-hover justify-content-center mt-4">
             <thead>
@@ -90,7 +117,9 @@
             </thead>
             <tbody>
                 <tr onclick="window.location='./problem'">
-                    <td></td>
+                    <td class="text-success"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                        <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                      </svg></td>
                     <td>ZJ</td>
                     <td>15</td>
                     <td>ZJ</td>
@@ -101,7 +130,9 @@
                     <td>2024-02-30</td>
                 </tr>
                 <tr onclick="window.location='./problem'">
-                    <td></td>
+                    <td class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bug" viewBox="0 0 16 16">
+                        <path d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A5 5 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A5 5 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623M4 7v4a4 4 0 0 0 3.5 3.97V7zm4.5 0v7.97A4 4 0 0 0 12 11V7zM12 6a4 4 0 0 0-1.334-2.982A3.98 3.98 0 0 0 8 2a3.98 3.98 0 0 0-2.667 1.018A4 4 0 0 0 4 6z"/>
+                      </svg></td>
                     <td>ZJ</td>
                     <td>15</td>
                     <td>ZJ</td>
