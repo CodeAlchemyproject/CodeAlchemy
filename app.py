@@ -33,6 +33,14 @@ def problem():
     return render_template('./problem.html')
 # 登入
 @app.route('/login')
+def login():
+    return render_template('./login.html')
+# 登入
+@app.route('/problem_list')
+def problem_list():
+    return render_template('./problem_list.html')
+
+#從ChatGPT上抄下來的 我也不知道有沒有用 
 @app.route('/run_code', methods=['POST'])
 def run_code():
     # 獲取前端傳遞的程式碼和語言
