@@ -3,7 +3,6 @@ from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
-
 def get_all_titles():
     # 透過 api 取得所有題目的標題
     url = "https://leetcode.com/api/problems/all/"
@@ -59,7 +58,6 @@ def parseTags(tags):
 if __name__ == "__main__":
     # 取得標題
     slugs = get_all_titles()
-
     columns = ['Id', 'title', 'titleSlug', 'content', 'isPaidOnly', 'difficulty', 'likes', 'dislikes', 'tag']
     df = pd.DataFrame(columns=columns)
 
@@ -79,11 +77,22 @@ if __name__ == "__main__":
 
         df.loc[len(df)] = [id, title, titleSlug, content, isPaidOnly, difficulty, likes, dislikes, tag]
 
+        print("(%d/%d)"%(i,len(slugs)))
+        print("id:",id)
+        print("title:",title)
+        print("titleSlug:",titleSlug)
+        print("content:",content)
+        print("isPaidOnly:",isPaidOnly)
+        print("difficulty:",difficulty)
+        print("likes:",likes)
+        print("dislikes:",dislikes)
+        print("tag:",tag)
+        print("==========")
     print(df)
-    try:
+    # try:
     # 刪除檔案
-        os.remove('leetcode_problem.csv')
-        df.to_csv('leetcode_problem.csv', index=False, encoding='utf-8-sig')
-    except FileNotFoundError:
+        # os.remove('leetcode_problem.csv')
+        # df.to_csv('leetcode_problem.csv', index=False, encoding='utf-8-sig')
+    # except FileNotFoundError:
     # 檔案不存在
-        df.to_csv('leetcode_problem.csv', index=False, encoding='utf-8-sig')
+        # df.to_csv('leetcode_problem.csv', index=False, encoding='utf-8-sig')
