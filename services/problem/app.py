@@ -25,7 +25,6 @@ def problem_list():
     
     #取出資料
     data = cursor.fetchall()    
-    print(data)
     #關閉資料庫連線    
     connection.close() 
     
