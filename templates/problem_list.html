@@ -105,17 +105,44 @@
 
         <table class="table table-hover justify-content-center mt-4">
             <thead>
-                <td>通過</td>
-                <td>OJ</td>
-                <td>編號</td>
-                <td>名稱</td>
-                <td>難度</td>
-                <td>標籤</td>
-                <td>解題人數</td>
-                <td>通過率</td>
-                <td>上傳日期</td>
+                <tr>
+                    <td>通過</td>
+                    <td>OJ</td>
+                    <td>編號</td>
+                    <td>名稱</td>
+                    <td>難度</td>
+                    <td>標籤</td>
+                    <td>解題人數</td>
+                    <td>通過率</td>
+                    <td>上傳日期</td>
+                </tr>
             </thead>
             <tbody>
+                {% for item in data %}
+                <tr onclick="window.location='./problem'">
+                    <td class="text-success">
+                        {% if item['passed'] %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
+                        </svg>
+                        {% endif %}
+                    </td>
+                    <td>ZeroJudge</td>
+                    <td>{{ item[0] }}</td>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[7] }}</td>
+                    <td>{{ item[8] }}</td>
+                    <td>{{ item[9] }}</td>
+                    <td>
+                        {% if item[10] != 0 %}
+                        {{ '%.2f' % (item[9] / item[10] * 100) }}%
+                        {% else %}
+                        0%
+                        {% endif %}
+                    </td>
+                    <td>{{ item[11].strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% endfor %}
                 <tr onclick="window.location='./problem'">
                     <td class="text-success"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
                         <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
