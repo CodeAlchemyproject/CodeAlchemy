@@ -1,0 +1,79 @@
+2024/3/14
+ZJ-c618 因為文字關係無法輸入資料庫
+ {% comment %} <tr onclick="window.location='./problem'">
+                    <td class="text-success"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                        <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                      </svg></td>
+                    <td>ZJ</td>
+                    <td>15</td>
+                    <td>ZJ</td>
+                    <td class="text-success">EASY</td>
+                    <td>數學</td>
+                    <td>80</td>
+                    <td>80/100</td>
+                    <td>2024-02-30</td>
+                </tr>
+                <tr onclick="window.location='./problem'">
+                    <td class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bug" viewBox="0 0 16 16">
+                        <path d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A5 5 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A5 5 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623M4 7v4a4 4 0 0 0 3.5 3.97V7zm4.5 0v7.97A4 4 0 0 0 12 11V7zM12 6a4 4 0 0 0-1.334-2.982A3.98 3.98 0 0 0 8 2a3.98 3.98 0 0 0-2.667 1.018A4 4 0 0 0 4 6z"/>
+                      </svg></td>
+                    <td>ZJ</td>
+                    <td>15</td>
+                    <td>ZJ</td>
+                    <td class="text-warning">Medium</td>
+                    <td>數學</td>
+                    <td>80</td>
+                    <td>80/100</td>
+                    <td>2024-02-30</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>ZJ</td>
+                    <td>15</td>
+                    <td>ZJ</td>
+                    <td class="text-danger">HARD</td>
+                    <td>數學</td>
+                    <td>80</td>
+                    <td>80/100</td>
+                    <td>2024-02-30</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- 分頁 -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+ {% endcomment %}
+ #分頁部分放在問題列表之後#
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index', page=1) }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% for page_num in range(1, total_pages + 1) %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a></li>
+                    {% endfor %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('index', page=total_pages) }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
