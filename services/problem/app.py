@@ -3,7 +3,7 @@ from flask import request, render_template
 from flask_login import login_required
 from flask import Blueprint
 import os
-import uuid
+
 
 from utils import db, common
 
