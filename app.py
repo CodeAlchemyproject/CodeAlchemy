@@ -3,6 +3,7 @@
 #-----------------------
 from flask import Flask, render_template, session,request, jsonify
 import subprocess
+import math
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -18,24 +19,33 @@ app = Flask(__name__)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
-#主畫面
-@app.route('/')
-def index():
-
-#取得資料庫連線 
+#分頁功能
+def paginate(page, per_page):
+    offset = (page - 1) * per_page
+    #取得資料庫連線 
     connection = db.get_connection() 
-            
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()     
     cursor.execute('SELECT * FROM problem')
-            
     #取出資料
     data = cursor.fetchall()    
     #關閉資料庫連線    
     connection.close()
-    
+    return data[offset: offset + per_page],len(data)
+#主畫面
+@app.route('/')
+def index():
+    # 預設第一頁
+    page = request.args.get('page', 1, type=int)
+    # 每頁顯示15列
+    per_page = 15
+    start_page = max(1, page - 3)
+    end_page = min(page+3,math.ceil(paginate(page, per_page)[1]/per_page)+1)
+    paginated_data = paginate(page, per_page)[0]
     #渲染網頁  
-    return render_template('problem_list.html', data=data)
+    print(end_page)
+    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page)
+    
 #題目
 @app.route('/problem')
 def problem():
