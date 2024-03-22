@@ -25,7 +25,7 @@
     <!-- nav-bar -->
     <!-- ------- -->
     {% include "nav_bar.html" %}
-    <!-- 題目列表 -->
+
     <div class="container">
         <div class="row mt-4">
             <div class="col-3">
@@ -73,37 +73,10 @@
                 </form>
             </div>
         </div>
-        <!-- 不知道有沒有用 -->
-        <!-- <script>
-            const table = document.querySelector('table'); // 取得表格元素
-            const selects = document.querySelectorAll('.dropdown-menu'); // 取得所有下拉式選單
-
-            selects.forEach(select => {
-                select.addEventListener('change', () => {
-                    const selectedValue = select.querySelector('.dropdown-item.active').textContent; // 取得使用者选择的選項文字
-                    const rows = table.querySelectorAll('tbody tr');
-
-                    rows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        let isVisible = true; // 假設該資料列是可見的
-
-                        // 檢查每個資料列中的資料是否符合篩選條件
-                        for (const cell of cells) {
-                            const cellText = cell.textContent.toLowerCase();
-                            if (selectedValue !== '全部' && !cellText.includes(selectedValue.toLowerCase())) {
-                                isVisible = false;
-                                break;
-                            }
-                        }
-
-                        // 根據篩選結果顯示或隱藏資料列
-                        row.style.display = isVisible ? '' : 'none';
-                    });
-                });
-            });
-        </script> -->
-
-        <table class="table table-hover justify-content-center mt-4">
+        <!-- ------- -->
+        <!-- 題目列表 -->
+        <!-- ------- -->
+        <table id="problem_list" class="table table-hover justify-content-center mt-4">
             <thead>
                 <tr>
                     <td>通過</td>
@@ -122,8 +95,10 @@
                 <tr onclick="window.location='./problem'">
                     <td class="text-success">
                         {% if item['passed'] %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
-                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-check-lg" viewBox="0 0 16 16">
+                            <path
+                                d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
                         </svg>
                         {% endif %}
                     </td>
@@ -144,7 +119,32 @@
                 </tr>
                 {% endfor %}
             </tbody>
-            
+        </table>
+        <!-- 題目列表分頁 -->
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if page > 1 %}
+                    <li class="page-item"><a class="page-link" href="?page=1">第一頁</a></li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">第一頁</span></li>
+                    {% endif %}
+                    {% for p in range(start_page, end_page) %}
+                    {% if p == page %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ p }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page < end_page-1 %} 
+                    <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page + 1 }}">下一頁</a></li>
+                    {%else%}
+                    <li class="page-item disabled"><span class="page-link">下一頁</span></li>
+                    {%endif%}
+                </ul>
+            </nav>
+        </div>
 </body>
 
 </html>
