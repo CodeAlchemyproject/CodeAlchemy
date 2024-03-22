@@ -32,36 +32,36 @@
             <div class="col-3">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>狀態</option>
-                    <option value="?page={{ page }}&state=*&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">All</option>
-                    <option value="?page={{ page }}&state=accept&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">通過</option>
-                    <option value="?page={{ page }}&state=error&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">錯誤</option>
-                    <option value="?page={{ page }}&state=none&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">未做</option>
+                    <option value="?page={{ page }}&state=*&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">All</option>
+                    <option value="?page={{ page }}&state=accept&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">通過</option>
+                    <option value="?page={{ page }}&state=error&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">錯誤</option>
+                    <option value="?page={{ page }}&state=none&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">未做</option>
                 </select>
             </div>
             <div class="col-3">
                 <select class="form-select" id="onlinejudge" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>OnlineJudge</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}">All</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}">ZeroJudge</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}">LeetCode</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">All</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}&search={{search}}">ZeroJudge</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">LeetCode</option>
                 </select>
             </div>
             <div class="col-3">
                 <select class="form-select" id="difficulty" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>難度</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*">All</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard">Hard</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle">Middle</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy">Easy</option>
-                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A">N/A</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">All</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">Hard</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">Middle</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">Easy</option>
+                    <option value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">N/A</option>
                 </select>
             </div>
             <div class="col-3">
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search">
-                    <button class="btn btn-outline-primary" type="submit" local.href="/filter">Search</button>
+                <form class="d-flex" action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}" method="GET">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search" id="search">
+                    <button class="btn btn-outline-primary">Search</button>
                 </form>
-            </div>
+            </div>            
         </div>
         <!-- ------- -->
         <!-- 題目列表 -->
@@ -115,7 +115,7 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     {% if page > 1 %}
-                    <li class="page-item"><a class="page-link" href="?page=1&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">第一頁</a></li>
+                    <li class="page-item"><a class="page-link" href="?page=1&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">第一頁</a></li>
                     {% else %}
                     <li class="page-item disabled"><span class="page-link">第一頁</span></li>
                     {% endif %}
@@ -123,11 +123,11 @@
                     {% if p == page %}
                     <li class="page-item active" aria-current="page"><span class="page-link">{{ p }}</span></li>
                     {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{p}}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">{{ p }}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{p}}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">{{ p }}</a></li>
                     {% endif %}
                     {% endfor %}
                     {% if page < end_page-1 %} <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="?page={{page+1}}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">下一頁</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{page+1}}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">下一頁</a></li>
                         {%else%}
                         <li class="page-item disabled"><span class="page-link">下一頁</span></li>
                         {%endif%}
