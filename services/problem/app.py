@@ -5,7 +5,7 @@ from flask import Blueprint
 import os
 
 
-from utils import db, common
+from utils import db
 
 # 產生客戶服務藍圖
 problem_bp = Blueprint('problem_bp', __name__)
@@ -29,4 +29,4 @@ def problem_list():
     connection.close() 
     
     #渲染網頁  
-    return render_template('[problem_list.html', data=data)
+    return render_template('problem_list.html', data=data)
