@@ -32,21 +32,9 @@ def paginate(page, per_page):
     #關閉資料庫連線    
     connection.close()
     return data[offset: offset + per_page],len(data)
-@app.route('/filter', methods=['GET'])
-def filter_data():
-    # 取得使用者選擇
-    state = request.args.get('state')
-    onlinejudge = request.args.get('onlinejudge')
-    difficulty = request.args.get('difficulty')
-    search_term = request.args.get('search', None)  # 處理可選的搜尋欄位
 
-    # 篩選資料
-    # ...
-    print(state,onlinejudge,difficulty,search_term)
-    # 渲染篩選結果
-    return render_template('problem_list.html')
 #主畫面
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
@@ -55,8 +43,13 @@ def index():
     start_page = max(1, page - 3)
     end_page = min(page+3,math.ceil(paginate(page, per_page)[1]/per_page)+1)
     paginated_data = paginate(page, per_page)[0]
+
+    state = request.args.get('state','none',type=str)
+    onlinejudge = request.args.get('onlinejudge','none',type=str)
+    difficulty = request.args.get('difficulty','none',type=str)
+    print(state,onlinejudge,difficulty)
     #渲染網頁
-    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page)
+    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty)
     
 #題目
 @app.route('/problem')
