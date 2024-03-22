@@ -57,29 +57,9 @@
             <div class="col-3">
                 <form class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search">
-                    <button class="btn btn-outline-primary" type="submit" onclick="Search()">Search</button>
+                    <button class="btn btn-outline-primary" type="submit" local.href="/filter">Search</button>
                 </form>
             </div>
-            <script>
-                // 獲取所有<select>元素
-                var selectElement1 = document.getElementById('state');
-                var selectElement2 = document.getElementById('onlinejudge');
-                var selectElement3 = document.getElementById('difficulty');
-
-                // 為每個<select>元素添加事件監聽器
-                selectElement1.addEventListener('change', function () {
-                    sendValue(selectElement1);
-                });
-
-                selectElement2.addEventListener('change', function () {
-                    sendValue(selectElement2);
-                });
-
-                selectElement3.addEventListener('change', function () {
-                    sendValue(selectElement3);
-                });
-                console.log(selectElement1)
-            </script>
 
         </div>
         <!-- ------- -->
