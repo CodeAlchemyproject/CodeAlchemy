@@ -43,13 +43,14 @@ def index():
     start_page = max(1, page - 3)
     end_page = min(page+3,math.ceil(paginate(page, per_page)[1]/per_page)+1)
     paginated_data = paginate(page, per_page)[0]
-
+    #題目分類
     state = request.args.get('state','none',type=str)
     onlinejudge = request.args.get('onlinejudge','none',type=str)
     difficulty = request.args.get('difficulty','none',type=str)
-    print(state,onlinejudge,difficulty)
+    search = request.args.get('search','none',type=str)
+    print(state,onlinejudge,difficulty,search)
     #渲染網頁
-    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty)
+    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
     
 #題目
 @app.route('/problem')
