@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask, render_template, session,request, jsonify
+from flask import Flask, render_template, session,request
 import subprocess
 import math
 #-----------------------
