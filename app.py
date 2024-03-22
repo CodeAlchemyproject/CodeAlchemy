@@ -32,6 +32,7 @@ def paginate(page, per_page):
     #關閉資料庫連線    
     connection.close()
     return data[offset: offset + per_page],len(data)
+
 #主畫面
 @app.route('/')
 def index():
@@ -42,8 +43,8 @@ def index():
     start_page = max(1, page - 3)
     end_page = min(page+3,math.ceil(paginate(page, per_page)[1]/per_page)+1)
     paginated_data = paginate(page, per_page)[0]
-    #渲染網頁  
-    print(end_page)
+    #渲染網頁 
+
     return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page)
     
 #題目
