@@ -31,7 +31,6 @@ def get_data(state,onlinejudge,difficulty,search):
     data = cursor.fetchall()    
     #關閉資料庫連線    
     connection.close()
-    print(state,onlinejudge,difficulty,search)
     return data
 
 #分頁功能
