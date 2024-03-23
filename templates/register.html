@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include "_site_header.html" %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- Google第三方登入 -->
+    <meta name="google-signin-client_id"
+        content="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com">
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4">
+                <div class="mt-5 border border-3 rounded shadow-lg p-3 mb-5 bg-body rounded">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <h1 class="d-flex justify-content-center">註冊</h1>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Email" aria-label="Email"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col">
+                            <div class="input-group mb-3">
+                                <input type="password" class="form-control" placeholder="Password" aria-label="Username"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                        </div>
+                        <div class="col-8">
+                            <a class="w-100 mt-3 btn btn-outline-primary" href="./register" role="button">送出</a>
+                        </div>
+                        <div class="col-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    <script src="../static/js/login.js"></script>
+    </div>
+</body>
+
+</html>
