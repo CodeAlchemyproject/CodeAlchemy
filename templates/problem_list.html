@@ -103,7 +103,7 @@
             </thead>
             <tbody>
                 {% for item in data %}
-                <tr onclick="window.location='./problem'">
+                <tr onclick="window.location='./problem?problem_id={{item[0]}}'">
                     <td class="text-success">
                         {% if item['passed'] %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
