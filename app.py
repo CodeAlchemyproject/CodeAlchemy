@@ -54,6 +54,7 @@ def index():
     start_page = max(1, page - 3)
     end_page = min(page+3,math.ceil(paginate(state,onlinejudge,difficulty,search,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(state,onlinejudge,difficulty,search,page, per_page)[0]
+    print(state,onlinejudge,difficulty,search)
     #渲染網頁
     return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
     
