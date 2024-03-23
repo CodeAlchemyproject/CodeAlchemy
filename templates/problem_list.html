@@ -74,14 +74,15 @@
                 </select>
             </div>
             <div class="col-3">
-                <form class="d-flex"
-                    action="?page={{page}}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}"
-                    method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search"
-                        aria-label="Search" id="search">
+                <form class="d-flex" action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
+                    <input type="hidden" name="page" value="{{page}}">
+                    <input type="hidden" name="state" value="{{state}}">
+                    <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
+                    <input type="hidden" name="difficulty" value="{{difficulty}}">
+                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
                     <button class="btn btn-outline-primary">Search</button>
                 </form>
-            </div>
+            </div>            
         </div>
         <!-- ------- -->
         <!-- 題目列表 -->
