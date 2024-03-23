@@ -86,11 +86,13 @@ def get_user_data(sql_user_commond):
 def login():
     return render_template('./login.html')
 # 註冊
-@app.route('/register' ,methods=['GET'])
+@app.route('/register' ,methods=['GET','POST'])
 def register():
-    sql_user_commond="SELECT * FROM user"
+    if request.method == "POST":
+        user_name=request.form['username']
+    sql_user_commond="SELECT * FROM [user]"
+    print(sql_user_commond+sql_user_commond)
     get_user_data(sql_user_commond)
-    print(sql_user_commond)
     return render_template('./register.html')
 #-------------------------
 # 在主程式註冊各個服務
