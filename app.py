@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask, render_template, session,request, jsonify
+from flask import Flask, render_template, session,request
 import subprocess
 import math
 #-----------------------
@@ -19,44 +19,43 @@ app = Flask(__name__)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
-#分頁功能
-def paginate(page, per_page):
-    offset = (page - 1) * per_page
+#取得並篩選資料
+def get_data(state,onlinejudge,difficulty,search):
     #取得資料庫連線 
     connection = db.get_connection() 
     #產生執行sql命令的物件, 再執行sql   
-    cursor = connection.cursor()     
+    cursor = connection.cursor()
+    # 這裡加篩選條件
     cursor.execute('SELECT * FROM problem')
     #取出資料
     data = cursor.fetchall()    
     #關閉資料庫連線    
     connection.close()
-    return data[offset: offset + per_page],len(data)
-@app.route('/filter', methods=['GET'])
-def filter_data():
-    # 取得使用者選擇
-    state = request.args.get('state')
-    onlinejudge = request.args.get('onlinejudge')
-    difficulty = request.args.get('difficulty')
-    search_term = request.args.get('search', None)  # 處理可選的搜尋欄位
+    return data
 
-    # 篩選資料
-    # ...
-    print(state,onlinejudge,difficulty,search_term)
-    # 渲染篩選結果
-    return render_template('problem_list.html')
+#分頁功能
+def paginate(state,onlinejudge,difficulty,search,page, per_page):
+    offset = (page - 1) * per_page
+    data=get_data(state,onlinejudge,difficulty,search)
+    return data[offset: offset + per_page],len(data)
+
 #主畫面
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
+    # 取得使用者的篩選條件
+    state = request.args.get('state','*',type=str)
+    onlinejudge = request.args.get('onlinejudge','*',type=str)
+    difficulty = request.args.get('difficulty','*',type=str)
+    search = request.args.get('search','*',type=str)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
     per_page = 15
     start_page = max(1, page - 3)
-    end_page = min(page+3,math.ceil(paginate(page, per_page)[1]/per_page)+1)
-    paginated_data = paginate(page, per_page)[0]
+    end_page = min(page+3,math.ceil(paginate(state,onlinejudge,difficulty,search,page, per_page)[1]/per_page)+1)
+    paginated_data = paginate(state,onlinejudge,difficulty,search,page, per_page)[0]
     #渲染網頁
-    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page)
+    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
     
 #題目
 @app.route('/problem')
