@@ -30,7 +30,7 @@
             <div class="col">
                 <div class="row">
                     <div class="col-6">
-                        <h1 class="display-6 mt-4">a001.哈囉</h1>
+                        <h1 class="display-6 mt-4">{{data[0][0]}}{{data[0][1]}}</h1>
                     </div>
                     <!-- 收藏按鈕 -->
                     <div class="col-6 d-flex justify-content-center align-items-center">
@@ -50,31 +50,18 @@
                     </div>
 
                     <div class="col-12">
-                        <h3 class="mt-4 overflow-auto">學習所有程式語言的第一個練習題 請寫一個程式，可以讀入指定的字串，並且輸出指定的字串。
-                            比如：輸入字串 "world", 則請輸出 "hello, world"</h3>
+                        <h3 class="mt-4 overflow-auto">{{data[0][2]}}</h3>
                     </div>
                     <div class="col-12">
-                        <h5 class="mt-4 overflow-auto">範例1</h5>
+                        {% for n in range(data[0][5].count('|||')+1) %}
+                        <h5 class="mt-4 overflow-auto">範例{{n+1}}</h5>
                         <div class="border-start border-4">
                             <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">world</h6>
+                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{data[0][5].split('|||')[n]}}</h6>
                             <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">hello, world</h6>
+                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{data[0][6].split('|||')[n]}}</h6>
                         </div>
-                        <h5 class="mt-4 overflow-auto">範例2</h5>
-                        <div class="border-start border-4">
-                            <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">world</h6>
-                            <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">hello, world</h6>
-                        </div>
-                        <h5 class="mt-4 overflow-auto">範例3</h5>
-                        <div class="border-start border-4">
-                            <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">world</h6>
-                            <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">hello, world</h6>
-                        </div>
+                        {%endfor%}
                     </div>
                 </div>
             </div>
