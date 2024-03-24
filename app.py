@@ -26,7 +26,7 @@ def get_data(state,onlinejudge,difficulty,search):
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()
     # 這裡加篩選條件
-    cursor.execute('SELECT * FROM problem')
+    cursor.execute('SELECT * FROM problem where  ')
     #取出資料
     data = cursor.fetchall()    
     #關閉資料庫連線    
