@@ -20,19 +20,30 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
 #取得並篩選題目資料
-def get_problem_data(sql_problem_command):
+def get_data(sql_command):
     #取得資料庫連線 
     connection = db.get_connection() 
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()
     # 這裡加篩選條件
-    cursor.execute(sql_problem_command)
+    cursor.execute(sql_command)
     #取出資料
     data = cursor.fetchall()    
     #關閉資料庫連線    
     connection.close()
     return data
 
+#取得並篩選使用者資料
+def insert_data(sql_commond):
+    #取得資料庫連線 
+    connection = db.get_connection() 
+    #產生執行sql命令的物件, 再執行sql   
+    cursor = connection.cursor()
+    # 這裡加篩選條件
+    cursor.execute(sql_commond)
+    connection.commit()
+    #關閉資料庫連線    
+    connection.close()
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
@@ -47,7 +58,7 @@ def index():
     difficulty = request.args.get('difficulty','*',type=str)
     search = request.args.get('search','*',type=str)
     sql_problem_command='SELECT * FROM problem'
-    data=get_problem_data(sql_problem_command)
+    data=get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -64,23 +75,11 @@ def index():
 def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data=get_problem_data(sql_problem_command)
+    data=get_data(sql_problem_command)
     print(data)
     return render_template('./problem.html',data=data)
 
-#取得並篩選使用者資料
-def get_user_data(sql_user_commond):
-    #取得資料庫連線 
-    connection = db.get_connection() 
-    #產生執行sql命令的物件, 再執行sql   
-    cursor = connection.cursor()
-    # 這裡加篩選條件
-    cursor.execute(sql_user_commond)
-    #取出資料
-    data = cursor.fetchall()    
-    #關閉資料庫連線    
-    connection.close()
-    return data
+
 # 登入
 @app.route('/login')
 def login():
@@ -92,11 +91,16 @@ def register():
         user_name=request.form['Username']
         Email=request.form['Email']
         Password=request.form['Password']
-        print(user_name,Email,Password)
-        sql_user_commond=f"INSERT INTO [user](user_id,password,email) VALUES ({user_name},{Email},{Password})"
-    print(sql_user_commond+sql_user_commond)
-    get_user_data(sql_user_commond)
-    return render_template('./register.html')
+        if get_data(f"SELECT * FROM [user] where email='{Email}'"):
+            result='此Email已經註冊過'
+        else:
+            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{Password}','{Email}')"
+            insert_data(sql_user_commond)
+            result='註冊成功'
+        print(result)
+        return render_template('./register_result.html',result=result)
+    else:
+        return render_template('./register.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
