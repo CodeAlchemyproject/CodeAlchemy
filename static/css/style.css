@@ -97,11 +97,3 @@
     transform: scale(1.15) !important;
     transform-origin: top !important;
 }
-
-/* --------------------- */
-/* Google code */
-/* --------------------- */
-.prettyprint ol.linenums>li {
-    list-style-type: decimal;
-    padding-left: 10px;
-}

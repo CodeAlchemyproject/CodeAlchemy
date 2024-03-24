@@ -19,14 +19,14 @@ app = Flask(__name__)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
-#取得並篩選資料
-def get_data(state,onlinejudge,difficulty,search):
+#取得並篩選題目資料
+def get_problem_data(sql_problem_command):
     #取得資料庫連線 
     connection = db.get_connection() 
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()
     # 這裡加篩選條件
-    cursor.execute('SELECT * FROM problem where  ')
+    cursor.execute(sql_problem_command)
     #取出資料
     data = cursor.fetchall()    
     #關閉資料庫連線    
@@ -34,9 +34,8 @@ def get_data(state,onlinejudge,difficulty,search):
     return data
 
 #分頁功能
-def paginate(state,onlinejudge,difficulty,search,page, per_page):
+def paginate(data,page, per_page):
     offset = (page - 1) * per_page
-    data=get_data(state,onlinejudge,difficulty,search)
     return data[offset: offset + per_page],len(data)
 
 #主畫面
@@ -47,25 +46,54 @@ def index():
     onlinejudge = request.args.get('onlinejudge','*',type=str)
     difficulty = request.args.get('difficulty','*',type=str)
     search = request.args.get('search','*',type=str)
+    sql_problem_command='SELECT * FROM problem'
+    data=get_problem_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
     per_page = 15
     start_page = max(1, page - 3)
-    end_page = min(page+3,math.ceil(paginate(state,onlinejudge,difficulty,search,page, per_page)[1]/per_page)+1)
-    paginated_data = paginate(state,onlinejudge,difficulty,search,page, per_page)[0]
+    end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
+    paginated_data = paginate(data,page, per_page)[0]
+    print(state,onlinejudge,difficulty,search)
     #渲染網頁
     return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
     
 #題目
-@app.route('/problem')
+@app.route('/problem',methods=['GET'])
 def problem():
-    return render_template('./problem.html')
+    problem_id = request.args.get('problem_id',type=str)
+    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    data=get_problem_data(sql_problem_command)
+    print(data)
+    return render_template('./problem.html',data=data)
+
+#取得並篩選使用者資料
+def get_user_data(sql_user_commond):
+    #取得資料庫連線 
+    connection = db.get_connection() 
+    #產生執行sql命令的物件, 再執行sql   
+    cursor = connection.cursor()
+    # 這裡加篩選條件
+    cursor.execute(sql_user_commond)
+    #取出資料
+    data = cursor.fetchall()    
+    #關閉資料庫連線    
+    connection.close()
+    return data
 # 登入
 @app.route('/login')
 def login():
     return render_template('./login.html')
-
+# 註冊
+@app.route('/register' ,methods=['GET','POST'])
+def register():
+    if request.method == "POST":
+        user_name=request.form['username']
+    sql_user_commond="SELECT * FROM [user]"
+    print(sql_user_commond+sql_user_commond)
+    get_user_data(sql_user_commond)
+    return render_template('./register.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
