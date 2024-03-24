@@ -89,8 +89,11 @@ def login():
 @app.route('/register' ,methods=['GET','POST'])
 def register():
     if request.method == "POST":
-        user_name=request.form['username']
-    sql_user_commond="SELECT * FROM [user]"
+        user_name=request.form['Username']
+        Email=request.form['Email']
+        Password=request.form['Password']
+        print(user_name,Email,Password)
+        sql_user_commond=f"INSERT INTO [user](user_id,password,email) VALUES ({user_name},{Email},{Password})"
     print(sql_user_commond+sql_user_commond)
     get_user_data(sql_user_commond)
     return render_template('./register.html')
