@@ -4,6 +4,7 @@
 from flask import Flask,render_template,session,request,redirect
 import subprocess
 import math
+import time
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -89,9 +90,10 @@ def login():
         password=request.form['Password']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         # 如果有註冊過
-        if len(get_data(sql_common))==1:
+        user_data=get_data(sql_common)
+        if len(user_data)==1:
             # 登入成功
-            if get_data(sql_common)[0][2]==password:
+            if user_data[0][2]==password:
                 session['logged_in']=True
                 return redirect('/')
                 print(session.get('logged_in'))
@@ -113,6 +115,8 @@ def register():
         Password=request.form['Password']
         if get_data(f"SELECT * FROM [user] where email='{Email}'"):
             result='此Email已經註冊過'
+            time.sleep(3)
+            return redirect('/login')
         else:
             sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{Password}','{Email}')"
             insert_data(sql_user_commond)
