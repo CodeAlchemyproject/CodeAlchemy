@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask, render_template, session,request
+from flask import Flask,render_template,session,request,redirect
 import subprocess
 import math
 #-----------------------
@@ -19,7 +19,7 @@ app = Flask(__name__)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
-#取得並篩選題目資料
+#取得並篩選資料
 def get_data(sql_command):
     #取得資料庫連線 
     connection = db.get_connection() 
@@ -33,7 +33,7 @@ def get_data(sql_command):
     connection.close()
     return data
 
-#取得並篩選使用者資料
+#新增資料
 def insert_data(sql_commond):
     #取得資料庫連線 
     connection = db.get_connection() 
@@ -81,9 +81,29 @@ def problem():
 
 
 # 登入
-@app.route('/login')
+@app.route('/login',methods=['GET','POST'])
 def login():
-    return render_template('./login.html')
+    # 收到登入資料
+    if request.method=="POST":
+        Email=request.form['Email']
+        password=request.form['Password']
+        sql_common=f"SELECT * FROM [user] where email='{Email}'"
+        # 如果有註冊過
+        if len(get_data(sql_common))==1:
+            # 登入成功
+            if get_data(sql_common)[0][2]==password:
+                session['logged_in']=True
+                return redirect('/')
+                print(session.get('logged_in'))
+            # 帳號密碼錯誤登入失敗
+            else:
+                print('登入失敗')
+            return render_template('./login.html')
+        # 如果沒有註冊過
+        else:
+            return redirect('/register')
+    else:
+        return render_template('./login.html')
 # 註冊
 @app.route('/register' ,methods=['GET','POST'])
 def register():
@@ -97,7 +117,6 @@ def register():
             sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{Password}','{Email}')"
             insert_data(sql_user_commond)
             result='註冊成功'
-        print(result)
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
