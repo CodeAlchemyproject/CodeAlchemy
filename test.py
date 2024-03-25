@@ -1,63 +1,74 @@
 import requests
 from bs4 import BeautifulSoup
-def submit_code_to_zerojudge(problem_id, language, code):
-    # ZeroJudge提交URL
-    submission_url = 'https://zerojudge.tw/Solution.api?action=SubmitCode&'
+import csv
+from datetime import datetime
 
-    # 構建提交的數據
-    data = {
-        'problemid': problem_id,
-        'language': language,
-        'code': code
-    }
+def scrape_problem_content_and_print(problem_id):
+    # 构建完整的 URL
+    url = f'https://zerojudge.tw/ShowProblem?problemid={problem_id}'
 
-    # 發送POST請求
-    response = requests.post(submission_url, data=data)
-
-    # 檢查響應狀態碼
-    if response.status_code == 200:
-        print('代碼提交成功！')
-        # 如果需要，你可以進一步處理響應的內容
-        # 例如，檢查提交結果，獲取評分結果等
-    else:
-        print('代碼提交失敗！')
-
-
-# 函式：獲取並打印提交紀錄
-def print_submission_records():
-    url = "https://zerojudge.tw/Submissions?problemid=a001"
+    # 发送 GET 请求
     response = requests.get(url)
 
+    # 检查是否成功获取网页
     if response.status_code == 200:
-        soup = BeautifulSoup(response.text, "html.parser")
-        submission_table = soup.find("table", {"class": "table table-striped table-hover"})
-        
-        if submission_table:
-            rows = submission_table.find_all('tr', {'solutionid': '13502901'})
-            for row in rows[1:]:  # Skip the header row
-                cols = row.find_all("td")
-                solve_id = cols[0].text.strip()
-                user_id = cols[1].text.strip()
-                problem_id = cols[2].text.strip()
-                verdict = cols[4].text.strip()
-                execution_time = cols[6].text.strip()
-                language = cols[7].text.strip()
+        try:
+            # 使用 BeautifulSoup 解析 HTML
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-                print(f"Submission ID: {solve_id}")
-                print(f"User ID: {user_id}")
-                print(f"Problem ID: {problem_id}")
-                print(f"Verdict: {verdict}")
-                print(f"Execution Time: {execution_time}")
-                print(f"Language: {language}")
-                print()
+            # 找到特定的 div 元素
+            problem_content_div = soup.find('div', {'id': 'problem_content'})
+            span_element = soup.find('span', {'id': 'problem_title'})
+            span_statistics = soup.find('span', title='解題統計')
 
-        else:
-            print("Submission table not found.")
+            # 检查是否找到
+            if span_element and problem_content_div:
+                # 获取标题和内容
+                problem_title = span_element.text.strip()
+                problem_content = problem_content_div.text.strip()
+
+                # 获取输入和输出
+                input_output_divs = soup.find_all('div', {'id': ['problem_theinput', 'problem_theoutput']})
+                input_output_texts = [div.text.strip() for div in input_output_divs]
+
+                # 获取标签
+                tag_div = soup.find('div', class_='problem_tag')
+                tag = tag_div.text.strip() if tag_div else 'N/A'
+
+                # 获取解题统计百分比
+                statistics_percentage = 'N/A'
+                if span_statistics:
+                    statistics_text = span_statistics.text.strip()
+                    last_10_chars = statistics_text[-10:]
+                    statistics_percentage = ''.join(filter(str.isdigit, last_10_chars))
+
+                    # 根据百分比确定难度等级
+                    if statistics_percentage:
+                        percentage_value = int(statistics_percentage)
+                        if percentage_value >= 80:
+                            difficulty = 'easy'
+                        elif percentage_value >= 60:
+                            difficulty = 'normal'
+                        else:
+                            difficulty = 'hard'
+                    else:
+                        difficulty = 'N/A'
+                else:
+                    difficulty = 'N/A'
+
+                # 打印问题信息
+                print(f'Problem Title: {problem_title}')
+                print(f'Problem Content: {problem_content}')
+                print(f'Problem Input: {input_output_texts[0]}')
+                print(f'Problem Output: {input_output_texts[1]}')
+                print(f'Tag: {tag}')
+                print(f'Difficulty: {difficulty}')
+                print(f'Statistics Percentage: {statistics_percentage}')
+
+            else:
+                print('未找到指定的元素')
+        except Exception as e:
+            print(f'处理问题 {problem_id} 时出错: {str(e)}')
     else:
-        print("Failed to retrieve submission records.")
-
-# 主程式入口
-if __name__ == "__main__":
-    print_submission_records()
-
-
+        print(f'网页请求失败，状态码: {response.status_code}')
+scrape_problem_content_and_print("a001")
