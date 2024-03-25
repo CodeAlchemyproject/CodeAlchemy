@@ -19,9 +19,15 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#">競賽</a>
                 </li>
+                {% if session[2]==TRUE %}
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./login">{{session[2]}}</a>
+                </li>
+                {% else %}
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./login">登入</a>
                 </li>
+                {% endif %}
             </ul>
         </div>
     </div>
