@@ -67,10 +67,12 @@ def index():
     start_page = max(1, page - 3)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
-    print(state,onlinejudge,difficulty,search)
+    print(session.get('logged_in'))
     #渲染網頁
-    return render_template('problem_list.html', data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
-    
+    return render_template('problem_list.html', session=session,data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+@app.route('/navbar', methods=['GET'])
+def navbar():
+    session
 #題目
 @app.route('/problem',methods=['GET'])
 def problem():
@@ -95,8 +97,8 @@ def login():
             # 登入成功
             if user_data[0][2]==password:
                 session['logged_in']=True
+                session['User_name']=user_data[0][1]
                 return redirect('/')
-                print(session.get('logged_in'))
             # 帳號密碼錯誤登入失敗
             else:
                 print('登入失敗')
@@ -124,6 +126,10 @@ def register():
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
