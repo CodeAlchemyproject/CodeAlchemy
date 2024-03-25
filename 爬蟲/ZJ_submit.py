@@ -1,47 +1,39 @@
+from datetime import time
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import time
+from selenium.webdriver.chrome.service import Service
 
-def login_to_zerojudge(username, password):
-    login_url = "https://zerojudge.tw/Login"
+# 設定瀏覽器驅動程式的路徑，這裡以Chrome為例
+driver_path = 'C:\\Users\\My_User\\Documents\\chromedriver_win64\\chromedriver_win64\\chromedriver.exe'
 
-    # 启动浏览器
-    driver = webdriver.Edge()  # 需要下载并安装 Chrome 驱动，或者使用其他浏览器驱动
-    driver.get(login_url)
+# 創建一個Chrome服務對象
+service = Service(driver_path)
 
-    # 等待页面加载完成
-    time.sleep(2)
+# 創建一個Chrome WebDriver對象，並指定服務
+driver = webdriver.Chrome(service=service)
 
-    # 输入用户名和密码
-    username_field = driver.find_element_by_id("UserName")
-    username_field.send_keys(username)
-    password_field = driver.find_element_by_id("Password")
-    password_field.send_keys(password)
+# 目標URL
+url = 'https://zerojudge.tw/Login'
+driver.get(url)
 
-    # 提交登录表单
-    login_button = driver.find_element_by_id("login")
-    login_button.click()
+# 找到帳號和密碼的input元素，並輸入資料
+account_input = driver.find_element_by_id('account')
+account_input.send_keys('codealchemyproject@gmail.com')
 
-    # 等待登录完成
-    time.sleep(2)
+passwd_input = driver.find_element_by_id('passwd')
+passwd_input.send_keys('10956CodeAlchemy')
 
-    # 获取登录后的页面内容
-    logged_in_page = driver.page_source
+# 等待一段時間，確保reCAPTCHA載入完畢
+time.sleep(5)
 
-    # 关闭浏览器
-    driver.quit()
+# 如果reCAPTCHA是由iframe包含的，需要先切換到iframe
+# driver.switch_to.frame('reCAPTCHA iframe id')
 
-    # 查找隐藏字段中的 CSRF 令牌
-    csrf_token_start = logged_in_page.find('__RequestVerificationToken')
-    if csrf_token_start != -1:
-        csrf_token_value = logged_in_page[csrf_token_start:].split('"')[2]
-        print("CSRF 令牌:", csrf_token_value)
-        return csrf_token_value
-    else:
-        print("找不到 CSRF 令牌。")
-        return None
+# 點擊提交按鈕
+submit_button = driver.find_element_by_xpath('//button[@type="submit"]')
+submit_button.click()
 
-# 使用示例
-username = 'codealchemyproject@gmail.com'  # 修改为你的用户名
-password = '10956010CodeAlchemy'  # 修改为你的密码
-csrf_token = login_to_zerojudge(username, password)
+# 等待一段時間，觀察登入結果或後續操作
+time.sleep(5)
+
+# 關閉瀏覽器
+driver.quit()
