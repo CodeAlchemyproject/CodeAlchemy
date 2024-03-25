@@ -1,39 +1,42 @@
-from datetime import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# 設定瀏覽器驅動程式的路徑，這裡以Chrome為例
-driver_path = 'C:\\Users\\My_User\\Documents\\chromedriver_win64\\chromedriver_win64\\chromedriver.exe'
+# 设置浏览器驱动程序的路径
+driver_path = 'C:\\Users\\My_User\\Documents\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe'
 
-# 創建一個Chrome服務對象
+# 创建一个 Chrome 服务对象
 service = Service(driver_path)
 
-# 創建一個Chrome WebDriver對象，並指定服務
+# 创建一个 Chrome WebDriver 对象，指定服务
 driver = webdriver.Chrome(service=service)
 
-# 目標URL
+# 目标 URL
 url = 'https://zerojudge.tw/Login'
 driver.get(url)
 
-# 找到帳號和密碼的input元素，並輸入資料
-account_input = driver.find_element_by_id('account')
-account_input.send_keys('codealchemyproject@gmail.com')
+# 找到帐号和密码的输入框元素，并输入数据
+account = driver.find_element(By.CSS_SELECTOR, 'input.form-control#account[type=text]')
+account.send_keys('codealchemyproject@gmail.com')
 
-passwd_input = driver.find_element_by_id('passwd')
-passwd_input.send_keys('10956CodeAlchemy')
+passwd = driver.find_element(By.CSS_SELECTOR, 'input.form-control#passwd[type=password]')
+passwd.send_keys('10956CodeAlchemy')
 
-# 等待一段時間，確保reCAPTCHA載入完畢
-time.sleep(5)
+# 等待 reCAPTCHA 加载完毕
+wait = WebDriverWait(driver, 20)
+submit_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="submit"]')))
 
-# 如果reCAPTCHA是由iframe包含的，需要先切換到iframe
-# driver.switch_to.frame('reCAPTCHA iframe id')
-
-# 點擊提交按鈕
-submit_button = driver.find_element_by_xpath('//button[@type="submit"]')
+# 点击提交按钮
 submit_button.click()
 
-# 等待一段時間，觀察登入結果或後續操作
-time.sleep(5)
+# 等待登录结果
+try:
+    wait.until(EC.url_to_be('https://zerojudge.tw/Index'))
+    print('登录成功！')
+except:
+    print('登录失败！')
 
-# 關閉瀏覽器
+# 关闭浏览器
 driver.quit()
