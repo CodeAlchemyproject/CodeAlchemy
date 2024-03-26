@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    
+
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
@@ -18,7 +18,7 @@
     <!-- ------- -->
     {% include "nav_bar.html" %}
     <div class="container">
-        <!-- ------- -->
+
         <div class="row mt-4">
             <div class="col-3">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
@@ -74,7 +74,8 @@
                 </select>
             </div>
             <div class="col-3">
-                <form class="d-flex" action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
+                <form class="d-flex"
+                    action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
                     <input type="hidden" name="page" value="{{page}}">
                     <input type="hidden" name="state" value="{{state}}">
                     <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
@@ -82,7 +83,7 @@
                     <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
                     <button class="btn btn-outline-primary">Search</button>
                 </form>
-            </div>            
+            </div>
         </div>
         <!-- ------- -->
         <!-- 題目列表 -->
@@ -115,7 +116,7 @@
                     </td>
                     <td>ZeroJudge</td>
                     <td>{{ item[0] }}</td>
-                    <td>{{ item[1] }}</td>  
+                    <td>{{ item[1] }}</td>
                     <td>{{ item[7] }}</td>
                     <td>{{ item[8] }}</td>
                     <td>{{ item[9] }}</td>
