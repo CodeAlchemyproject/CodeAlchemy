@@ -69,7 +69,7 @@ def index():
     paginated_data = paginate(data,page, per_page)[0]
     print(session.get('logged_in'))
     #渲染網頁
-    return render_template('problem_list.html', session=session,data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 @app.route('/navbar', methods=['GET'])
 def navbar():
     session
