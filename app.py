@@ -126,6 +126,7 @@ def register():
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
+#登出 
 @app.route('/logout')
 def logout():
     session.clear()
