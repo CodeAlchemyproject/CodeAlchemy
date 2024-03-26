@@ -80,7 +80,7 @@
                                 </svg>
                                 語言
                             </button>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" id="select_language_button">
                                 <li><a class="dropdown-item" data-mode="text/x-csrc">C</a></li>
                                 <li><a class="dropdown-item" data-mode="text/x-c++src">C++</a></li>
                                 <li><a class="dropdown-item" data-mode="text/x-java">Java</a></li>
@@ -112,10 +112,9 @@ if (year%4!=0) or (year%100==0 and year%400!=0):
     print(False)
 else:
     print(True)
-                </textarea>
-                    <!-- <script src="../static/js/change_codemirro_mode.js"></script> -->
-
+</textarea>
                 </div>
+                <script src="../static/js/change_codemirro_mode.js"></script>
                 <div class="mt-5 bg-success p-2 text-white round rounded-2" style="display: none;">
                     <h4>通過</h4>
                     <h5>Run time:10ms</h5>
