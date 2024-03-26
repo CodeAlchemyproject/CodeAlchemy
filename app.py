@@ -141,6 +141,9 @@ login_manager.init_app(app)
 
 #-------------------------
 # 啟動主程式
-#-------------------------
+#------------------------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(
+        host='123.192.165.145',
+        port=80,
+        debug=True)
