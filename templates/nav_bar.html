@@ -1,15 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1D4D9F;">
-    <div class="container-fluid justify-content-between">
+    <div class="container-fluid">
         <a class="navbar-brand" href="/">
-            <img src="../static/imgs/icon.svg" alt="" width="45" height="auto" class="d-inline-block align-text-top">
-            <b class="code-font">CodeAlchemy</b>
+            <img src="../static/imgs/icon.svg" alt="" width="45" height="auto" class="d-inline-block align-text-top"><b
+                class="code-font">CodeAlchemy</b>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNav">
-            <ul class="navbar-nav">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./">{{session[2]}}題目</a>
                 </li>
@@ -19,18 +19,18 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="#">競賽</a>
                 </li>
-            </ul>
-            <ul class="navbar-nav">
-                {% if session['logged_in'] == True %}
+                {% if session['logged_in']==True %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button"
+                    <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ session['User_name'] }}
+                        {{session['User_name']}}
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="/user">個人資料</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/logout">登出</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#">個人資料</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="logout">登出</a></li>
                     </ul>
                 </li>
                 {% else %}
