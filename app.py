@@ -64,7 +64,7 @@ def index():
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
     per_page = 15
-    start_page = max(1, page - 3)
+    start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
     print(session.get('logged_in'))
