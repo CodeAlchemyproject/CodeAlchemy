@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect
+from flask import Flask,render_template,session,request,redirect,url_for
 import subprocess
 import math
 import time
@@ -82,32 +82,48 @@ def problem():
     print(data)
     return render_template('./problem.html',data=data)
 
-
-# 登入
+# 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
 def login():
     # 收到登入資料
     if request.method=="POST":
         Email=request.form['Email']
-        password=request.form['Password']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         # 如果有註冊過
         user_data=get_data(sql_common)
-        if len(user_data)==1:
-            # 登入成功
-            if user_data[0][2]==password:
-                session['logged_in']=True
-                session['User_name']=user_data[0][1]
-                return redirect('/')
-            # 帳號密碼錯誤登入失敗
-            else:
-                print('登入失敗')
-            return render_template('./login.html')
+        if len(user_data) == 1:
+            # 將Email存入session
+            session['Email'] = Email
+            print("轉跳中")
+            return redirect('/login_password')
         # 如果沒有註冊過
         else:
             return redirect('/register')
     else:
         return render_template('./login.html')
+# 輸入密碼
+@app.route('/login_password',methods=['GET','POST'])
+def login_password():
+    # 收到登入資料
+    if request.method=="POST":
+        print(session)
+        Email = session.get('Email')
+        password=request.form['Password']
+        sql_common=f"SELECT * FROM [user] where email='{Email}'"
+        user_data=get_data(sql_common)
+        # 登入成功
+        if user_data[0][2]==password:
+            session['logged_in']=True
+            session['User_name']=user_data[0][1]
+            return redirect('/')
+        # 帳號密碼錯誤登入失敗
+        else:
+            result='密碼錯誤'
+            print(result)
+            return render_template('./login_password.html',results=result)
+        
+    else:
+        return render_template('./login_password.html')
 # 註冊
 @app.route('/register' ,methods=['GET','POST'])
 def register():
