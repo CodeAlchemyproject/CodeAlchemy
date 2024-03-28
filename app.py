@@ -146,6 +146,10 @@ def register():
 def logout():
     session.clear()
     return redirect('/')
+
+@app.route('/user_data')
+def user_data():
+    return render_template('./user_data.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
