@@ -5,6 +5,7 @@ from flask import Flask,render_template,session,request,redirect,url_for
 import subprocess
 import math
 import time
+from werkzeug.security import generate_password_hash,check_password_hash
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -94,7 +95,6 @@ def login():
         if len(user_data) == 1:
             # 將Email存入session
             session['Email'] = Email
-            print("轉跳中")
             return redirect('/login_password')
         # 如果沒有註冊過
         else:
@@ -106,13 +106,12 @@ def login():
 def login_password():
     # 收到登入資料
     if request.method=="POST":
-        print(session)
         Email = session.get('Email')
         password=request.form['Password']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         user_data=get_data(sql_common)
         # 登入成功
-        if user_data[0][2]==password:
+        if check_password_hash(get_data(sql_common)[0][2],password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
             return redirect('/')
@@ -120,8 +119,7 @@ def login_password():
         else:
             result='密碼錯誤'
             print(result)
-            return render_template('./login_password.html',results=result)
-        
+            return render_template('./login_password.html',result=result)
     else:
         return render_template('./login_password.html')
 # 註冊
@@ -136,7 +134,8 @@ def register():
             time.sleep(3)
             return redirect('/login')
         else:
-            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{Password}','{Email}')"
+            print(generate_password_hash(Password))
+            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
             insert_data(sql_user_commond)
             result='註冊成功'
         return render_template('./register_result.html',result=result)
