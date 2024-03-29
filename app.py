@@ -107,11 +107,13 @@ def login_password():
     # 收到登入資料
     if request.method=="POST":
         Email = session.get('Email')
-        password=request.form['Password']
+        Password=request.form['Password']
+        Rememberme=request.form['Rememberme']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         user_data=get_data(sql_common)
+        print(Rememberme)
         # 登入成功
-        if check_password_hash(get_data(sql_common)[0][2],password):
+        if check_password_hash(get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
             return redirect('/')
