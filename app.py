@@ -73,6 +73,7 @@ def index():
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 @app.route('/navbar', methods=['GET'])
 def navbar():
+    request.cookies.get('user_name')
     session
 #題目
 @app.route('/problem',methods=['GET'])
@@ -118,8 +119,13 @@ def login_password():
         if check_password_hash(get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
-            # return redirect('/').set_cookie('username',user_data[0][1])
-            return redirect('/')
+            print(Rememberme)
+            if Rememberme==1:
+                resp = make_response(redirect('/'))
+                resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
+                return resp
+            else:
+                return redirect('/')
         # 帳號密碼錯誤登入失敗
         else:
             result='密碼錯誤'
