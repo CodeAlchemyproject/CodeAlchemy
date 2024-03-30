@@ -20,12 +20,12 @@
             <a class="nav-link active" href="#">競賽</a>
           </li>
         </ul>
-        {% if session['logged_in']==True %}
+        {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
           <ul class="navbar-nav">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button"
                  data-bs-toggle="dropdown" aria-expanded="false">
-                {{session['User_name']}}
+                {{session['User_name'] or request.cookies.get('user_name')}}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink" style="max-width: 200px;">  <li><a class="dropdown-item" href="./user_data">個人資料</a></li>
                 <li>
