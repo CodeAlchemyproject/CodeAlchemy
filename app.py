@@ -51,7 +51,6 @@ def insert_data(sql_commond):
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
-
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -71,10 +70,7 @@ def index():
     paginated_data = paginate(data,page, per_page)[0]
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
-@app.route('/navbar', methods=['GET'])
-def navbar():
-    request.cookies.get('user_name')
-    session
+
 #題目
 @app.route('/problem',methods=['GET'])
 def problem():
@@ -108,20 +104,23 @@ def login_password():
     if request.method=="POST":
         Email = session.get('Email')
         Password=request.form['Password']
+        # 記住我
         try:
             Rememberme=request.form['Rememberme']
             Rememberme=1
         except Exception:
             Rememberme=0
+        # 取的使用者資料
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         user_data=get_data(sql_common)
         # 登入成功
         if check_password_hash(get_data(sql_common)[0][2],Password):
-            session['logged_in']=True
-            session['User_name']=user_data[0][1]
+            # session['logged_in']=True
+            # session['User_name']=user_data[0][1]
             print(Rememberme)
             if Rememberme==1:
                 resp = make_response(redirect('/'))
+                resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
                 return resp
             else:
@@ -157,6 +156,7 @@ def register():
 def logout():
     session.clear()
     resp = make_response(redirect('/'))
+    resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
     return resp
 
