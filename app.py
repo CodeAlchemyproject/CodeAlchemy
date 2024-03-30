@@ -82,7 +82,7 @@ def problem():
 # 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
 def login():
-    # 收到登入資料
+    # 收到電子郵件
     if request.method=="POST":
         Email=request.form['Email']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
@@ -92,7 +92,7 @@ def login():
             # 將Email存入session
             session['Email'] = Email
             return redirect('/login_password')
-        # 如果沒有註冊過
+        # 如果沒有註冊過跳轉到註冊頁面
         else:
             return redirect('/register')
     else:
@@ -100,7 +100,7 @@ def login():
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
 def login_password():
-    # 收到登入資料
+    # 收到密碼
     if request.method=="POST":
         Email = session.get('Email')
         Password=request.form['Password']
@@ -115,20 +115,20 @@ def login_password():
         user_data=get_data(sql_common)
         # 登入成功
         if check_password_hash(get_data(sql_common)[0][2],Password):
-            # session['logged_in']=True
-            # session['User_name']=user_data[0][1]
-            print(Rememberme)
+            session['logged_in']=True
+            session['User_name']=user_data[0][1]
+            # 如果使用者有勾記住我
             if Rememberme==1:
                 resp = make_response(redirect('/'))
+                # cookie效期30天
                 resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
                 return resp
             else:
                 return redirect('/')
-        # 帳號密碼錯誤登入失敗
+        # 密碼錯誤登入失敗
         else:
             result='密碼錯誤'
-            print(result)
             return render_template('./login_password.html',result=result)
     else:
         return render_template('./login_password.html')
@@ -141,7 +141,6 @@ def register():
         Password=request.form['Password']
         if get_data(f"SELECT * FROM [user] where email='{Email}'"):
             result='此Email已經註冊過'
-            time.sleep(3)
             return redirect('/login')
         else:
             print(generate_password_hash(Password))
