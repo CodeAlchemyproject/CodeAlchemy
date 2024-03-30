@@ -156,7 +156,9 @@ def register():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/')
+    resp = make_response(redirect('/'))
+    resp.set_cookie('user_name','',expires=0)
+    return resp
 
 @app.route('/user_data')
 def user_data():
