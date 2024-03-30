@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect,url_for
+from flask import Flask,render_template,session,request,redirect,make_response
 import subprocess
 import math
 import time
@@ -46,6 +46,7 @@ def insert_data(sql_commond):
     connection.commit()
     #關閉資料庫連線    
     connection.close()
+
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
@@ -68,7 +69,6 @@ def index():
     start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
-    print(session.get('logged_in'))
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 @app.route('/navbar', methods=['GET'])
@@ -80,7 +80,6 @@ def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=get_data(sql_problem_command)
-    print(data)
     return render_template('./problem.html',data=data)
 
 # 查詢電子郵件有沒有註冊過
@@ -108,14 +107,18 @@ def login_password():
     if request.method=="POST":
         Email = session.get('Email')
         Password=request.form['Password']
-        Rememberme=request.form['Rememberme']
+        try:
+            Rememberme=request.form['Rememberme']
+            Rememberme=1
+        except Exception:
+            Rememberme=0
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         user_data=get_data(sql_common)
-        print(Rememberme)
         # 登入成功
         if check_password_hash(get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
+            # return redirect('/').set_cookie('username',user_data[0][1])
             return redirect('/')
         # 帳號密碼錯誤登入失敗
         else:
