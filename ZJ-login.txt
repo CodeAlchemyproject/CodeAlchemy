@@ -1,1 +1,1 @@
-[{"domain": "zerojudge.tw", "httpOnly": true, "name": "JSESSIONID", "path": "/", "sameSite": "Lax", "secure": true, "value": "A0D1FB79536DFABC37D0498C481BE364"}]
+[{"domain": "zerojudge.tw", "httpOnly": true, "name": "JSESSIONID", "path": "/", "sameSite": None, "secure": true, "value": "12348EDF336E2F2E522550585734E7DF"}]
