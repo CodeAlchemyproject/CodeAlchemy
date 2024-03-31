@@ -5,7 +5,7 @@ from flask import Blueprint
 import os
 
 
-from . import db
+from utils import db
 
 # 產生客戶服務藍圖
 problem_bp = Blueprint('problem_bp', __name__)

@@ -5,7 +5,7 @@ from flask import Blueprint
 import os
 import uuid
 
-from . import db
+from utils import db
 from utils import common
 
 # 產生客戶服務藍圖
