@@ -1,10 +1,11 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect
+from flask import Flask,render_template,session,request,redirect,make_response
 import subprocess
 import math
 import time
+from werkzeug.security import generate_password_hash,check_password_hash
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -45,11 +46,11 @@ def insert_data(sql_commond):
     connection.commit()
     #關閉資料庫連線    
     connection.close()
+
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
-
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -67,47 +68,70 @@ def index():
     start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
-    print(session.get('logged_in'))
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
-@app.route('/navbar', methods=['GET'])
-def navbar():
-    session
+
 #題目
 @app.route('/problem',methods=['GET'])
 def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=get_data(sql_problem_command)
-    print(data)
     return render_template('./problem.html',data=data)
 
-
-# 登入
+# 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
 def login():
-    # 收到登入資料
+    # 收到電子郵件
     if request.method=="POST":
         Email=request.form['Email']
-        password=request.form['Password']
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
         # 如果有註冊過
         user_data=get_data(sql_common)
-        if len(user_data)==1:
-            # 登入成功
-            if user_data[0][2]==password:
-                session['logged_in']=True
-                session['User_name']=user_data[0][1]
-                return redirect('/')
-            # 帳號密碼錯誤登入失敗
-            else:
-                print('登入失敗')
-            return render_template('./login.html')
-        # 如果沒有註冊過
+        if len(user_data) == 1:
+            # 將Email存入session
+            session['Email'] = Email
+            return redirect('/login_password')
+        # 如果沒有註冊過跳轉到註冊頁面
         else:
             return redirect('/register')
     else:
         return render_template('./login.html')
+# 輸入密碼
+@app.route('/login_password',methods=['GET','POST'])
+def login_password():
+    # 收到密碼
+    if request.method=="POST":
+        Email = session.get('Email')
+        Password=request.form['Password']
+        # 記住我
+        try:
+            Rememberme=request.form['Rememberme']
+            Rememberme=1
+        except Exception:
+            Rememberme=0
+        # 取的使用者資料
+        sql_common=f"SELECT * FROM [user] where email='{Email}'"
+        user_data=get_data(sql_common)
+        # 登入成功
+        if check_password_hash(get_data(sql_common)[0][2],Password):
+            session['logged_in']=True
+            session['User_name']=user_data[0][1]
+            # 如果使用者有勾記住我
+            if Rememberme==1:
+                resp = make_response(redirect('/'))
+                # cookie效期30天
+                resp.set_cookie('logged_in','True',max_age=60*60*24*30)
+                resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
+                return resp
+            else:
+                return redirect('/')
+        # 密碼錯誤登入失敗
+        else:
+            result='密碼錯誤'
+            return render_template('./login_password.html',result=result)
+    else:
+        return render_template('./login_password.html')
 # 註冊
 @app.route('/register' ,methods=['GET','POST'])
 def register():
@@ -117,10 +141,10 @@ def register():
         Password=request.form['Password']
         if get_data(f"SELECT * FROM [user] where email='{Email}'"):
             result='此Email已經註冊過'
-            time.sleep(3)
             return redirect('/login')
         else:
-            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{Password}','{Email}')"
+            print(generate_password_hash(Password))
+            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
             insert_data(sql_user_commond)
             result='註冊成功'
         return render_template('./register_result.html',result=result)
@@ -130,7 +154,14 @@ def register():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/')
+    resp = make_response(redirect('/'))
+    resp.set_cookie('logged_in','',expires=0)
+    resp.set_cookie('user_name','',expires=0)
+    return resp
+
+@app.route('/user_data')
+def user_data():
+    return render_template('./user_data.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------

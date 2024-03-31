@@ -21,59 +21,35 @@
     {% include "nav_bar.html" %}
     <div class="container">
         <div class="row">
-            <div class="col-5 mx-auto">
-                <div class="mt-5 border border-3 rounded shadow-lg p-3 mb-5 bg-body rounded">
-                    <div class="row">
-                        <div class="col-2"></div>
-                        <div class="col">
-                            <h1 class="d-flex justify-content-center">登入</h1>
-                        </div>
-                        <div class="col-2"></div>
-                    </div>
-                    <form action="/login" method="POST">
-                        <div class="row">
-                            <div class="col-2"></div>
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <input type="email" class="form-control" placeholder="Email" aria-label="Email"
-                                        aria-describedby="basic-addon1" name="Email" required>
-                                </div>
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <h2 class="card-title text-center mb-5">登入</h2>
+                        <form action="/login" method="POST">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="floatingInput"
+                                    placeholder="name@example.com" name="Email" required>
+                                <label for="floatingInput">Email address</label>
                             </div>
-                            <div class="col-2"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2"></div>
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <input type="password" class="form-control" placeholder="Password"
-                                        aria-label="Password" aria-describedby="basic-addon1" name="Password" required>
-                                </div>
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-login text-uppercase fw-bold"
+                                    type="submit">送出</button>
                             </div>
-                            <div class="col-2"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-10"><a href="./forget_password.html"
-                                    class="link-dark d-flex justify-content-end">忘記密碼</a></div>
-                            <div class="col-2"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">
+                        </form>
+                        <hr class="my-4">
+                        <div class="d-grid mb-2">
+                            <div id="g_id_onload"
+                                data-client_id="570075629720-t8lnamkjs4kggo6dimruitguvs6usch8.apps.googleusercontent.com"
+                                data-context="signin" data-ux_mode="popup"
+                                data-auto_prompt="false">
                             </div>
-                            <div class="col-8">
-                                <button class="w-100 mt-3 btn btn-primary">送出</button>
-                            </div>
-                            <div class="col-2">
+
+                            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+                                data-text="signin_with" data-size="large" data-logo_alignment="left">
                             </div>
                         </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-2">
-                        </div>
-                        <div class="col-8">
-                            <a class="w-100 mt-3 btn btn-outline-primary" href="./register" role="button">註冊</a>
-                        </div>
-                        <div class="col-2">
-                        </div>
+                        <!-- <hr class="my-4"> -->
+
                     </div>
                 </div>
             </div>
