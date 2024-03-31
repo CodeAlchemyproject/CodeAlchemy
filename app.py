@@ -9,10 +9,11 @@ from werkzeug.security import generate_password_hash,check_password_hash
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
+from . import db
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
-from utils import db, common
+from utils import common
 #-------------------------
 # 產生主程式, 加入主畫面
 #-------------------------

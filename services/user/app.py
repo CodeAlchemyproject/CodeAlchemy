@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user 
 from flask import Blueprint
 
-from utils import db
+from . import db
 
 # 產生使用者服務藍圖
 user_bp = Blueprint('user_bp', __name__)
