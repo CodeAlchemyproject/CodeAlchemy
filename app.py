@@ -53,6 +53,15 @@ def insert_data(sql_commond):
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
+
+# 傳送驗證電子郵件
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'codealchemyproject@gmail.com'
+app.config['MAIL_PASSWORD'] = 'zsog pref sqoh xagd'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -146,9 +155,21 @@ def register():
             return redirect('/login')
         else:
             print(generate_password_hash(Password))
-            sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
-            insert_data(sql_user_commond)
+            # sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
+            # insert_data(sql_user_commond)
             result='註冊成功'
+            msg_title = 'Hello'
+            msg_recipients=[Email]
+            msg_html = '這是 flask-mail example <br> <br>' \
+                    '附上一張圖片 <br> <br>' \
+                    '<b  style="color:#FF4E4E" >新垣結衣</b>'
+            msg = Message(
+                subject=msg_title,
+                sender = 'codealchemyproject@gmail.com',
+                recipients=msg_recipients,
+                html=msg_html
+            )
+            mail.send(msg)
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
@@ -160,14 +181,6 @@ def logout():
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
     return resp
-# 傳送驗證電子郵件
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'codealchemyproject@gmail.com'
-app.config['MAIL_PASSWORD'] = 'zsog pref sqoh xagd'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
 
 @app.route('/send-email')
 def send_mail():
