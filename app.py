@@ -7,6 +7,7 @@ import subprocess
 import math
 import time
 from werkzeug.security import generate_password_hash,check_password_hash
+import uuid
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -158,11 +159,13 @@ def register():
             # sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
             # insert_data(sql_user_commond)
             result='註冊成功'
-            msg_title = 'Hello'
+            token=str(uuid.uuid4)
+            html='http://127.0.0.1/'
+            print(token)
+            msg_title = 'Welcome to CodeAlchemy'
             msg_recipients=[Email]
-            msg_html = '這是 flask-mail example <br> <br>' \
-                    '附上一張圖片 <br> <br>' \
-                    '<b  style="color:#FF4E4E" >新垣結衣</b>'
+            msg_html =f'<p>親愛的 {user_name}，<br>感謝您註冊成為我們平台的一員！為了確保您的帳戶安全，請點擊以下連結驗證您的電子郵件地址：<a href="{html}">驗證連結</a>。<br>如果您無法點擊上述連結，請將以下網址複製並粘貼到瀏覽器地址欄中：<a href="{html}">{html}</a>。<br>請完成這一步驟以啟用您的帳戶。如果您遇到任何問題或需要協助，請隨時聯繫我們的客戶服務團隊，我們將竭誠為您服務。<br>謝謝您的合作！<br>祝您有個愉快的體驗！</p>'
+
             msg = Message(
                 subject=msg_title,
                 sender = 'codealchemyproject@gmail.com',
