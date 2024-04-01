@@ -177,7 +177,21 @@ def register():
 @app.route('/forget_password' ,methods=['GET','POST'])
 def forget_password():
     if request.method == "POST":
-        user_name=request.form['Username']
+        Email=request.form['Email']
+        user_name=get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
+        token=str(uuid.uuid4())
+        html=f'http://127.0.0.1/verify_forget_password?uuid={token}'
+        msg_title = 'Welcome to CodeAlchemy'
+        msg_recipients=[Email]
+        msg_html =f'<p>親愛的{user_name},</p><p>我們注意到您最近嘗試登入您的帳號時遇到了一些問題。如果您忘記了您的密碼，請不要擔心，我們很樂意協助您重設密碼。</p><p>請點擊以下連結以重設您的密碼：</p><a href="{html}">重設密碼</a><p>如果點擊上述連結無法正常工作，請複製並粘貼以下網址至您的瀏覽器中：</p><p>{html}</p><p>請注意，此連結將在收到此郵件後的24小時內有效。請盡快完成密碼重設流程。</p><p>如果您沒有請求重設密碼，請忽略此郵件。您的帳號安全是我們的首要關注。</p><p>如果您有任何疑問或需要進一步協助，請隨時回覆此郵件與我們聯繫。</p>'
+        msg = Message(
+            subject=msg_title,
+            sender = 'codealchemyproject@gmail.com',
+            recipients=msg_recipients,
+            html=msg_html
+        )
+        mail.send(msg)
+        return render_template('./forget_password.html')
     else:
         return render_template('./forget_password.html')
 # 註冊驗證
@@ -197,7 +211,7 @@ def verify_forget_password():
     edit_data(sql_command)
     sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
     edit_data(sql_command)
-    return render_template('./verify.html',mode='register')
+    return render_template('./verify.html',mode='forget_password')
 #登出 
 @app.route('/logout')
 def logout():
