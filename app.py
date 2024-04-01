@@ -182,23 +182,6 @@ def logout():
     resp.set_cookie('user_name','',expires=0)
     return resp
 
-@app.route('/send-email')
-def send_mail():
-    msg_title = 'Hello'
-    msg_recipients=['chouenyu940808@gmail.com']
-    msg_html = '這是 flask-mail example <br> <br>' \
-              '附上一張圖片 <br> <br>' \
-              '<b  style="color:#FF4E4E" >新垣結衣</b>'
-    msg = Message(
-        subject=msg_title,
-        sender = 'codealchemyproject@gmail.com',
-        recipients=msg_recipients,
-        html=msg_html
-    )
-    # msg.body = '純文字'
-    # msg.html=msg_html
-    mail.send(msg)
-    return()
 @app.route('/user_data')
 def user_data():
     return render_template('./user_data.html')
