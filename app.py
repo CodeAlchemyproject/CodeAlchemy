@@ -38,14 +38,14 @@ def get_data(sql_command):
     connection.close()
     return data
 
-#新增資料
-def insert_data(sql_commond):
+#新增、更新、刪除資料
+def edit_data(sql_command):
     #取得資料庫連線 
     connection = db.get_connection() 
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()
     # 這裡加篩選條件
-    cursor.execute(sql_commond)
+    cursor.execute(sql_command)
     connection.commit()
     #關閉資料庫連線    
     connection.close()
@@ -97,9 +97,9 @@ def login():
     # 收到電子郵件
     if request.method=="POST":
         Email=request.form['Email']
-        sql_common=f"SELECT * FROM [user] where email='{Email}'"
+        sql_user_command=f"SELECT * FROM [user] where email='{Email}'"
         # 如果有註冊過
-        user_data=get_data(sql_common)
+        user_data=get_data(sql_user_command)
         if len(user_data) == 1:
             # 將Email存入session
             session['Email'] = Email
@@ -155,17 +155,13 @@ def register():
             result='此Email已經註冊過'
             return redirect('/login')
         else:
-            print(generate_password_hash(Password))
-            # sql_user_commond=f"INSERT INTO [user](user_name,password,email) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}')"
-            # insert_data(sql_user_commond)
-            result='註冊成功'
-            token=str(uuid.uuid4)
-            html='http://123.192.195.145/'
-            print(token)
+            token=str(uuid.uuid4())
+            sql_user_command=f"INSERT INTO [user](user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
+            edit_data(sql_user_command)
+            html=f'http://127.0.0.1/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
             msg_recipients=[Email]
             msg_html =f'<p>親愛的 {user_name}，<br>感謝您註冊成為我們平台的一員！為了確保您的帳戶安全，請點擊以下連結驗證您的電子郵件地址：<a href="{html}">驗證連結</a>。<br>如果您無法點擊上述連結，請將以下網址複製並粘貼到瀏覽器地址欄中：<a href="{html}">{html}</a>。<br>請完成這一步驟以啟用您的帳戶。如果您遇到任何問題或需要協助，請隨時聯繫我們的客戶服務團隊，我們將竭誠為您服務。<br>謝謝您的合作！<br>祝您有個愉快的體驗！</p>'
-
             msg = Message(
                 subject=msg_title,
                 sender = 'codealchemyproject@gmail.com',
@@ -173,9 +169,19 @@ def register():
                 html=msg_html
             )
             mail.send(msg)
+            result='註冊成功'
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
+# 驗證
+@app.route('/verify_register',methods=['GET'])
+def verify_register():
+    uuid = request.args.get('uuid',None,type=str)
+    sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
+    edit_data(sql_command)
+    sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+    edit_data(sql_command)
+    return render_template('./verify.html',mode='register')
 #登出 
 @app.route('/logout')
 def logout():
