@@ -160,7 +160,7 @@ def register():
             # insert_data(sql_user_commond)
             result='註冊成功'
             token=str(uuid.uuid4)
-            html='http://127.0.0.1/'
+            html='http://123.192.195.145/'
             print(token)
             msg_title = 'Welcome to CodeAlchemy'
             msg_recipients=[Email]
