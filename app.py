@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect,make_response
+from flask import Flask,render_template,session,request,redirect,make_response,jsonify
 from flask_mail import Mail,Message
 import subprocess
 import math
@@ -11,7 +11,7 @@ import uuid
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
-from utils import db
+import utils 
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
@@ -90,6 +90,17 @@ def problem():
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=get_data(sql_problem_command)
     return render_template('./problem.html',data=data)
+
+#題目提交
+@app.route('/problem_submit', methods=['POST'])
+def problem_submit():
+    data = request.get_json() # 從POST請求中獲取JSON數據
+    uploaded_data = data['data'] # 提取所需的數據，這裡假設數據以'data'鍵存儲
+    print(data)
+    # 在這裡執行任何你需要的處理
+
+    return jsonify({"message": "Data received successfully!"}) # 返回一個JSON響應
+
 
 # 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
