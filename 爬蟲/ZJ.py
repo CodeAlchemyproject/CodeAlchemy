@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
 import pyodbc
+import time
 
 def scrape_problem_content_and_save_to_sql_server(problem_id):
     # 構建完整的 URL
@@ -90,6 +91,5 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
     for row in csv_reader:
         problem_id = row[0]
         scrape_problem_content_and_save_to_sql_server(problem_id)
-
-
+        time.sleep(10)
 print("完成")
