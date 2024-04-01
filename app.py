@@ -180,6 +180,7 @@ def forget_password():
         Email=request.form['Email']
         user_name=get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
         token=str(uuid.uuid4())
+        edit_data(f"UPDATE [user] SET uuid = '{token}' WHERE email='{Email}'")
         html=f'http://127.0.0.1/verify_forget_password?uuid={token}'
         msg_title = 'Welcome to CodeAlchemy'
         msg_recipients=[Email]
@@ -191,13 +192,15 @@ def forget_password():
             html=msg_html
         )
         mail.send(msg)
-        return render_template('./forget_password.html')
+        return render_template('./login')
     else:
         return render_template('./forget_password.html')
 # 註冊驗證
 @app.route('/verify_register',methods=['GET'])
 def verify_register():
+    # 獲得uuid
     uuid = request.args.get('uuid',None,type=str)
+
     sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
     edit_data(sql_command)
     sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
@@ -207,11 +210,9 @@ def verify_register():
 @app.route('/verify_forget_password',methods=['GET'])
 def verify_forget_password():
     uuid = request.args.get('uuid',None,type=str)
-    sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
-    edit_data(sql_command)
-    sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
-    edit_data(sql_command)
-    return render_template('./verify.html',mode='forget_password')
+    # sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+    # edit_data(sql_command)
+    return render_template('./reset_password.html')
 #登出 
 @app.route('/logout')
 def logout():
