@@ -2,6 +2,7 @@
 # 匯入模組
 #-----------------------
 from flask import Flask,render_template,session,request,redirect,make_response
+from flask_mail import Mail,Message
 import subprocess
 import math
 import time
@@ -159,7 +160,32 @@ def logout():
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
     return resp
+# 傳送驗證電子郵件
+app.config.update(
+    # EMAIL SETTINGS
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='codealchemyproject@gmail.com',
+    MAIL_PASSWORD='zsog pref sqoh xagd'
+)
+mail = Mail(app)
 
+@app.route('/send-email')
+def send_mail():
+    msg_title = 'Hello'
+    msg_recipients=['chouenyu940808@gmail.com']
+    msg_html = '這是 flask-mail example <br> <br>' \
+              '附上一張圖片 <br> <br>' \
+              '<b  style="color:#FF4E4E" >新垣結衣</b>'
+    msg = Message(
+        subject=msg_title,
+        recipients=msg_recipients,
+        html=msg_html
+    )
+    # msg.body = '純文字'
+    # msg.html=msg_html
+    mail.send(msg)
 @app.route('/user_data')
 def user_data():
     return render_template('./user_data.html')
