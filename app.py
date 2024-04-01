@@ -161,14 +161,12 @@ def logout():
     resp.set_cookie('user_name','',expires=0)
     return resp
 # 傳送驗證電子郵件
-app.config.update(
-    # EMAIL SETTINGS
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=465,
-    MAIL_USE_SSL=True,
-    MAIL_USERNAME='codealchemyproject@gmail.com',
-    MAIL_PASSWORD='zsog pref sqoh xagd'
-)
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'codealchemyproject@gmail.com'
+app.config['MAIL_PASSWORD'] = 'zsog pref sqoh xagd'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 @app.route('/send-email')
@@ -180,12 +178,14 @@ def send_mail():
               '<b  style="color:#FF4E4E" >新垣結衣</b>'
     msg = Message(
         subject=msg_title,
+        sender = 'codealchemyproject@gmail.com',
         recipients=msg_recipients,
         html=msg_html
     )
     # msg.body = '純文字'
     # msg.html=msg_html
     mail.send(msg)
+    return()
 @app.route('/user_data')
 def user_data():
     return render_template('./user_data.html')
