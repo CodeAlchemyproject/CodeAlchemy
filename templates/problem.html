@@ -16,7 +16,7 @@
     <!-- Java -->
     <script src="../static/lib/codemirror/mode/clike/clike.js"></script>
     <script src="../static/lib/codemirror/addon/hint/show-hint.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -107,11 +107,7 @@
                 <!-- 程式輸入框 -->
                 <div class="row border border-3 round rounded-2 mt-5">
                     <textarea id="editor">
-year=int(input())+1911
-if (year%4!=0) or (year%100==0 and year%400!=0):
-    print(False)
-else:
-    print(True)
+
 </textarea>
                 </div>
                 <script src="../static/js/change_codemirro_mode.js"></script>
@@ -130,6 +126,33 @@ else:
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function(){
+            $('#uploadBtn').click(function(){
+                // 在這裡獲取要傳送的數據
+                var dataToSend = data[0][0]; // 這是你要傳送的數據，可以是任何你需要的格式
+        
+                // 使用AJAX發送POST請求到Flask後端
+                $.ajax({
+                    type: "POST",
+                    url: "/problem_submit", // 請根據你的Flask路由配置正確的URL
+                    data: JSON.stringify({data: dataToSend}), // 將數據轉換為JSON格式
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response){
+                        // 在成功接收到Flask的回應後執行的代碼
+                        console.log("Data uploaded successfully!");
+                        console.log(response); // 這是Flask後端返回的任何數據
+                    },
+                    error: function(error){
+                        // 在出現錯誤時執行的代碼
+                        console.error("Error uploading data: ", error);
+                    }
+                });
+            });
+        });
+        </script>
+        
 </body>
 
 </html>
