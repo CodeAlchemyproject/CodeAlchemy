@@ -192,7 +192,7 @@ def forget_password():
             html=msg_html
         )
         mail.send(msg)
-        return render_template('./login')
+        return redirect('/login')
     else:
         return render_template('./forget_password.html')
 # 註冊驗證
@@ -200,19 +200,31 @@ def forget_password():
 def verify_register():
     # 獲得uuid
     uuid = request.args.get('uuid',None,type=str)
-
     sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
     edit_data(sql_command)
     sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
     edit_data(sql_command)
     return render_template('./verify.html',mode='register')
 # 忘記密碼驗證
-@app.route('/verify_forget_password',methods=['GET'])
+@app.route('/verify_forget_password',methods=['GET','POST'])
 def verify_forget_password():
     uuid = request.args.get('uuid',None,type=str)
-    # sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
-    # edit_data(sql_command)
-    return render_template('./reset_password.html')
+    if request.method == "POST":
+        uuid=request.form['uuid']
+        Password=request.form['Password']
+        Repassword=request.form['Repassword']
+        # 判斷重複密碼有沒有一樣 
+        if Password!=Repassword:
+            result='密碼不一致'
+            return render_template('./reset_password.html',result=result)
+        else:
+            Password=generate_password_hash(Password)
+            sql_command = f"UPDATE [user] SET password = {Password} WHERE uuid='{uuid}'"
+            edit_data(sql_command)
+            result='更改成功'
+            return render_template('./reset_password.html',result=result)
+    else:
+        return render_template('./reset_password.html',uuid=uuid)
 #登出 
 @app.route('/logout')
 def logout():
