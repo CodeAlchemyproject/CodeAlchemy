@@ -173,9 +173,25 @@ def register():
         return render_template('./register_result.html',result=result)
     else:
         return render_template('./register.html')
-# 驗證
+# 忘記密碼
+@app.route('/forget_password' ,methods=['GET','POST'])
+def forget_password():
+    if request.method == "POST":
+        user_name=request.form['Username']
+    else:
+        return render_template('./forget_password.html')
+# 註冊驗證
 @app.route('/verify_register',methods=['GET'])
 def verify_register():
+    uuid = request.args.get('uuid',None,type=str)
+    sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
+    edit_data(sql_command)
+    sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+    edit_data(sql_command)
+    return render_template('./verify.html',mode='register')
+# 忘記密碼驗證
+@app.route('/verify_forget_password',methods=['GET'])
+def verify_forget_password():
     uuid = request.args.get('uuid',None,type=str)
     sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
     edit_data(sql_command)
