@@ -6,7 +6,7 @@ import csv
 from datetime import datetime
 import pyodbc
 import time
-
+from utils import db
 
 def scrape_problem_content_and_save_to_sql_server(problem_id):
     # 構建完整的 URL
@@ -72,7 +72,7 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                     difficulty = 'N/A'
 
                 # 連接到 SQL Server 資料庫
-                conn = pyodbc.connect('DRIVER={SQL Server};SERVER=123.192.165.145;DATABASE=CodeAlchemy;UID=sa;PWD=10956CodeAlchemy;CHARSET=UTF8')
+                conn=db.connection
 
                 # 創建一個游標對象
                 cursor = conn.cursor()
@@ -120,5 +120,5 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
     for row in csv_reader:
         problem_id = row[0]
         scrape_problem_content_and_save_to_sql_server(problem_id)
-        time.sleep(random.randomint(10,20))
+        time.sleep(random.randint(10,20))
 print("完成")
