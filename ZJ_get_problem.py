@@ -120,5 +120,5 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
     for row in csv_reader:
         problem_id = row[0]
         scrape_problem_content_and_save_to_sql_server(problem_id)
-        time.sleep(random.random(10,20))
+        time.sleep(random.randomint(10,20))
 print("完成")
