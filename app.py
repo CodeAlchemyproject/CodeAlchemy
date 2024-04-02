@@ -219,10 +219,10 @@ def verify_register():
         sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
         edit_data(sql_command)
         result='驗證成功'
-        return render_template('./verify_register.html',result)
+        return render_template('./verify_register.html',result=result)
     else:
         result='驗證失敗'
-        return render_template('./verify_register.html',result)
+        return render_template('./verify_register.html',result=result)
 # 忘記密碼驗證
 @app.route('/verify_forget_password',methods=['GET','POST'])
 def verify_forget_password():
