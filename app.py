@@ -15,7 +15,7 @@ import utils
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
-from utils import common
+from utils import common,db
 #-------------------------
 # 產生主程式, 加入主畫面
 #-------------------------
@@ -215,27 +215,29 @@ def verify_register():
     edit_data(sql_command)
     sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
     edit_data(sql_command)
-    return render_template('./verify.html',mode='register')
+    return render_template('./verify_register.html',mode='register')
 # 忘記密碼驗證
 @app.route('/verify_forget_password',methods=['GET','POST'])
 def verify_forget_password():
     uuid = request.args.get('uuid',None,type=str)
+    sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
+    data=get_data(sql_command)
+    print(data)
+    print(len(data))
     if request.method == "POST":
-        uuid=request.form['uuid']
-        Password=request.form['Password']
-        Repassword=request.form['Repassword']
-        # 判斷重複密碼有沒有一樣 
-        if Password!=Repassword:
-            result='密碼不一致'
-            return render_template('./reset_password.html',result=result)
-        else:
+        result='錯誤'
+        if len(data)==1:
+            uuid=request.form['uuid']
+            Password=request.form['Password']
             Password=generate_password_hash(Password)
-            sql_command = f"UPDATE [user] SET password = {Password} WHERE uuid='{uuid}'"
+            sql_command = f"UPDATE [user] SET password = '{Password}' WHERE uuid='{uuid}'"
             edit_data(sql_command)
             result='更改成功'
-            return render_template('./reset_password.html',result=result)
+            return render_template('./verify_forget_password_result.html',result=result)
+        else:
+            return render_template('./verify_forget_password_result.html',result=result)
     else:
-        return render_template('./reset_password.html',uuid=uuid)
+        return render_template('./verify_forget_password.html',uuid=uuid)
 #登出 
 @app.route('/logout')
 def logout():
