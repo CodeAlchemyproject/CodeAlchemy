@@ -35,7 +35,6 @@ def scrape_problem_content_and_print(problem_id):
                 # 获取标签
                 tag_div = soup.find('span', class_='tag')
                 tag = tag_div.text.strip() if tag_div else 'N/A'
-                import re
 
                 # 假設soup是BeautifulSoup的一個實例，已經找到了對應的元素
                 string = soup.find('span', title='解題統計').text.strip()
