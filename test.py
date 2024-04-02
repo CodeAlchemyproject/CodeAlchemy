@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 import csv
@@ -32,27 +33,30 @@ def scrape_problem_content_and_print(problem_id):
                 input_output_texts = [div.text.strip() for div in input_output_divs]
 
                 # 获取标签
-                tag_div = soup.find('div', class_='problem_tag')
+                tag_div = soup.find('span', class_='tag')
                 tag = tag_div.text.strip() if tag_div else 'N/A'
+                import re
 
-                # 获取解题统计百分比
-                statistics_percentage = 'N/A'
-                if span_statistics:
-                    statistics_text = span_statistics.text.strip()
-                    last_10_chars = statistics_text[-10:]
-                    statistics_percentage = ''.join(filter(str.isdigit, last_10_chars))
+                # 假設soup是BeautifulSoup的一個實例，已經找到了對應的元素
+                string = soup.find('span', title='解題統計').text.strip()
+                
 
-                    # 根据百分比确定难度等级
-                    if statistics_percentage:
-                        percentage_value = int(statistics_percentage)
-                        if percentage_value >= 80:
-                            difficulty = 'easy'
-                        elif percentage_value >= 60:
-                            difficulty = 'normal'
-                        else:
-                            difficulty = 'hard'
+                # 使用正規表達式將非數字部分去除，並將剩下的數字放在清單中
+                numbers_only = re.findall(r'\d+', string)  # 找到所有的數字
+                numbers = [int(num) for num in numbers_only]  # 將字符串轉換為整數
+                percentage=numbers[-1]
+                    
+
+
+                # 根据百分比确定难度等级
+                if percentage:
+                    percentage_value = int(percentage)
+                    if percentage_value >= 80:
+                        difficulty = 'easy'
+                    elif percentage_value >= 60:
+                        difficulty = 'normal'
                     else:
-                        difficulty = 'N/A'
+                        difficulty = 'hard'
                 else:
                     difficulty = 'N/A'
 
@@ -63,7 +67,6 @@ def scrape_problem_content_and_print(problem_id):
                 print(f'Problem Output: {input_output_texts[1]}')
                 print(f'Tag: {tag}')
                 print(f'Difficulty: {difficulty}')
-                print(f'Statistics Percentage: {statistics_percentage}')
 
             else:
                 print('未找到指定的元素')
