@@ -169,7 +169,7 @@ def register():
             token=str(uuid.uuid4())
             sql_user_command=f"INSERT INTO [user](user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
             edit_data(sql_user_command)
-            html=f'http://127.0.0.1/verify_register?uuid={token}'
+            html=f'http://123.192.165.145/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
             msg_recipients=[Email]
             msg_html =f'<p>親愛的 {user_name}，<br>感謝您註冊成為我們平台的一員！為了確保您的帳戶安全，請點擊以下連結驗證您的電子郵件地址：<a href="{html}">驗證連結</a>。<br>如果您無法點擊上述連結，請將以下網址複製並粘貼到瀏覽器地址欄中：<a href="{html}">{html}</a>。<br>請完成這一步驟以啟用您的帳戶。如果您遇到任何問題或需要協助，請隨時聯繫我們的客戶服務團隊，我們將竭誠為您服務。<br>謝謝您的合作！<br>祝您有個愉快的體驗！</p>'
@@ -192,7 +192,7 @@ def forget_password():
         user_name=get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
         token=str(uuid.uuid4())
         edit_data(f"UPDATE [user] SET uuid = '{token}' WHERE email='{Email}'")
-        html=f'http://127.0.0.1/verify_forget_password?uuid={token}'
+        html=f'http://123.192.165.145/verify_forget_password?uuid={token}'
         msg_title = 'Forget CodeAlchemy Password'
         msg_recipients=[Email]
         msg_html =f'<p>親愛的{user_name},</p><p>我們注意到您最近嘗試登入您的帳號時遇到了一些問題。如果您忘記了您的密碼，請不要擔心，我們很樂意協助您重設密碼。</p><p>請點擊以下連結以重設您的密碼：</p><a href="{html}">重設密碼</a><p>如果點擊上述連結無法正常工作，請複製並粘貼以下網址至您的瀏覽器中：</p><p>{html}</p><p>請注意，此連結將在收到此郵件後的24小時內有效。請盡快完成密碼重設流程。</p><p>如果您沒有請求重設密碼，請忽略此郵件。您的帳號安全是我們的首要關注。</p><p>如果您有任何疑問或需要進一步協助，請隨時回覆此郵件與我們聯繫。</p>'
