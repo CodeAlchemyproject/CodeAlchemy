@@ -15,11 +15,7 @@ import utils
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
-<<<<<<< HEAD
 from utils import db
-=======
-from utils import common,db
->>>>>>> c29d19a7659bc8fababfce7bfac22469c7a49150
 #-------------------------
 # 產生主程式, 加入主畫面
 #-------------------------
