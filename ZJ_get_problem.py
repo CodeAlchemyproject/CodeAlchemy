@@ -7,6 +7,7 @@ from datetime import datetime
 import pyodbc
 import time
 
+
 def scrape_problem_content_and_save_to_sql_server(problem_id):
     # 構建完整的 URL
     url = f'https://zerojudge.tw/ShowProblem?problemid={problem_id}'
