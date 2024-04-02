@@ -113,7 +113,6 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
     else:
         print(f'網頁請求失敗，狀態碼: {response.status_code}')
 
-
 # 讀取 CSV 文件中的問題編號
 csv_file_path = './ZJ_problem_list.csv'
 with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
