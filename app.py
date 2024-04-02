@@ -11,7 +11,7 @@ import uuid
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
-import utils 
+from utils import db
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
@@ -94,12 +94,19 @@ def problem():
 #題目提交
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
-    data = request.get_json() # 從POST請求中獲取JSON數據
-    uploaded_data = data['data'] # 提取所需的數據，這裡假設數據以'data'鍵存儲
-    print(data)
-    # 在這裡執行任何你需要的處理
+    # 取得 JSON 格式的資料
+    data = request.get_json()
 
-    return jsonify({"message": "Data received successfully!"}) # 返回一個JSON響應
+    # 從 JSON 中取得特定欄位的值
+    upload_data = data.get('data')
+    textarea_content = data.get('textarea_content')
+    # 在伺服器端印出該值
+    print("Received data:", upload_data)
+    print("Textarea content:", textarea_content)
+    # 在這裡可以進行任何你需要的處理，例如將資料存入資料庫等
+
+    # 返回一個 JSON 響應給客戶端
+    return jsonify({"message": "Data received successfully!"})
 
 
 # 查詢電子郵件有沒有註冊過

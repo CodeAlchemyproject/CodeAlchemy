@@ -76,7 +76,7 @@
                                     <path
                                         d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                                     <path
-                                        d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 1 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                        d="M6.854 4.646a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0" />
                                 </svg>
                                 語言
                             </button>
@@ -93,21 +93,19 @@
                                 <path
                                     d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0" />
                             </svg>測試</button>
-                        <button type="button" class="btn btn-outline-success"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up"
-                                viewBox="0 0 16 16">
-                                <path fill-rule="evenodd"
-                                    d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
-                                <path
-                                    d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
-                            </svg>上傳</button>
+                            <button id="uploadBtn" type="button" class="btn btn-outline-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16" >
+                                    <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                    <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+                                </svg>上傳
+                        </button>
 
                     </div>
                 </div>
                 <!-- 程式輸入框 -->
                 <div class="row border border-3 round rounded-2 mt-5">
                     <textarea id="editor">
-
+print(f'hello, {input()}')
 </textarea>
                 </div>
                 <script src="../static/js/change_codemirro_mode.js"></script>
@@ -126,33 +124,44 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function(){
-            $('#uploadBtn').click(function(){
-                // 在這裡獲取要傳送的數據
-                var dataToSend = data[0][0]; // 這是你要傳送的數據，可以是任何你需要的格式
-        
-                // 使用AJAX發送POST請求到Flask後端
-                $.ajax({
-                    type: "POST",
-                    url: "/problem_submit", // 請根據你的Flask路由配置正確的URL
-                    data: JSON.stringify({data: dataToSend}), // 將數據轉換為JSON格式
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(response){
-                        // 在成功接收到Flask的回應後執行的代碼
-                        console.log("Data uploaded successfully!");
-                        console.log(response); // 這是Flask後端返回的任何數據
-                    },
-                    error: function(error){
-                        // 在出現錯誤時執行的代碼
-                        console.error("Error uploading data: ", error);
-                    }
-                });
-            });
-        });
-        </script>
-        
+ 
 </body>
+
+<script>
+    // 獲取{{data[0][0]}}的值
+    var dataValue = "{{ data[0][0] }}";
+    
+    // 找到上傳按鈕
+    var uploadBtn = document.getElementById("uploadBtn");
+    
+    // 找到<textarea>元素
+    var textareaContent = document.getElementById("editor").value;
+    
+    // 添加點擊事件監聽器
+    uploadBtn.addEventListener("click", function() {
+        // 使用 Fetch API 傳送 POST 請求
+        fetch('/problem_submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                data: dataValue,
+                textarea_content: textareaContent  // 將<textarea>的內容包含在POST請求中
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // 在這裡可以添加任何你想要的處理，例如顯示成功訊息等
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // 在這裡可以添加任何你想要的處理，例如顯示錯誤訊息等
+        });
+    });
+</script>
+
+
 
 </html>

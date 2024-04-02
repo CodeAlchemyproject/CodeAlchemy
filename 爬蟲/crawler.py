@@ -10,74 +10,65 @@ import time
 import os
 import glob
 import json
+def ZJ_submit(prob_id,content):
+    # load account information
+    with open('account.json', 'r') as file: 
+        account = json.load(file)
+        
+    username = account['username']
+    password = account['password']
 
-# load account information
-with open('account.json', 'r') as file: 
-    account = json.load(file)
-    
-username = account['username']
-password = account['password']
+    # crawler setting
+    main_url = 'https://zerojudge.tw/Login'
 
-# read all python files
-submit_program_dict = dict()
-py_files = glob.glob('./src/*.py')
-for file_name in py_files:
-    with open(file_name, 'r', encoding='utf-8') as file:
-        content = file.read()
-        submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
+    s = Service(ChromeDriverManager().install())
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    driver = webdriver.Chrome(service=s, options=chrome_options)
+    driver.maximize_window()
+    driver.get(main_url)
 
-# crawler setting
-main_url = 'https://zerojudge.tw/Login'
+    wait_max = 10
 
-s = Service(ChromeDriverManager().install())
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-driver = webdriver.Chrome(service=s, options=chrome_options)
-driver.maximize_window()
-driver.get(main_url)
+    # login the website
+    try:
+        print('\nLogin Automatically ... \n')
+        login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-md-4.text-center')))
+        login_area = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
 
-wait_max = 10
+        time.sleep(1)
 
-# login the website
-try:
-    print('\nLogin Automatically ... \n')
-    login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-md-4.text-center')))
-    login_area = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
+        input_username = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'account')))
+        input_username.send_keys(username)
 
-    time.sleep(1)
+        time.sleep(1)
 
-    input_username = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'account')))
-    input_username.send_keys(username)
+        input_password = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'passwd')))
+        input_password.send_keys(password)
 
-    time.sleep(1)
+        time.sleep(3)
 
-    input_password = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'passwd')))
-    input_password.send_keys(password)
+        iframe = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.XPATH, '//iframe[@title="reCAPTCHA"]')))
+        driver.switch_to.frame(iframe)
 
-    time.sleep(3)
+        driver.execute_script("document.querySelector('.recaptcha-checkbox').click();")
 
-    iframe = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.XPATH, '//iframe[@title="reCAPTCHA"]')))
-    driver.switch_to.frame(iframe)
+        time.sleep(3)
 
-    driver.execute_script("document.querySelector('.recaptcha-checkbox').click();")
+        driver.switch_to.default_content()
 
-    time.sleep(3)
+        btn_login = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-primary")))
+        btn_login.click()
 
-    driver.switch_to.default_content()
+        time.sleep(5)
+        
+        if driver.current_url != 'https://zerojudge.tw/': raise BaseException
 
-    btn_login = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-primary")))
-    btn_login.click()
+    except BaseException as e:
+        print(e)
 
-    time.sleep(5)
-    
-    if driver.current_url != 'https://zerojudge.tw/': raise BaseException
-
-except BaseException as e:
-    print(e)
-
-# submit the programs
-results = []
-for prob_id in list(submit_program_dict.keys()):
+    # submit the programs
+    results = []
     try:
         driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
 
@@ -88,7 +79,7 @@ for prob_id in list(submit_program_dict.keys()):
         btn_py.click()
         
         input_code = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "code")))
-        input_code.send_keys(submit_program_dict[prob_id])
+        input_code.send_keys(content)
         
         btn_submit = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "submitCode")))
         btn_submit.click()
@@ -101,16 +92,8 @@ for prob_id in list(submit_program_dict.keys()):
         results.append([])
         for col in WebDriverWait(current_row, wait_max).until(EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
             results[-1].append(col.text.strip())
-            
+                
     except BaseException as e:
         print(prob_id, e)
 
-# save the results
-df_results = pd.DataFrame(results, columns=['編號', '身分', '題目', '評分結果', '程式碼', '時間'], index=None)
-df_results.to_excel(f'{username}.xlsx', index=False)
-print(df_results)
-
-time.sleep(3)
-
-driver.quit()
-
+    return results
