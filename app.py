@@ -215,29 +215,33 @@ def verify_register():
     edit_data(sql_command)
     sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
     edit_data(sql_command)
-    return render_template('./verify_register.html',mode='register')
+    return render_template('./verify_register.html')
 # 忘記密碼驗證
 @app.route('/verify_forget_password',methods=['GET','POST'])
 def verify_forget_password():
+    # 獲得UUID
     uuid = request.args.get('uuid',None,type=str)
+    if request.method == "POST":
+            uuid=request.form['uuid']
+    # 檢查UUID是否存在
     sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
     data=get_data(sql_command)
-    print(data)
-    print(len(data))
-    if request.method == "POST":
-        result='錯誤'
-        if len(data)==1:
+    if len(data)==1:
+        if request.method == "POST":
             uuid=request.form['uuid']
             Password=request.form['Password']
             Password=generate_password_hash(Password)
             sql_command = f"UPDATE [user] SET password = '{Password}' WHERE uuid='{uuid}'"
             edit_data(sql_command)
-            result='更改成功'
+            sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+            edit_data(sql_command)
+            result='變更成功'
             return render_template('./verify_forget_password_result.html',result=result)
         else:
-            return render_template('./verify_forget_password_result.html',result=result)
+            return render_template('./verify_forget_password.html',uuid=uuid)
     else:
-        return render_template('./verify_forget_password.html',uuid=uuid)
+        result='錯誤'
+        return render_template('./verify_forget_password_result.html',result=result)
 #登出 
 @app.route('/logout')
 def logout():
