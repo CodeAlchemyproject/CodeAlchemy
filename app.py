@@ -258,9 +258,16 @@ def logout():
     resp.set_cookie('user_name','',expires=0)
     return resp
 
-@app.route('/user_data')
+@app.route('/user_data',methods=['GET'])
 def user_data():
-    return render_template('./user_data.html')
+    Email = session.get('Email')
+    sql_command=f"SELECT * FROM [user] where email='{Email}'"
+    data=get_data(sql_command)
+    User_name=data[0][1]
+    Email=data[0][3]
+    img=data[0][4]
+    register_time=data[0][5]
+    return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
