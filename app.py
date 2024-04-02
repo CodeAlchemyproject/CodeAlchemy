@@ -211,11 +211,18 @@ def forget_password():
 def verify_register():
     # 獲得uuid
     uuid = request.args.get('uuid',None,type=str)
-    sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
-    edit_data(sql_command)
-    sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
-    edit_data(sql_command)
-    return render_template('./verify_register.html')
+    sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
+    data=get_data(sql_command)
+    if len(data)==1:
+        sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
+        edit_data(sql_command)
+        sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+        edit_data(sql_command)
+        result='驗證成功'
+        return render_template('./verify_register.html',result)
+    else:
+        result='驗證失敗'
+        return render_template('./verify_register.html',result)
 # 忘記密碼驗證
 @app.route('/verify_forget_password',methods=['GET','POST'])
 def verify_forget_password():
