@@ -4,10 +4,9 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
-import pyodbc
 import time
 
-def scrape_problem_content_and_save_to_sql_server(problem_id):
+def scrape_problem_content(problem_id):
     # 構建完整的 URL
     url = f'https://zerojudge.tw/ShowProblem?problemid={problem_id}'
 
@@ -29,12 +28,12 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
             # 檢查是否找到
             if span_element and problem_content_div and problem_theinput_div and problem_theoutput_div:
                 # 獲取內容、輸入說明和輸出說明
-                problem_content = problem_content_div.text.strip()
-                problem_theinput = problem_theinput_div.text.strip()
-                problem_theoutput = problem_theoutput_div.text.strip()
-                problem_title = span_element.text.strip()
+                problem_content = str(problem_content_div)
+                problem_theinput = str(problem_theinput_div)
+                problem_theoutput = str(problem_theoutput_div)
+                problem_title = str(span_element)
                 # 找到所有的 pre 元素
-                pre_contents = [pre_element.text.strip() for pre_element in pre_elements]
+                pre_contents = [str(pre_element) for pre_element in pre_elements]
 
                 # 將範例輸入和範例輸出分別存儲到兩個列表中
                 example_inputs = [pre_contents[i] for i in range(0, len(pre_contents), 2)]
@@ -70,41 +69,16 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 else:
                     difficulty = 'N/A'
 
-                # 連接到 SQL Server 資料庫
-                conn = pyodbc.connect('DRIVER={SQL Server};SERVER=123.192.165.145;DATABASE=CodeAlchemy;UID=sa;PWD=10956CodeAlchemy;CHARSET=UTF8')
+                print(f"題目標題: {problem_title}")
+                print(f"題目內容: {problem_content}")
+                print(f"輸入說明: {problem_theinput}")
+                print(f"輸出說明: {problem_theoutput}")
+                print(f"範例輸入: {examples_combined_input}")
+                print(f"範例輸出: {examples_combined_output}")
+                print(f"標籤: {tag}")
+                print(f"難度等級: {difficulty}")
 
-                # 創建一個游標對象
-                cursor = conn.cursor()
-
-                # 執行 SQL 插入語句
-                sql_insert = """
-                    INSERT INTO problem (problem_id, title, content, enter_description, output_description, example_input, example_output, difficulty, tag, solved, submission, update_time,collection)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """
-
-                # 提供預設值
-                default_difficulty = difficulty
-                default_tag = tag
-                default_solved = 0
-                default_submission = 0
-                default_update_time = datetime.now()  # 如果不提供值，則預設為 NULL
-                default_collection=0
-
-                # 使用整數值插入
-                values = ('ZJ-' + problem_id, problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
-                          examples_combined_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
-
-                # 執行 SQL 插入
-                cursor.execute(sql_insert, values)
-
-                # 提交事務
-                conn.commit()
-
-                # 關閉游標和連接
-                cursor.close()
-                conn.close()
-
-                print(f'已將題目編號 {problem_id} 的資料儲存到 My SQL 資料庫中')
+                response.close()
             else:
                 print('未找到指定的 div 元素')
         except Exception as e:
@@ -112,13 +86,4 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
     else:
         print(f'網頁請求失敗，狀態碼: {response.status_code}')
 
-
-# 讀取 CSV 文件中的問題編號
-csv_file_path = './ZJ_problem_list.csv'
-with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
-    csv_reader = csv.reader(csvfile)
-    for row in csv_reader:
-        problem_id = row[0]
-        scrape_problem_content_and_save_to_sql_server(problem_id)
-        time.sleep(random(10,20))
-print("完成")
+scrape_problem_content('b924')
