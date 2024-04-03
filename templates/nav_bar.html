@@ -14,10 +14,11 @@
             <a class="nav-link active" aria-current="page" href="./">題目</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">排行榜</a>
+            <a class="nav-link active" href="#" >排行榜</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">競賽</a>
+            <a class="nav-link active" onclick="togglePopup()">競賽</a>
+            <div id="overlay" onclick="closePopup()"></div>
           </li>
         </ul>
         {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
@@ -45,4 +46,32 @@
       </div>
     </div>
   </nav>
+
+  <!-------------------------
+  # Popup
+  #------------------------->
+
+  <div id="overlay"></div>
+
+  <div id="popup">
+      <div class="button-container">
+          <button style="width: 45%; height: 50%;" type="button" class="btn btn-outline-primary">創建比賽</button>
+          <button style="width: 45%; height: 50%;" type="button" class="btn btn-outline-primary">加入比賽</button>
+      </div>
+  </div>
   
+  <script>
+    function togglePopup() {
+        var overlay = document.getElementById('overlay');
+        var popup = document.getElementById('popup');
+        overlay.style.display = 'block';
+        popup.style.display = 'block';
+    }
+
+    function closePopup() {
+        var overlay = document.getElementById('overlay');
+        var popup = document.getElementById('popup');
+        overlay.style.display = 'none';
+        popup.style.display = 'none';
+    }
+</script>
