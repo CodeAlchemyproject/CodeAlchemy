@@ -38,6 +38,7 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 # 使用正規表達式將第一個<p>前面的所有文字和最後一個</p>後面的文字去除
                 problem_content = re.sub(r'^.*?<p>', '<p>', problem_content, 1)
                 problem_content = re.sub(r'</p>.*?$', '</p>', problem_content, 1)
+                problem_content = problem_content[:-6]
                 problem_theinput = re.sub(r'^.*?<p>', '<p>', problem_theinput, 1)
                 problem_theinput = re.sub(r'</p>.*?$', '</p>', problem_theinput, 1)
                 problem_theoutput = re.sub(r'^.*?<p>', '<p>', problem_theoutput, 1)

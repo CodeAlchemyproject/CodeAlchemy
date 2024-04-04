@@ -89,7 +89,9 @@ def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=get_data(sql_problem_command)
-    return render_template('./problem.html',data=data)
+    example_inputs = data[0][5].split('|||')
+    example_outputs = data[0][6].split('|||')
+    return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
 
 #題目提交
 @app.route('/problem_submit', methods=['POST'])
@@ -97,6 +99,7 @@ def problem_submit():
     data = request.get_json() # 從POST請求中獲取JSON數據
     uploaded_data = data['data'] # 提取所需的數據，這裡假設數據以'data'鍵存儲
     print(data)
+    
     # 在這裡執行任何你需要的處理
 
     return jsonify({"message": "Data received successfully!"}) # 返回一個JSON響應

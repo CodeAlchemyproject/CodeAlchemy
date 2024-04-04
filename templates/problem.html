@@ -50,19 +50,21 @@
                     </div>
 
                     <div class="col-12">
-                        <h3 class="mt-4 overflow-auto">{{data[0][2]}}</h3>
+                        <h3 class="mt-4 overflow-auto">{{data.0.2|safe}}</h3>
                     </div>
                     <div class="col-12">
-                        {% for n in range(data[0][5].count('|||')+1) %}
+                        {% for n in range(example_inputs|length) %}
                         <h5 class="mt-4 overflow-auto">範例{{n+1}}</h5>
                         <div class="border-start border-4">
                             <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{data[0][5].split('|||')[n]}}</h6>
+                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_inputs[n]|safe }}</h6>
                             <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{data[0][6].split('|||')[n]}}</h6>
+                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_outputs[n]|safe }}</h6>
                         </div>
-                        {%endfor%}
+                        {% endfor %}
                     </div>
+                    
+                    
                 </div>
             </div>
             <div class="col mt-5">
@@ -130,8 +132,9 @@
         $(document).ready(function(){
             $('#uploadBtn').click(function(){
                 // 在這裡獲取要傳送的數據
+
                 var dataToSend = data[0][0]; // 這是你要傳送的數據，可以是任何你需要的格式
-        
+                
                 // 使用AJAX發送POST請求到Flask後端
                 $.ajax({
                     type: "POST",
