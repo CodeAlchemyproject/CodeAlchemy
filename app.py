@@ -119,7 +119,7 @@ def problem_submit():
     # 寫入內容到文件中
     with open(file_path, 'w') as file:
         file.write(content)
-        
+
     # 假設有三個目標文件夾
     target_folders = ['./爬蟲/src/BeAPro113', './爬蟲/src/TestCase2024', './爬蟲/src/yyyiii']
 
@@ -128,14 +128,13 @@ def problem_submit():
     # 讀取帳戶資訊
     with open('./爬蟲/account.json', 'r') as file: 
         accounts = json.load(file)['account']
-
     #多執行序
     threads = []
     for acc in accounts:
         username = acc[0]
         password = acc[1]
         #執行提交程序
-        thread = threading.Thread(target=process_account(problem_id), args=(username, password))
+        thread = threading.Thread(target=process_account, args=(username, password,language))
         threads.append(thread)
         thread.start()
         

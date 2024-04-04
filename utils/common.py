@@ -20,3 +20,8 @@ def distribute_files(source_folder, target_folders):
             source_file_path = os.path.join(source_folder, file_name)
             target_file_path = os.path.join(folder, file_name)
             shutil.copy(source_file_path, target_file_path)
+    
+    # 刪除來源文件夾中的文件
+    for file_name in files:
+        source_file_path = os.path.join(source_folder, file_name)
+        os.remove(source_file_path)

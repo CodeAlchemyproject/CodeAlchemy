@@ -14,27 +14,33 @@ import json
 import threading
 
 
-
-def process_account(username, password):
+def process_account(username, password, language):
     # crawler setting
     main_url = 'https://zerojudge.tw/Login'
-
+    language=language
     s = Service(ChromeDriverManager().install())
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    chrome_options.add_extension('./reCAPTCHA_extension.crx')
+    chrome_options.add_extension('./爬蟲/reCAPTCHA_extension.crx')
     driver = webdriver.Chrome(service=s, options=chrome_options)
     driver.maximize_window()
     wait_max = 10
-    
+    # 定義語言對應的文件擴展名字典
+    file_extensions = {
+        'python': '.py',
+        'java': '.java',
+        'c': '.c',
+        'cpp': '.cpp'
+    }
     # 讀取所有Python檔案
     submit_program_dict = dict()
-    py_files = glob.glob(f'./src/{username}/*.py')
+    py_files = glob.glob(f'./爬蟲/src/{username}/*.py')
     for file_name in py_files:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = file.read()
             submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
 
+    
     driver.get(main_url)
 
     # 登錄網站
@@ -73,8 +79,8 @@ def process_account(username, password):
         input('\n= = = = = 請手動登錄網站後按下ENTER = = = = =\n')
     
     # 提交程式
-    results = []
     for prob_id in list(submit_program_dict.keys()):
+        results = []
         try:
             driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
 
@@ -98,26 +104,10 @@ def process_account(username, password):
             results.append([])
             for col in WebDriverWait(current_row, wait_max).until(EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
                 results[-1].append(col.text.strip())
-                
+            return (results)
         except BaseException as e:
             print(prob_id, e)
-
-    # 儲存結果
-    df_results = pd.DataFrame(results, columns=['編號', '身分', '題目', '評分結果', '程式碼', '時間'], index=None)
-    df_results.to_excel(f'{username}.xlsx', index=False)
-    # print(df_results)
-
-    # 登出帳戶    
-    btn_drop = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "dropdown-toggle")))
-    btn_drop.click()
-    
-    btn_logout = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "dropdown-menu"))).find_elements(By.TAG_NAME, 'li')[1]
-    btn_logout.click()
-    
-    time.sleep(3)
-    
     driver.quit()
-    return (df_results)
     
    
 
