@@ -1,7 +1,7 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect,make_response,jsonify
+from flask import Flask,render_template,session,request,redirect,make_response,jsonify, url_for
 from flask_mail import Mail,Message
 import subprocess
 import math
@@ -271,6 +271,24 @@ def user_data():
     img=data[0][4]
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
+
+#懸浮視窗按鈕處理
+@app.route('/redirect', methods=['POST'])
+def redirect():
+    choice = request.form['choice']
+    if choice == 'A':
+        return redirect(url_for('add_contest'))  # 跳到add_contest.html頁面
+    elif choice == 'B':
+        return redirect(url_for('create_contest'))  # 跳到create_contest.html頁面
+
+@app.route('/add_contest.html')
+def add_contest():
+    return render_template('add_contest.html')  # 返回add_contest.html頁面的内容
+
+@app.route('/create_contest.html')
+def create_contest():
+    return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
+
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
