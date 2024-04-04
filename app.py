@@ -1,7 +1,9 @@
 #-----------------------
 # 匯入模組
 #-----------------------
-from flask import Flask,render_template,session,request,redirect,make_response,jsonify, url_for
+import os
+import threading
+from flask import Flask, json,render_template,session,request,redirect,make_response,jsonify, url_for
 from flask_mail import Mail,Message
 import subprocess
 import math
@@ -11,11 +13,13 @@ import uuid
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
-import utils 
+
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
-from utils import db
+from utils import db,common
+from 爬蟲.ZJ_submit import process_account
+
 #-------------------------
 # 產生主程式, 加入主畫面
 #-------------------------
@@ -97,12 +101,49 @@ def problem():
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
     data = request.get_json() # 從POST請求中獲取JSON數據
-    uploaded_data = data['data'] # 提取所需的數據，這裡假設數據以'data'鍵存儲
-    print(data)
-    
-    # 在這裡執行任何你需要的處理
+    problem_id=data['problem_id']
+    language=data['language']
+    content = data['content']
 
-    return jsonify({"message": "Data received successfully!"}) # 返回一個JSON響應
+    # 定義語言對應的文件擴展名字典
+    file_extensions = {
+        'python': '.py',
+        'java': '.java',
+        'c': '.c',
+        'cpp': '.cpp'
+    }
+
+    # 構建文件路徑
+    file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
+    
+    # 寫入內容到文件中
+    with open(file_path, 'w') as file:
+        file.write(content)
+        
+    # 假設有三個目標文件夾
+    target_folders = ['./爬蟲/src/BeAPro113', './爬蟲/src/TestCase2024', './爬蟲/src/yyyiii']
+
+    # 將文件分配到目標文件夾中
+    common.distribute_files('./source', target_folders)
+    # 讀取帳戶資訊
+    with open('./爬蟲/account.json', 'r') as file: 
+        accounts = json.load(file)['account']
+
+    #多執行序
+    threads = []
+    for acc in accounts:
+        username = acc[0]
+        password = acc[1]
+        #執行提交程序
+        thread = threading.Thread(target=process_account(problem_id), args=(username, password))
+        threads.append(thread)
+        thread.start()
+        
+    for thread in threads:
+        thread.join()
+    return jsonify({'message': 'Data received successfully!'})
+    
+
 
 
 # 查詢電子郵件有沒有註冊過
