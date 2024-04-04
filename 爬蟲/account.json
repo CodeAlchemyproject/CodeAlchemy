@@ -1,4 +1,7 @@
 {
-    "username": "TestCase2024",
-    "password": "TestCase2024"
+    "account": [
+        ["TestCase2024", "TestCase2024"],
+        ["BeAPro113", "BeAPro113"],
+        ["yyyiii", "yyyiii"]
+        ]
 }

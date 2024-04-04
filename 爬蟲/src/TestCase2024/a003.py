@@ -1,0 +1,1 @@
+print(['普通', '吉', '大吉'][sum([a * b for a, b in zip([2, 1], [int(n) for n in input().split()])]) % 3])
