@@ -12,11 +12,13 @@ selectLanguageButton.addEventListener('click', function (event) {
 
 
 document.getElementById("test_btn").addEventListener("click", function () {
-    var problem_id = problem_id
+    var type='test'
+    var problem_id = document.getElementById('problem_id').innerHTML
     var language = mode
     // 获取包含 <span> 标签的内容
     var code = document.querySelector('.cm-number')?document.querySelector('.cm-number').innerHTML : null;
     var formData = new FormData();
+    formData.append("test",type)
     formData.append("problem_id",problem_id)
     formData.append("language", language);
     formData.append("code", code);
