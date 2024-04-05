@@ -32,10 +32,11 @@ def process_account(username, password, language):
         'c': '.c',
         'cpp': '.cpp'
     }
-    # 讀取所有Python檔案
+    # 讀取所有檔案
     file_extension = file_extensions.get(language, '')
+    print(file_extension)
     submit_program_dict = dict()
-    files = glob.glob(f'./爬蟲/src/{username}/*{file_extension}')  # 根據副檔名讀取檔案
+    files = glob.glob(f'./爬蟲/src/{username}/*.py')  # 根據副檔名讀取檔案
     for file_name in files:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = file.read()
