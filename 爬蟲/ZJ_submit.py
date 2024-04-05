@@ -34,15 +34,20 @@ def process_account(username, password, language):
         'cpp': '.cpp'
     }
     # 讀取所有檔案
+    # submit_program_dict = dict()
+    # directory = f'./爬蟲/src/{username}/'
+    # for file_name in os.listdir(directory):
+    #     file_path = os.path.join(directory, file_name)
+    #     if os.path.isfile(file_path):
+    #         with open(file_path, 'r', encoding='utf-8') as file:
+    #             content = file.read()
+    #             submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
     submit_program_dict = dict()
-    directory = f'./爬蟲/src/{username}/'
-    for file_name in os.listdir(directory):
-        file_path = os.path.join(directory, file_name)
-        if os.path.isfile(file_path):
-            with open(file_path, 'r', encoding='utf-8') as file:
-                content = file.read()
-                submit_program_dict[file_name] = content
-
+    py_files = glob.glob(f'./src/{username}/*.py')
+    for file_name in py_files:
+        with open(file_name, 'r', encoding='utf-8') as file:
+            content = file.read()
+            submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
     
     driver.get(main_url)
 
@@ -83,14 +88,13 @@ def process_account(username, password, language):
     results = []
     language_upper = language.upper()
     for prob_id in list(submit_program_dict.keys()):
-        
         try:
             driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
 
             btn_code = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
             btn_code.click()
             
-            btn_py = WebDriverWait(driver, wait_max).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='language'][value='{language_upper}']")))
+            btn_py = WebDriverWait(driver, wait_max).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='language'][value='={language_upper}']")))
             btn_py.click()
             
             input_code = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "code")))
@@ -107,7 +111,7 @@ def process_account(username, password, language):
             results.append([])
             for col in WebDriverWait(current_row, wait_max).until(EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
                 results[-1].append(col.text.strip())
-            results.append('|||')
+                
         except BaseException as e:
             print(prob_id, e)
 
