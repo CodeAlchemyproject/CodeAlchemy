@@ -183,7 +183,7 @@ def register():
             return redirect('/login')
         else:
             token=str(uuid.uuid4())
-            sql_user_command=f"INSERT INTO user(user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
+            sql_user_command=f"INSERT INTO user(user_name,password,email,permission,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','Default user','{token}')"
             db.edit_data(sql_user_command)
             html=f'http://123.192.165.145/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
