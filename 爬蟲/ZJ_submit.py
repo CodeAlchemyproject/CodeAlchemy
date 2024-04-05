@@ -108,8 +108,14 @@ def process_account(username, password, language):
             results.append('|||')
         except BaseException as e:
             print(prob_id, e)
-    driver.quit()
 
+    # 刪除以username為名的資料夾下的所有檔案
+    folder_path = f'./爬蟲/src/{username}'
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        os.remove(file_path)
+
+    driver.quit()
     return (results)
     
    
