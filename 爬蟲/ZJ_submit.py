@@ -12,7 +12,7 @@ import os
 import glob
 import json
 import threading
-
+from utils import db
 
 def process_account(username, password, language):
     # crawler setting
@@ -33,9 +33,10 @@ def process_account(username, password, language):
         'cpp': '.cpp'
     }
     # 讀取所有Python檔案
+    file_extension = file_extensions.get(language, '')
     submit_program_dict = dict()
-    py_files = glob.glob(f'./爬蟲/src/{username}/*.py')
-    for file_name in py_files:
+    files = glob.glob(f'./爬蟲/src/{username}/*{file_extension}')  # 根據副檔名讀取檔案
+    for file_name in files:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = file.read()
             submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
@@ -45,7 +46,6 @@ def process_account(username, password, language):
 
     # 登錄網站
     try:
-        print('\n自動登錄中... \n')
         login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-md-4.text-center')))
         login_area = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
 
@@ -76,11 +76,11 @@ def process_account(username, password, language):
 
     except BaseException as e:
         print(e)
-        input('\n= = = = = 請手動登錄網站後按下ENTER = = = = =\n')
     
     # 提交程式
+    results = []
     for prob_id in list(submit_program_dict.keys()):
-        results = []
+        
         try:
             driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
 
@@ -104,10 +104,12 @@ def process_account(username, password, language):
             results.append([])
             for col in WebDriverWait(current_row, wait_max).until(EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
                 results[-1].append(col.text.strip())
-            return (results)
+            results.append('|||')
         except BaseException as e:
             print(prob_id, e)
     driver.quit()
+    
+    return (results)
     
    
 

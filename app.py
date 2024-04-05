@@ -28,31 +28,6 @@ app = Flask(__name__)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
-#取得並篩選資料
-def get_data(sql_command):
-    #取得資料庫連線 
-    connection = db.connection() 
-    #產生執行sql命令的物件, 再執行sql   
-    cursor = connection.cursor()
-    # 這裡加篩選條件
-    cursor.execute(sql_command)
-    #取出資料
-    data = cursor.fetchall()
-    #關閉資料庫連線    
-    connection.close()
-    return data
-
-#新增、更新、刪除資料
-def edit_data(sql_command):
-    #取得資料庫連線 
-    connection = db.connection() 
-    #產生執行sql命令的物件, 再執行sql   
-    cursor = connection.cursor()
-    # 這裡加篩選條件
-    cursor.execute(sql_command)
-    connection.commit()
-    #關閉資料庫連線    
-    connection.close()
 
 #分頁功能
 def paginate(data,page, per_page):
@@ -76,7 +51,7 @@ def index():
     difficulty = request.args.get('difficulty','*',type=str)
     search = request.args.get('search','*',type=str)
     sql_problem_command='SELECT * FROM problem'
-    data=get_data(sql_problem_command)
+    data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -92,7 +67,7 @@ def index():
 def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data=get_data(sql_problem_command)
+    data=db.get_data(sql_problem_command)
     example_inputs = data[0][5].split('|||')
     example_outputs = data[0][6].split('|||')
     return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
@@ -151,7 +126,7 @@ def login():
         Email=request.form['Email']
         sql_user_command=f"SELECT * FROM [user] where email='{Email}'"
         # 如果有註冊過
-        user_data=get_data(sql_user_command)
+        user_data=db.get_data(sql_user_command)
         if len(user_data) == 1:
             # 將Email存入session
             session['Email'] = Email
@@ -176,9 +151,9 @@ def login_password():
             Rememberme=0
         # 取的使用者資料
         sql_common=f"SELECT * FROM [user] where email='{Email}'"
-        user_data=get_data(sql_common)
+        user_data=db.get_data(sql_common)
         # 登入成功
-        if check_password_hash(get_data(sql_common)[0][2],Password):
+        if check_password_hash(db.get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
             # 如果使用者有勾記住我
@@ -203,13 +178,13 @@ def register():
         user_name=request.form['Username']
         Email=request.form['Email']
         Password=request.form['Password']
-        if get_data(f"SELECT * FROM [user] where email='{Email}'"):
+        if db.get_data(f"SELECT * FROM [user] where email='{Email}'"):
             result='此Email已經註冊過'
             return redirect('/login')
         else:
             token=str(uuid.uuid4())
             sql_user_command=f"INSERT INTO [user](user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
-            edit_data(sql_user_command)
+            db.edit_data(sql_user_command)
             html=f'http://123.192.165.145/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
             msg_recipients=[Email]
@@ -230,9 +205,9 @@ def register():
 def forget_password():
     if request.method == "POST":
         Email=request.form['Email']
-        user_name=get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
+        user_name=db.get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
         token=str(uuid.uuid4())
-        edit_data(f"UPDATE [user] SET uuid = '{token}' WHERE email='{Email}'")
+        db.edit_data(f"UPDATE [user] SET uuid = '{token}' WHERE email='{Email}'")
         html=f'http://123.192.165.145/verify_forget_password?uuid={token}'
         msg_title = 'Forget CodeAlchemy Password'
         msg_recipients=[Email]
@@ -253,12 +228,12 @@ def verify_register():
     # 獲得uuid
     uuid = request.args.get('uuid',None,type=str)
     sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
-    data=get_data(sql_command)
+    data=db.get_data(sql_command)
     if len(data)==1:
         sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
-        edit_data(sql_command)
+        db.edit_data(sql_command)
         sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
-        edit_data(sql_command)
+        db.edit_data(sql_command)
         result='驗證成功'
         return render_template('./verify_register.html',result=result)
     else:
@@ -273,16 +248,16 @@ def verify_forget_password():
             uuid=request.form['uuid']
     # 檢查UUID是否存在
     sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
-    data=get_data(sql_command)
+    data=db.get_data(sql_command)
     if len(data)==1:
         if request.method == "POST":
             uuid=request.form['uuid']
             Password=request.form['Password']
             Password=generate_password_hash(Password)
             sql_command = f"UPDATE [user] SET password = '{Password}' WHERE uuid='{uuid}'"
-            edit_data(sql_command)
+            db.edit_data(sql_command)
             sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
-            edit_data(sql_command)
+            db.edit_data(sql_command)
             result='變更成功'
             return render_template('./verify_forget_password_result.html',result=result)
         else:
@@ -303,7 +278,7 @@ def logout():
 def user_data():
     Email = session.get('Email')
     sql_command=f"SELECT * FROM [user] where email='{Email}'"
-    data=get_data(sql_command)
+    data=db.get_data(sql_command)
     User_name=data[0][1]
     Email=data[0][3]
     img=data[0][4]

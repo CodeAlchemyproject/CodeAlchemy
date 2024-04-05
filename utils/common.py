@@ -25,3 +25,4 @@ def distribute_files(source_folder, target_folders):
     for file_name in files:
         source_file_path = os.path.join(source_folder, file_name)
         os.remove(source_file_path)
+
