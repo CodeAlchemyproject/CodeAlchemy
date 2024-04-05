@@ -81,13 +81,13 @@
                                 語言
                             </button>
                             <ul class="dropdown-menu" id="select_language_button">
-                                <li><a class="dropdown-item" data-mode="text/x-csrc">C</a></li>
-                                <li><a class="dropdown-item" data-mode="text/x-c++src">C++</a></li>
-                                <li><a class="dropdown-item" data-mode="text/x-java">Java</a></li>
-                                <li><a class="dropdown-item" data-mode="python">Python</a></li>
+                                <li><a class="dropdown-item" data-mode="text/x-csrc" value="c">C</a></li>
+                                <li><a class="dropdown-item" data-mode="text/x-c++src" value="cpp">C++</a></li>
+                                <li><a class="dropdown-item" data-mode="text/x-java" value="java">Java</a></li>
+                                <li><a class="dropdown-item" data-mode="python" value="python">Python</a></li>
                             </ul>
                         </div>
-                        <button type="button" class="btn btn-outline-primary">
+                        <button type="button" class="btn btn-outline-primary" id="test_btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-code-slash" viewBox="0 0 16 16">
                                 <path
@@ -106,21 +106,17 @@
                 </div>
                 <!-- 程式輸入框 -->
                 <div class="row border border-3 round rounded-2 mt-5">
-                    <textarea id="editor">
-year=int(input())+1911
-if (year%4!=0) or (year%100==0 and year%400!=0):
-    print(False)
-else:
-    print(True)
+                    <textarea id="editor" name="editor">
 </textarea>
                 </div>
+                <!-- 切換程式輸入框的js -->
                 <script src="../static/js/change_codemirro_mode.js"></script>
                 <div class="mt-5 bg-success p-2 text-white round rounded-2" style="display: none;">
                     <h4>通過</h4>
                     <h5>Run time:10ms</h5>
                     <h5>Memory:</h5>
                 </div>
-                <div class="mt-5 bg-danger p-2 text-white round rounded-2">
+                <div class="mt-5 bg-danger p-2 text-white round rounded-2" style="display: none;">
                     <h4>錯誤</h4>
                     <h6>Run time:10ms</h6>
                     <h6>Memory:</h6>
@@ -131,5 +127,6 @@ else:
         </div>
     </div>
 </body>
+<script src="../static/js/submit_code.js"></script>
 
 </html>
