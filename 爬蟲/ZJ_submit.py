@@ -79,6 +79,7 @@ def process_account(username, password, language):
     
     # 提交程式
     results = []
+    language_upper = language.upper()
     for prob_id in list(submit_program_dict.keys()):
         
         try:
@@ -87,7 +88,7 @@ def process_account(username, password, language):
             btn_code = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
             btn_code.click()
             
-            btn_py = WebDriverWait(driver, wait_max).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='language'][value='PYTHON']")))
+            btn_py = WebDriverWait(driver, wait_max).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='language'][value='{language_upper}']")))
             btn_py.click()
             
             input_code = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "code")))
@@ -108,7 +109,7 @@ def process_account(username, password, language):
         except BaseException as e:
             print(prob_id, e)
     driver.quit()
-    
+
     return (results)
     
    
