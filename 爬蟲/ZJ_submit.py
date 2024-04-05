@@ -34,14 +34,14 @@ def process_account(username, password, language):
         'cpp': '.cpp'
     }
     # 讀取所有檔案
-    file_extension = file_extensions.get(language, '')
-    print(file_extension)
     submit_program_dict = dict()
-    files = glob.glob(f'./爬蟲/src/{username}/*.py')  # 根據副檔名讀取檔案
-    for file_name in files:
-        with open(file_name, 'r', encoding='utf-8') as file:
-            content = file.read()
-            submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
+    directory = f'./爬蟲/src/{username}/'
+    for file_name in os.listdir(directory):
+        file_path = os.path.join(directory, file_name)
+        if os.path.isfile(file_path):
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                submit_program_dict[file_name] = content
 
     
     driver.get(main_url)
