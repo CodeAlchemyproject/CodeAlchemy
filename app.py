@@ -115,6 +115,7 @@ def problem_submit():
         
     # for thread in threads:
     #     thread.join()
+    print(data)
     return jsonify({'message': data})
     
 
