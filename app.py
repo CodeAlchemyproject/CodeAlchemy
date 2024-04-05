@@ -274,6 +274,7 @@ def logout():
     resp.set_cookie('user_name','',expires=0)
     return resp
 
+
 @app.route('/user_data',methods=['GET'])
 def user_data():
     Email = session.get('Email')
