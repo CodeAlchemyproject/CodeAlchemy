@@ -230,7 +230,7 @@ def verify_register():
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
     if len(data)==1:
-        sql_command = f"UPDATE user SET register_time = GETDATE() WHERE uuid='{uuid}'"
+        sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
