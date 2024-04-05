@@ -95,7 +95,7 @@ def problem_submit():
         'c': '.c',
         'cpp': '.cpp'
     }
-    problem_id = problem_id.split('-')[1].split('.')[0]
+    problem_id = problem_id.split('-')[1]
     # 構建文件路徑
     file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
