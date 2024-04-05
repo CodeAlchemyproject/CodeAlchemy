@@ -12,14 +12,21 @@ selectLanguageButton.addEventListener('click', function (event) {
 
 
 document.getElementById("test_btn").addEventListener("click", function () {
-    var type='test'
+    var type = 'test'
     var problem_id = document.getElementById('problem_id').innerHTML
     var language = mode
-    // 获取包含 <span> 标签的内容
-    var code = document.querySelector('.cm-number')?document.querySelector('.cm-number').innerHTML : null;
+    // 获取所有具有类名为 'CodeMirror-line' 的 <pre> 元素
+    var preElements = document.querySelectorAll('pre.CodeMirror-line');
+    // 遍历每个 <pre> 元素并提取其内容
+    var code = [];
+    preElements.forEach(function (element) {
+        var content = element.textContent.trim();
+        code.push(content);
+    });
+
     var formData = new FormData();
-    formData.append("type",type)
-    formData.append("problem_id",problem_id)
+    formData.append("type", type)
+    formData.append("problem_id", problem_id)
     formData.append("language", language);
     formData.append("code", code);
     var xhr = new XMLHttpRequest();

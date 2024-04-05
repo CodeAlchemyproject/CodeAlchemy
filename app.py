@@ -82,59 +82,59 @@ def problem_submit():
     language = data.get('language')
     code = data.get('code')
 
-    # 輸出每個變數的值
-    print("Type:", type)
-    print("Problem ID:", problem_id)
-    print("Language:", language)
-    print("Code:", code)
-    # 定義語言對應的文件擴展名字典
-    file_extensions = {
-        'python': '.py',
-        'java': '.java',
-        'c': '.c',
-        'cpp': '.cpp'
-    }
+    # # 輸出每個變數的值
+    # print("Type:", type)
+    # print("Problem ID:", problem_id)
+    # print("Language:", language)
+    # print("Code:", code)
+    # # 定義語言對應的文件擴展名字典
+    # file_extensions = {
+    #     'python': '.py',
+    #     'java': '.java',
+    #     'c': '.c',
+    #     'cpp': '.cpp'
+    # }
 
-    # 構建文件路徑
-    file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
+    # # 構建文件路徑
+    # file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
-    # 確保目錄存在
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    # # 確保目錄存在
+    # os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    # 寫入內容到文件中
-    with open(file_path, 'w') as file:
-        file.write(code)
+    # # 寫入內容到文件中
+    # with open(file_path, 'w') as file:
+    #     file.write(code)
 
-    # 假設有三個目標文件夾
-    target_folders = ['./爬蟲/src/BeAPro113', './爬蟲/src/TestCase2024', './爬蟲/src/yyyiii']
+    # # 假設有三個目標文件夾
+    # target_folders = ['./爬蟲/src/BeAPro113', './爬蟲/src/TestCase2024', './爬蟲/src/yyyiii']
 
-    # 將文件分配到目標文件夾中
-    common.distribute_files('./source', target_folders)
+    # # 將文件分配到目標文件夾中
+    # common.distribute_files('./source', target_folders)
 
-    # 讀取帳戶資訊
-    with open('./爬蟲/account.json', 'r') as file: 
-        accounts = json.load(file)['account']
+    # # 讀取帳戶資訊
+    # with open('./爬蟲/account.json', 'r') as file: 
+    #     accounts = json.load(file)['account']
 
-    # 多執行序
-    threads = []
-    for acc in accounts:
-        username = acc[0]
-        password = acc[1]
-        # 構建該使用者資料夾的路徑
-        user_folder_path = os.path.join('./爬蟲/src/', username)
-        # 檢查該資料夾是否存在並且是否為空
-        if os.path.exists(user_folder_path) and os.listdir(user_folder_path):
-            # 如果該資料夾存在並且不為空，則進行處理
-            # 將該使用者資料夾下的檔案加入執行序中
-            for file_name in os.listdir(user_folder_path):
-                file_path = os.path.join(user_folder_path, file_name)
-                if os.path.isfile(file_path):
-                    thread = threading.Thread(target=process_account, args=(username, password, language))
-                    threads.append(thread)
-                    thread.start()
-        else:
-            # 如果該資料夾不存在或者為空，則顯示相應的訊息
-            print(f"資料夾 {username} 為空，未加入執行序。")
+    # # 多執行序
+    # threads = []
+    # for acc in accounts:
+    #     username = acc[0]
+    #     password = acc[1]
+    #     # 構建該使用者資料夾的路徑
+    #     user_folder_path = os.path.join('./爬蟲/src/', username)
+    #     # 檢查該資料夾是否存在並且是否為空
+    #     if os.path.exists(user_folder_path) and os.listdir(user_folder_path):
+    #         # 如果該資料夾存在並且不為空，則進行處理
+    #         # 將該使用者資料夾下的檔案加入執行序中
+    #         for file_name in os.listdir(user_folder_path):
+    #             file_path = os.path.join(user_folder_path, file_name)
+    #             if os.path.isfile(file_path):
+    #                 thread = threading.Thread(target=process_account, args=(username, password, language))
+    #                 threads.append(thread)
+    #                 thread.start()
+    #     else:
+    #         # 如果該資料夾不存在或者為空，則顯示相應的訊息
+    #         print(f"資料夾 {username} 為空，未加入執行序。")
 
     # 等待所有執行序完成
     for thread in threads:
