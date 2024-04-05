@@ -100,10 +100,10 @@ def problem():
 #題目提交
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
-    data = request.get_json() # 從POST請求中獲取JSON數據
+    data = request.form # 從POST請求中獲取JSON數據
     problem_id=data['problem_id']
     language=data['language']
-    content = data['content']
+    # content = data['content']
 
     # 定義語言對應的文件擴展名字典
     file_extensions = {
@@ -138,12 +138,10 @@ def problem_submit():
         threads.append(thread)
         thread.start()
         
-    for thread in threads:
-        thread.join()
-    return jsonify({'message': 'Data received successfully!'})
+    # for thread in threads:
+    #     thread.join()
+    return jsonify({'message': data})
     
-
-
 
 # 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
