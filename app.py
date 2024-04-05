@@ -139,7 +139,6 @@ def problem_submit():
     for thread in threads:
         thread.join()
 
-    
 
 # 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])
