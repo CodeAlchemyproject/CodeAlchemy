@@ -76,9 +76,9 @@ def problem():
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
     data = request.form # 從POST請求中獲取JSON數據
-    problem_id=data['problem_id']
-    language=data['language']
-    content = data['content']
+    # problem_id=data['problem_id']
+    # language=data['language']
+    # content = data['content']
 
     # # 定義語言對應的文件擴展名字典
     # file_extensions = {
