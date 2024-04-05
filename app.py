@@ -124,9 +124,9 @@ def login():
     # 收到電子郵件
     if request.method=="POST":
         Email=request.form['Email']
-        sql_user_command=f"SELECT * FROM [user] where email='{Email}'"
-        # 如果有註冊過
+        sql_user_command=f"SELECT * FROM user where email='{Email}'"
         user_data=db.get_data(sql_user_command)
+        # 如果有註冊過
         if len(user_data) == 1:
             # 將Email存入session
             session['Email'] = Email
@@ -150,7 +150,7 @@ def login_password():
         except Exception:
             Rememberme=0
         # 取的使用者資料
-        sql_common=f"SELECT * FROM [user] where email='{Email}'"
+        sql_common=f"SELECT * FROM user where email='{Email}'"
         user_data=db.get_data(sql_common)
         # 登入成功
         if check_password_hash(db.get_data(sql_common)[0][2],Password):
@@ -178,12 +178,12 @@ def register():
         user_name=request.form['Username']
         Email=request.form['Email']
         Password=request.form['Password']
-        if db.get_data(f"SELECT * FROM [user] where email='{Email}'"):
+        if db.get_data(f"SELECT * FROM user where email='{Email}'"):
             result='此Email已經註冊過'
             return redirect('/login')
         else:
             token=str(uuid.uuid4())
-            sql_user_command=f"INSERT INTO [user](user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
+            sql_user_command=f"INSERT INTO user(user_name,password,email,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','{token}')"
             db.edit_data(sql_user_command)
             html=f'http://123.192.165.145/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
@@ -205,9 +205,9 @@ def register():
 def forget_password():
     if request.method == "POST":
         Email=request.form['Email']
-        user_name=db.get_data(f"SELECT * FROM [user] where email='{Email}'")[0][1]
+        user_name=db.get_data(f"SELECT * FROM user where email='{Email}'")[0][1]
         token=str(uuid.uuid4())
-        db.edit_data(f"UPDATE [user] SET uuid = '{token}' WHERE email='{Email}'")
+        db.edit_data(f"UPDATE user SET uuid = '{token}' WHERE email='{Email}'")
         html=f'http://123.192.165.145/verify_forget_password?uuid={token}'
         msg_title = 'Forget CodeAlchemy Password'
         msg_recipients=[Email]
@@ -227,12 +227,12 @@ def forget_password():
 def verify_register():
     # 獲得uuid
     uuid = request.args.get('uuid',None,type=str)
-    sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
+    sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
     if len(data)==1:
-        sql_command = f"UPDATE [user] SET register_time = GETDATE() WHERE uuid='{uuid}'"
+        sql_command = f"UPDATE user SET register_time = GETDATE() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
-        sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+        sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         result='驗證成功'
         return render_template('./verify_register.html',result=result)
@@ -247,16 +247,16 @@ def verify_forget_password():
     if request.method == "POST":
             uuid=request.form['uuid']
     # 檢查UUID是否存在
-    sql_command=f"SELECT * FROM [user] where uuid='{uuid}'"
+    sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
     if len(data)==1:
         if request.method == "POST":
             uuid=request.form['uuid']
             Password=request.form['Password']
             Password=generate_password_hash(Password)
-            sql_command = f"UPDATE [user] SET password = '{Password}' WHERE uuid='{uuid}'"
+            sql_command = f"UPDATE user SET password = '{Password}' WHERE uuid='{uuid}'"
             db.edit_data(sql_command)
-            sql_command = f"UPDATE [user] SET uuid = Null WHERE uuid='{uuid}'"
+            sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
             db.edit_data(sql_command)
             result='變更成功'
             return render_template('./verify_forget_password_result.html',result=result)
@@ -268,7 +268,7 @@ def verify_forget_password():
 #登出 
 @app.route('/logout')
 def logout():
-    session.clear()
+    # session.clear()
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
@@ -277,7 +277,7 @@ def logout():
 @app.route('/user_data',methods=['GET'])
 def user_data():
     Email = session.get('Email')
-    sql_command=f"SELECT * FROM [user] where email='{Email}'"
+    sql_command=f"SELECT * FROM user where email='{Email}'"
     data=db.get_data(sql_command)
     User_name=data[0][1]
     Email=data[0][3]
@@ -285,22 +285,22 @@ def user_data():
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
 
-#懸浮視窗按鈕處理
-@app.route('/redirect', methods=['POST'])
-def redirect():
-    choice = request.form['choice']
-    if choice == 'A':
-        return redirect(url_for('add_contest'))  # 跳到add_contest.html頁面
-    elif choice == 'B':
-        return redirect(url_for('create_contest'))  # 跳到create_contest.html頁面
+# #懸浮視窗按鈕處理
+# @app.route('/redirect', methods=['POST'])
+# def redirect():
+#     choice = request.form['choice']
+#     if choice == 'A':
+#         return redirect(url_for('add_contest'))  # 跳到add_contest.html頁面
+#     elif choice == 'B':
+#         return redirect(url_for('create_contest'))  # 跳到create_contest.html頁面
 
-@app.route('/add_contest.html')
-def add_contest():
-    return render_template('add_contest.html')  # 返回add_contest.html頁面的内容
+# @app.route('/add_contest.html')
+# def add_contest():
+#     return render_template('add_contest.html')  # 返回add_contest.html頁面的内容
 
-@app.route('/create_contest.html')
-def create_contest():
-    return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
+# @app.route('/create_contest.html')
+# def create_contest():
+#     return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
 
 #-------------------------
 # 在主程式註冊各個服務
