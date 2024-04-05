@@ -15,4 +15,30 @@ def connection():
     except OperationalError as e:
         print(f"Error: {e}")
         return None
+    
+#取得並篩選資料
+def get_data(sql_command):
+    #取得資料庫連線 
+    connection = connection() 
+    #產生執行sql命令的物件, 再執行sql   
+    cursor = connection.cursor()
+    # 這裡加篩選條件
+    cursor.execute(sql_command)
+    #取出資料
+    data = cursor.fetchall()
+    #關閉資料庫連線    
+    connection.close()
+    return data
+
+#新增、更新、刪除資料
+def edit_data(sql_command):
+    #取得資料庫連線 
+    connection = connection() 
+    #產生執行sql命令的物件, 再執行sql   
+    cursor = connection.cursor()
+    # 這裡加篩選條件
+    cursor.execute(sql_command)
+    connection.commit()
+    #關閉資料庫連線    
+    connection.close()
       
