@@ -11,14 +11,13 @@ var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
 
 // 取得下拉選單
 var selectLanguageButton = document.getElementById('select_language_button');
-console.log(selectLanguageButton);
 
 // 監聽點擊事件
 selectLanguageButton.addEventListener('click', function (event) {
   // 確保點擊的是 a 標籤
   if (event.target.tagName === 'A') {
     // 取得選項中的 data-mode 屬性值
-    var mode = event.target.getAttribute('data-mode');
+    mode = event.target.getAttribute('data-mode');
     // 設定編輯器模式
     editor.setOption('mode', mode);
   }
