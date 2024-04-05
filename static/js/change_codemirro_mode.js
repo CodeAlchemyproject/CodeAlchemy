@@ -6,7 +6,7 @@ var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
   // 設定縮排單位
   indentUnit: 4,
   // 初始模式（默认为 C）
-  mode: 'text/x-csrc'
+  mode: 'python'
 });
 
 // 取得下拉選單
