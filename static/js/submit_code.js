@@ -18,7 +18,7 @@ document.getElementById("test_btn").addEventListener("click", function () {
     // 获取包含 <span> 标签的内容
     var code = document.querySelector('.cm-number')?document.querySelector('.cm-number').innerHTML : null;
     var formData = new FormData();
-    formData.append("test",type)
+    formData.append("type",type)
     formData.append("problem_id",problem_id)
     formData.append("language", language);
     formData.append("code", code);
