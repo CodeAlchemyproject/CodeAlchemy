@@ -1,6 +1,6 @@
 // 取得下拉選單
 var selectLanguageButton = document.getElementById('select_language_button');
-mode='c'
+mode='python'
 // 監聽點擊事件
 selectLanguageButton.addEventListener('click', function (event) {
     // 確保點擊的是 a 標籤
