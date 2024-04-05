@@ -10,6 +10,7 @@ import math
 import time
 from werkzeug.security import generate_password_hash,check_password_hash
 import uuid
+from queue import Queue
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -138,7 +139,7 @@ def problem_submit():
     # 等待所有執行序完成
     for thread in threads:
         thread.join()
-
+    return jsonify({'success': True})
 
 # 查詢電子郵件有沒有註冊過
 @app.route('/login',methods=['GET','POST'])

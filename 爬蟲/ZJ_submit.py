@@ -1,4 +1,5 @@
 # 引入所需的模組和套件
+from queue import Queue
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -50,12 +51,12 @@ def process_account(username, password, language):
         login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-md-4.text-center')))
         login_area = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
 
-        time.sleep(1)
+        time.sleep(2)
 
         input_username = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'account')))
         input_username.send_keys(username)
 
-        time.sleep(1)
+        time.sleep(2)
 
         input_password = WebDriverWait(login_area, wait_max).until(EC.presence_of_element_located((By.ID, 'passwd')))
         input_password.send_keys(password)
