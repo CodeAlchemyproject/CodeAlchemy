@@ -82,12 +82,6 @@ def problem_submit():
     language = data.get('language')
     code = data.get('code')
 
-    # 輸出每個變數的值
-    print("Type:", type)
-    print("Problem ID:", problem_id)
-    print("Language:", language)
-    print("Code:", code)
-    
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
@@ -130,14 +124,12 @@ def problem_submit():
             for file_name in os.listdir(user_folder_path):
                 file_path = os.path.join(user_folder_path, file_name)
                 if os.path.isfile(file_path):
-                    
                     thread = threading.Thread(target=process_account, args=(username, password, language))
                     threads.append(thread)
                     thread.start()
         else:
             # 如果該資料夾不存在或者為空，則顯示相應的訊息
             print(f"資料夾 {username} 為空，未加入執行序。")
-
     # 等待所有執行序完成
     for thread in threads:
         thread.join()
@@ -311,22 +303,22 @@ def user_data():
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
 
-# #懸浮視窗按鈕處理
-# @app.route('/redirect', methods=['POST'])
-# def redirect():
-#     choice = request.form['choice']
-#     if choice == 'A':
-#         return redirect(url_for('add_contest'))  # 跳到add_contest.html頁面
-#     elif choice == 'B':
-#         return redirect(url_for('create_contest'))  # 跳到create_contest.html頁面
+#懸浮視窗按鈕處理
+@app.route('/contest', methods=['POST'])
+def contest():
+    choice = request.form['choice']
+    if choice == 'A':
+        return contest(url_for('create_contest'))  # 跳到join_contest.html頁面
+    elif choice == 'B':
+        return contest(url_for('join_contest'))  # 跳到create_contest.html頁面
 
-# @app.route('/add_contest.html')
-# def add_contest():
-#     return render_template('add_contest.html')  # 返回add_contest.html頁面的内容
+@app.route('/join_contest.html')
+def join_contest():
+    return render_template('join_contest.html')  # 返回join_contest.html頁面的内容
 
-# @app.route('/create_contest.html')
-# def create_contest():
-#     return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
+@app.route('/create_contest.html')
+def create_contest():
+    return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
 
 #-------------------------
 # 在主程式註冊各個服務

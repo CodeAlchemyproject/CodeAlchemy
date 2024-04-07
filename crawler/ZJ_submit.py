@@ -28,7 +28,7 @@ def process_account(username, password, language):
     wait_max = 10
     # 讀取所有檔案
     submit_program_dict = dict()
-    py_files = glob.glob(f'./src/{username}/*.*')
+    py_files = glob.glob(f'./crawler/src/{username}/*.*')
     for file_name in py_files:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = file.read()
