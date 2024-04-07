@@ -82,12 +82,6 @@ def problem_submit():
     language = data.get('language')
     code = data.get('code')
 
-    # 輸出每個變數的值
-    print("Type:", type)
-    print("Problem ID:", problem_id)
-    print("Language:", language)
-    print("Code:", code)
-    
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
@@ -130,14 +124,12 @@ def problem_submit():
             for file_name in os.listdir(user_folder_path):
                 file_path = os.path.join(user_folder_path, file_name)
                 if os.path.isfile(file_path):
-                    
-                    thread = threading.Thread(target=process_account, args=(username, password, language))
+                    thread = threading.Thread(target=process_account, args=(username, password, language, language))
                     threads.append(thread)
                     thread.start()
         else:
             # 如果該資料夾不存在或者為空，則顯示相應的訊息
             print(f"資料夾 {username} 為空，未加入執行序。")
-
     # 等待所有執行序完成
     for thread in threads:
         thread.join()
