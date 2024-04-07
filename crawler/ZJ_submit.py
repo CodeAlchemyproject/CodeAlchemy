@@ -22,7 +22,7 @@ def process_account(username, password, language):
     s = Service(ChromeDriverManager().install())
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    chrome_options.add_extension('./爬蟲/reCAPTCHA_extension.crx')
+    chrome_options.add_extension('./crawler/reCAPTCHA_extension.crx')
     driver = webdriver.Chrome(service=s, options=chrome_options)
     driver.maximize_window()
     wait_max = 10
@@ -34,16 +34,8 @@ def process_account(username, password, language):
         'cpp': '.cpp'
     }
     # 讀取所有檔案
-    # submit_program_dict = dict()
-    # directory = f'./爬蟲/src/{username}/'
-    # for file_name in os.listdir(directory):
-    #     file_path = os.path.join(directory, file_name)
-    #     if os.path.isfile(file_path):
-    #         with open(file_path, 'r', encoding='utf-8') as file:
-    #             content = file.read()
-    #             submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
     submit_program_dict = dict()
-    py_files = glob.glob(f'./src/{username}/*.py')
+    py_files = glob.glob(f'./crawler/src/{username}/*.*')
     for file_name in py_files:
         with open(file_name, 'r', encoding='utf-8') as file:
             content = file.read()
@@ -116,7 +108,7 @@ def process_account(username, password, language):
             print(prob_id, e)
 
     # 刪除以username為名的資料夾下的所有檔案
-    folder_path = f'./爬蟲/src/{username}'
+    folder_path = f'./crawler/src/{username}'
     for file_name in os.listdir(folder_path):
         file_path = os.path.join(folder_path, file_name)
         os.remove(file_path)
