@@ -1,4 +1,4 @@
-#-----------------------
+#----------------   -------
 # 匯入模組
 #-----------------------
 import os
@@ -98,8 +98,8 @@ def problem_submit():
 
     # 寫入內容到文件中
     with open(file_path, 'w') as file:
-        file.write(code)
-
+        encoded_code = str(code.encode('utf-8'))
+        file.write(encoded_code)
     # 假設有三個目標文件夾
     target_folders = ['./crawler/src/BeAPro113', './crawler/src/TestCase2024', './crawler/src/yyyiii']
 

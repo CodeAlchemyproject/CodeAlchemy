@@ -1,7 +1,5 @@
-#檢查上傳檔案類型
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ('png', 'jpg', 'jpeg', 'gif')
 import os
+import random
 import shutil
 
 def distribute_files(source_folder, target_folders):
@@ -11,6 +9,9 @@ def distribute_files(source_folder, target_folders):
     
     files_per_folder = num_files // num_folders
     remainder = num_files % num_folders
+    
+    # 對目標文件夾進行隨機排序
+    random.shuffle(target_folders)
     
     for i, folder in enumerate(target_folders):
         files_to_copy = files[i * files_per_folder : (i + 1) * files_per_folder]
