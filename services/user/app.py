@@ -47,24 +47,24 @@ def login_form():
 @user_bp.route('/login', methods=['POST'])
 def user_login():
     # 取出帳號/密碼
-    empno = request.form.get('empno')
-    ext = request.form.get('ext')
+    user_id = request.form.get('user_id')
+    password = request.form.get('password')
     
     # 建立資料庫連線
-    conn = db.get_connection()
+    conn = db.connection()
     
     # 查詢使用者
     cursor = conn.cursor()    
-    cursor.execute("SELECT empno, empname FROM employee WHERE empno = %s AND ext = %s", (empno, ext))
-    employee = cursor.fetchone()
+    cursor.execute("SELECT user_id, user_name FROM user WHERE user_id = %s AND password = %s", (user_id, password))
+    user = cursor.fetchone()
     
     # 判斷使用者是否存在
-    if employee:
-        empno, empname = employee 
-        user = User(empno)   #(登入管理)產生一個user物件  
+    if user:
+        user_id, user_name = user 
+        user = User(user_id)   #(登入管理)產生一個user物件  
         login_user(user)     #(登入管理)在session中保存此user物件 
-        session['username'] = empname  #將使用者姓名放入對話中
-        return render_template('login_success.html', username=empname)
+        session['username'] = user_name  #將使用者姓名放入對話中
+        return render_template('login_success.html', username=user_name)
     else:
         return render_template('login_fail.html')
     
