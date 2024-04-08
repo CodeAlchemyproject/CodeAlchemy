@@ -19,7 +19,7 @@ customer_bp = Blueprint('customer_bp', __name__)
 @login_required
 def customer_list(): 
     #取得資料庫連線 
-    connection = db.get_connection() 
+    connection = db.connection() 
     
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()     
@@ -45,7 +45,7 @@ def customer_read_form():
 @customer_bp.route('/read', methods=['GET'])
 def customer_read():    
     #取得資料庫連線    
-    connection = db.get_connection()  
+    connection = db.connection()  
     
     #取得執行sql命令的cursor
     cursor = connection.cursor()   
@@ -94,7 +94,7 @@ def customer_create():
         print(cusno, cusname, address)
 
         #取得資料庫連線
-        conn = db.get_connection()
+        conn = db.connection()
 
         #將資料加入customer表
         cursor = conn.cursor()
@@ -125,7 +125,7 @@ def customer_delete_form():
 @customer_bp.route('/delete/confirm', methods=['GET'])
 def customer_delete_confirm():
     #取得資料庫連線    
-    connection = db.get_connection()  
+    connection = db.connection()  
     
     #取得執行sql命令的cursor
     cursor = connection.cursor()   
@@ -154,7 +154,7 @@ def customer_delete():
         cusno = request.form.get('cusno').strip().upper()
 
         #取得資料庫連線
-        conn = db.get_connection()
+        conn = db.connection()
 
         #將資料從customer表刪除
         cursor = conn.cursor()
@@ -185,7 +185,7 @@ def customer_update_form():
 @customer_bp.route('/update/confirm', methods=['GET'])
 def customer_update_confirm():
     #取得資料庫連線    
-    connection = db.get_connection()  
+    connection = db.connection()  
     
     #取得執行sql命令的cursor
     cursor = connection.cursor()   
@@ -216,7 +216,7 @@ def customer_update():
         address = request.form.get('address')
 
         #取得資料庫連線
-        conn = db.get_connection()
+        conn = db.connection()
 
         #將資料從customer表刪除
         cursor = conn.cursor()

@@ -13,7 +13,7 @@ problem_bp = Blueprint('problem_bp', __name__)
 def paginate(page, per_page):
     offset = (page - 1) * per_page
     #取得資料庫連線 
-    connection = db.get_connection() 
+    connection = db.connection() 
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()     
     cursor.execute('SELECT * FROM problem')
@@ -30,7 +30,7 @@ def paginate(page, per_page):
 #@login_required
 def problem_list(): 
     #取得資料庫連線 
-    connection = db.get_connection() 
+    connection = db.connection() 
     
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()     
