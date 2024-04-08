@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
-import pyodbc
 import time
 from utils import db
 
@@ -28,14 +27,25 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
             pre_elements = soup.find_all('pre')
             span_element = soup.find('span', {'id': 'problem_title'})
             # 檢查是否找到
+            
+    
             if span_element and problem_content_div and problem_theinput_div and problem_theoutput_div:
                 # 獲取內容、輸入說明和輸出說明
-                problem_content = problem_content_div.text.strip()
-                problem_theinput = problem_theinput_div.text.strip()
-                problem_theoutput = problem_theoutput_div.text.strip()
-                problem_title = span_element.text.strip()
+                problem_content = str(problem_content_div)
+                problem_theinput = str(problem_theinput_div)
+                problem_theoutput = str(problem_theoutput_div)
+                problem_title = span_element.text.split()
+                # 使用正規表達式將第一個<p>前面的所有文字和最後一個</p>後面的文字去除
+                problem_content = re.sub(r'^.*?<p>', '<p>', problem_content, 1)
+                problem_content = re.sub(r'</p>.*?$', '</p>', problem_content, 1)
+                problem_content = problem_content[:-6]
+                problem_theinput = re.sub(r'^.*?<p>', '<p>', problem_theinput, 1)
+                problem_theinput = re.sub(r'</p>.*?$', '</p>', problem_theinput, 1)
+                problem_theoutput = re.sub(r'^.*?<p>', '<p>', problem_theoutput, 1)
+                problem_theoutput = re.sub(r'</p>.*?$', '</p>', problem_theoutput, 1)
+                
                 # 找到所有的 pre 元素
-                pre_contents = [pre_element.text.strip() for pre_element in pre_elements]
+                pre_contents = [str(pre_element) for pre_element in pre_elements]
 
                 # 將範例輸入和範例輸出分別存儲到兩個列表中
                 example_inputs = [pre_contents[i] for i in range(0, len(pre_contents), 2)]
@@ -71,17 +81,18 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 else:
                     difficulty = 'N/A'
 
-                # 連接到 SQL Server 資料庫
-                conn=db.connection
+                # 連接到 My SQL 資料庫
+                conn=db.connection()
 
                 # 創建一個游標對象
                 cursor = conn.cursor()
 
                 # 執行 SQL 插入語句
                 sql_insert = """
-                    INSERT INTO problem (problem_id, title, content, enter_description, output_description, example_input, example_output, difficulty, tag, solved, submission, update_time,collection)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO problem (problem_id, title, content, enter_description, output_description, `example input`, `example output`, difficulty, tag, solved, submission, update_time, collection)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
+
 
                 # 提供預設值
                 default_difficulty = difficulty
@@ -101,11 +112,8 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 # 提交事務
                 conn.commit()
 
-                # 關閉游標和連接
-                cursor.close()
-                conn.close()
-
                 print(f'已將題目編號 {problem_id} 的資料儲存到 My SQL 資料庫中')
+                response.close()
             else:
                 print('未找到指定的 div 元素')
         except Exception as e:

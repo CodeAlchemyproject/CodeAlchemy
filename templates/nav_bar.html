@@ -14,11 +14,12 @@
             <a class="nav-link active" aria-current="page" href="./">題目</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">排行榜</a>
+            <a class="nav-link active" href="#" >排行榜</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="#">競賽</a>
+            <a class="nav-link active" id="openPopup" onclick="togglePopup()">競賽</a>
           </li>
+          <div id="overlay" onclick="closePopup()"></div>
         </ul>
         {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
           <ul class="navbar-nav">
@@ -38,11 +39,62 @@
         {% else %}
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="./login">登入</a>
+              <a class="nav-link active" aria-current="page" href="./login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a type="button" class="btn btn-warning">Sign-up</a>
             </li>
           </ul>
         {% endif %}
       </div>
     </div>
   </nav>
+
+  <!-------------------------
+  # Popup
+  #------------------------->
+
+ <div id="popup">
+      <div class="button-container">
+          <button id="create_contest" style="width: 45%; height: 50%;" type="button" class="btn btn-outline-primary">創建比賽</button>
+          <button id="join_contest" style="width: 45%; height: 50%;" type="button" class="btn btn-outline-primary">加入比賽</button>
+      </div>
+  </div>
   
+  <script>      
+    function togglePopup() {
+        var overlay = document.getElementById('overlay');
+        var popup = document.getElementById('popup');
+        overlay.style.display = 'block';
+        popup.style.display = 'block';
+    }
+
+    function closePopup() {
+        var overlay = document.getElementById('overlay');
+        var popup = document.getElementById('popup');
+        overlay.style.display = 'none';
+        popup.style.display = 'none';
+    }
+    
+    // 取得懸浮視窗按鈕
+    var openPopupBtn = document.getElementById('openPopup');
+    var overlay = document.getElementById('overlay');
+    var popup = document.getElementById('popup');
+    var optionA = document.getElementById('create_contest');
+    var optionB = document.getElementById('join_contest');
+
+    // 點擊按鈕時顯示懸浮視窗
+    openPopupBtn.addEventListener('click', function() {
+        popup.style.display = 'block';
+    });
+
+    // 選擇join_contest跳到join_contest.html頁面
+    optionA.addEventListener('click', function() {
+        window.location.href = 'create_contest.html';
+    });
+
+    // 選擇create_contest跳到create_contest.html頁面
+    optionB.addEventListener('click', function() {
+        window.location.href = 'join_contest.html';
+    });
+</script>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    {% include "_site_header.html" %}
+    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-3">
+                <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
+                    <option selected>狀態</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        public</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        private</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <select class="form-select" id="onlinejudge"
+                    onchange="location.href=this.options[this.selectedIndex].value">
+                    <option selected>語言</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        All</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}&search={{search}}">
+                        python</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
+                        C</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
+                        C++</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
+                        python</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <select class="form-select" id="difficulty"
+                    onchange="location.href=this.options[this.selectedIndex].value">
+                    <option selected>難度</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
+                        All</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
+                        Hard</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
+                        Middle</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
+                        Easy</option>
+                    <option
+                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
+                        N/A</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <form class="d-flex"
+                    action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
+                    <input type="hidden" name="page" value="{{page}}">
+                    <input type="hidden" name="state" value="{{state}}">
+                    <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
+                    <input type="hidden" name="difficulty" value="{{difficulty}}">
+                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
+                </form>
+            </div>
+        </div>
+        <!-- ------- -->
+        <!-- 題目列表 -->
+        <!-- ------- -->
+        <table id="problem_list" class="table table-hover justify-content-center mt-4">
+            <thead>
+                <tr>
+                    <td>狀態</td>
+                    <td>比賽名稱</td>
+                    <td>開始日期</td>
+                    <td>結束日期</td>
+                </tr>
+            </thead>
+            <tbody>
+                    
+            </tbody>
+        </table>
+    </div>
+    
+            
+    <!--{% include "footer.html" %}-->
+
+</body>
+
+</html>
