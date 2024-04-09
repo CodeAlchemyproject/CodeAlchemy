@@ -9,8 +9,10 @@ selectLanguageButton.addEventListener('click', function (event) {
         mode = event.target.getAttribute('value');
     }
 });
-
-
+var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+    // 設定行號
+    lineNumbers: true,
+  });
 document.getElementById("test_btn").addEventListener("click", function () {
     var type = 'test'
     var problem_id = document.getElementById('problem_id').innerHTML
@@ -18,11 +20,7 @@ document.getElementById("test_btn").addEventListener("click", function () {
     // 获取所有具有类名为 'CodeMirror-line' 的 <pre> 元素
     var preElements = document.querySelectorAll('pre.CodeMirror-line');
     // 遍历每个 <pre> 元素并提取其内容
-    var code = [];
-    preElements.forEach(function (element) {
-        var content = element.textContent.trim();
-        code.push(content);
-    });
+    var code = editor.getValue();;
 
     var formData = new FormData();
     formData.append("type", type)
