@@ -1,12 +1,13 @@
 //C:text/x-csrc C++:text/x-c++src Python:python Java:text/x-java
 // 載入 CodeMirror 編輯器
+
 var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
   // 設定行號
   lineNumbers: true,
   // 設定縮排單位
   indentUnit: 4,
   // 初始模式（默认为 C）
-  mode: 'text/x-csrc'
+  mode: 'python'
 });
 
 // 取得下拉選單
