@@ -17,6 +17,7 @@ from queue import Queue
 
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
+from services.feedback.app import feedback_bp
 from services.user.app import user_bp, login_manager
 from utils import db,common
 from crawler.ZJ_submit import process_account
