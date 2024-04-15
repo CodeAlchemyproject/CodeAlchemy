@@ -81,7 +81,6 @@ def problem_submit():
     problem_id = data.get('problem_id')
     language = data.get('language')
     code = data.get('code')
-
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
@@ -89,7 +88,10 @@ def problem_submit():
         'c': '.c',
         'cpp': '.cpp'
     }
-    problem_id = problem_id.split('-')[1]
+
+    if problem_id.split('-')[0]=="ZJ":
+       problem_id=problem_id.split('-')[1]
+    
     # 構建文件路徑
     file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
@@ -98,10 +100,10 @@ def problem_submit():
 
     # 寫入內容到文件中
     with open(file_path, 'w') as file:
-        encoded_code = str(code.encode('utf-8'))
-        file.write(encoded_code)
-    # 假設有三個目標文件夾
-    target_folders = ['./crawler/src/BeAPro113', './crawler/src/TestCase2024', './crawler/src/yyyiii']
+        file.write(code)
+
+    # 假設有兩個目標文件夾
+    target_folders = ['./crawler/src/TestCase2024','./crawler/src/BeAPro113', './crawler/src/yyyiii']
 
     # 將文件分配到目標文件夾中
     common.distribute_files('./source', target_folders)
@@ -130,6 +132,7 @@ def problem_submit():
         else:
             # 如果該資料夾不存在或者為空，則顯示相應的訊息
             print(f"資料夾 {username} 為空，未加入執行序。")
+
     # 等待所有執行序完成
     for thread in threads:
         thread.join()

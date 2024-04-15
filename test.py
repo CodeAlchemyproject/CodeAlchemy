@@ -28,7 +28,7 @@ with open(file_path, 'w') as file:
     file.write(content)
 
 # 假設有兩個目標文件夾
-target_folders = ['./crawler/src/TestCase2024', './crawler/src/yyyiii']
+target_folders = ['./crawler/src/TestCase2024','./crawler/src/BeAPro113', './crawler/src/yyyiii']
 
 # 將文件分配到目標文件夾中
 common.distribute_files('./source', target_folders)
