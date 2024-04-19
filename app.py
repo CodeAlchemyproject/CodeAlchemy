@@ -86,9 +86,9 @@ def problem_submit():
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
-        'java': '.java',
-        'c': '.c',
-        'cpp': '.cpp'
+        'text/x-java': '.java',
+        'text/x-csrc': '.c',
+        'text/x-c++src': '.cpp'
     }
 
     if problem_id.split('-')[0]=="ZJ":
@@ -97,10 +97,10 @@ def problem_submit():
     # 構建文件路徑
     file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
-    # 確保目錄存在
+    #確保目錄存在
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    # 寫入內容到文件中
+    #寫入內容到文件中
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
@@ -113,7 +113,7 @@ def problem_submit():
         last_row = df.tail(1)
 
         print(last_row)
-        return jsonify({'success': True})
+    return jsonify({'message': data})
 
 
 # 查詢電子郵件有沒有註冊過
