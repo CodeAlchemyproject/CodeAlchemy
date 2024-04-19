@@ -86,9 +86,9 @@ def problem_submit():
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
-        'java': '.java',
-        'c': '.c',
-        'cpp': '.cpp'
+        'text/x-java': '.java',
+        'text/x-csrc': '.c',
+        'text/x-c++src': '.cpp'
     }
 
     if problem_id.split('-')[0]=="ZJ":
