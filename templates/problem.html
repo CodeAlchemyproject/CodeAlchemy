@@ -110,31 +110,17 @@
                                                 aria-valuemax="100" style="width: 0%">
                                                 <span id="current-progress"></span>
                                             </div>
-                                            <script>
-                                                // 監聽按鈕點擊事件
-                                                document.getElementById("test_btn").addEventListener("click", function () {
-                                                    var current_progress = 0;
-                                                    var interval = setInterval(function () {
-                                                        current_progress += 5;
-                                                        var progressBar = document.querySelector(".progress-bar");
-                                                        progressBar.style.width = current_progress + "%";
-                                                        progressBar.textContent = current_progress + "%";
-                                                        if (current_progress >= 100) {
-                                                            clearInterval(interval);
-                                                        }
-                                                    }, 1000);
-                                                });
-                                            </script>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                            id="stop_btn">停止</button>
                                         <button type="button" class="btn btn-primary">Understood</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <script src="../static/js/progress.js"></script>
                         <button type="button" class="btn btn-outline-success"><svg xmlns="http://www.w3.org/2000/svg"
                                 width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up"
                                 viewBox="0 0 16 16">
