@@ -48,17 +48,13 @@ py_files = glob.glob(f'./source/*.*')
 for file_name in py_files:
     with open(file_name, 'r', encoding='utf-8') as file:
         content = file.read()
-        print(content)
         submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
-        print(submit_program_dict[os.path.basename(file_name).split('.')[0]])
 # 讀取帳戶資訊
 with open('./crawler/account.json', 'r') as file: 
     accounts = json.load(file)['account']
 for acc in accounts:
     username = acc[0]
-    print(username)
     password = acc[1]
-    print(password)
     # 構建資料夾的路徑
     folder_path = os.path.join('./source')
     # 檢查該資料夾是否存在並且是否為空
@@ -132,16 +128,15 @@ for acc in accounts:
     if results:
         df = pd.DataFrame(results)  # 不包含列名
         # 轉換 DataFrame 為字串
-        csv_data = df.to_csv(index=False, header=False)  # 不寫入列名
-        print(csv_data)
-        csv_data = csv_data.encode('big5').decode('utf-8')
+        csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
         # 寫入 CSV 文件
-        with open('result.csv', 'a') as f:
-            f.write(csv_data.rstrip('\r\n') + '\n')  # 添加換行符
+        with open('result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+            f.write(csv_data)  # 直接寫入CSV數據
+            f.write('\n')  # 添加換行符
 
-# # 刪除source資料夾下的所有檔案
-# folder_path = './source'
-# for file_name in os.listdir(folder_path):
-#     file_path = os.path.join(folder_path, file_name)
-#     os.remove(file_path)
-# driver.quit()
+    # 刪除source資料夾下的所有檔案
+    folder_path = './source'
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        os.remove(file_path)
+    driver.quit()
