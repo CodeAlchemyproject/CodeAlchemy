@@ -1,14 +1,14 @@
 // 設置全局變量用於存儲 interval ID
 var intervalId;
 
-// 監聽開始按鈕點擊事件
+// 監聽測試按鈕點擊事件
 document.getElementById("test_btn").addEventListener("click", function () {
   // 重置進度條
   var progressBar = document.querySelector(".progress-bar");
   progressBar.style.width = "0%";
   progressBar.textContent = "0%";
 
-  // 開始新的 interval，並保存其 ID
+  // 測試新的 interval，並保存其 ID
   var current_progress = 0;
   intervalId = setInterval(function () {
     current_progress += 5;
@@ -17,6 +17,10 @@ document.getElementById("test_btn").addEventListener("click", function () {
 
     if (current_progress >= 100) {
       clearInterval(intervalId);
+      // 進度條到達100%自動關閉視窗
+      var modal = document.getElementById("staticBackdrop");
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      modalInstance.hide();
     }
   }, 1000);
 });
