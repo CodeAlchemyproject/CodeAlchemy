@@ -95,25 +95,25 @@ def problem_submit():
        problem_id=problem_id.split('-')[1]
     
     # 構建文件路徑
-    # file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
+    file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
-    # 確保目錄存在
-    # os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    #確保目錄存在
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    # 寫入內容到文件中
-    # with open(file_path, 'w') as file:
-        # file.write(code)
-        # print(f"程式碼已成功寫入至 {file_path}")
-    # process_account(language)
-    # if type=="test":
+    #寫入內容到文件中
+    with open(file_path, 'w') as file:
+        file.write(code)
+        print(f"程式碼已成功寫入至 {file_path}")
+    process_account(language)
+    if type=="test":
         # 讀取CSV文件
-        # df = pd.read_csv('result.csv')
+        df = pd.read_csv('result.csv')
 
         # 獲取最後一行
-        # last_row = df.tail(1)
+        last_row = df.tail(1)
 
-        # print(last_row)
-    return jsonify({'success': True})
+        print(last_row)
+    return jsonify({'message': data})
 
 
 # 查詢電子郵件有沒有註冊過
