@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    {% include "_site_header.html" %}
+    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .competition-box {
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: larger;
+            font-weight: bold;
+        }
+        .join-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            text-decoration: none; /* 移除链接下划线 */
+        }
+        .join-button:hover {
+            color: white; /* 悬停时不改变文字颜色 */
+        }
+    </style>
+</head>
+<body>
+    {% include "nav_bar.html" %}
+    <div class="competition-box">                
+        <div>
+            <p>create success!</p>
+            <a href="/contest/join/form" class="join-button">back</a>
+        </div>
+    </div>   
+</body>
+</html>

@@ -10,6 +10,43 @@
         crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        .competition-box {
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+        }
+        .title {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .description {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .join-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .competition-info {
+            flex: 3;
+        }
+        .competition-details {
+            flex: 1;
+            padding-left: 150px;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -86,21 +123,22 @@
         <!-- ------- -->
         <!-- 題目列表 -->
         <!-- ------- -->
-        <table id="problem_list" class="table table-hover justify-content-center mt-4">
-            <thead>
-                <tr>
-                    <td>狀態</td>
-                    <td>比賽名稱</td>
-                    <td>開始日期</td>
-                    <td>結束日期</td>
-                </tr>
-            </thead>
-            <tbody>
-                    
-            </tbody>
-        </table>
-    </div>
-    
+        <div>
+            {% for contest in contests %}
+            <div class="competition-box">                
+                <div class="competition-info">
+                    <div class="title">{{contest[0]}}</div>
+                    <div class="description">{{contest[1]}}</div>
+                    <button class="join-button">加入比賽</button>
+                </div>
+                <div class="competition-details">
+                    <p>參加人數：100</p>
+                    <p>開始時間：2024-04-25</p>
+                    <!-- 添加其他比赛详情 -->
+                </div>               
+            </div>
+            {% endfor %}
+        </div>
             
     <!--{% include "footer.html" %}-->
 

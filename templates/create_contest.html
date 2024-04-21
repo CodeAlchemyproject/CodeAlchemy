@@ -66,39 +66,59 @@
 <body>
     {% include "nav_bar.html" %}
     <div class="createform">
-        <form id="competitionForm">
-            <label for="competitionName">Competition Name:</label>
-            <input type="text" class="form-control" id="competitionName" placeholder="name" name="competitionName" required>
+        <form id="competitionForm" action="/contest/create" method="post">
+            <div class="form">
+                <span class="name">Competition Name:</span>
+                <span class="value">
+                    <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
+                </span>
 
-            <label for="languages">state:</label>
-            <select class="form-select" id="state">
-                <option value="public">public</option>
-                <option value="private">private</option>
-            </select>
-            
-            <label for="languages">languages:</label>
-            <div class="checkbox-row">
-                <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages" value="Python">
-                <label for="python">Python</label>
-                <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
-                <label for="c">C</label>  
-                <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages" value="C++">
-                <label for="cpp">C++</label>
-                <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages" value="Java">
-                <label for="java">Java</label>                              
-            </div>             
-                       
-            <label for="startTime">Start Time:</label>
-            <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
-            
-            <label for="endTime">End Time:</label>
-            <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
-            
-            <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Create Competition</button>
+                <span class="name">description</span>
+                <span class="value">
+                    <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
+                </span>
+                
+                <span class="name">Type:</span>
+                <span class="value">
+                    <select class="form-select" id="state">
+                        <option value="public">public</option>
+                        <option value="private">private</option>
+                    </select>
+                </span>
+                
+                <span class="name">languages:</span>
+                <span class="value">
+                    <div class="checkbox-row">
+                        <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages" value="Python">
+                        <label for="python">Python</label>
+                        <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
+                        <label for="c">C</label>  
+                        <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages" value="C++">
+                        <label for="cpp">C++</label>
+                        <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages" value="Java">
+                        <label for="java">Java</label>                              
+                    </div>             
+                </span> 
+
+                <span class="name">Start Time:</span>
+                <span class="value">
+                    <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+                </span>
+
+                <span class="name">End Time:</span>
+                <span class="value">
+                    <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
+                </span>
+
+                <span class="value">
+                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">Create Competition</button>
+                </span>
+            </div>
         </form>
     </div>
     
     <script>
+        /*
         document.getElementById('competitionForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
             
@@ -114,7 +134,7 @@
             console.log("Start Time:", startTime);
             console.log("End Time:", endTime);
             
-        });
+        });*/
     </script>
     
 </body>
