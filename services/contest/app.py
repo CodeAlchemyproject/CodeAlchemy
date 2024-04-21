@@ -1,29 +1,25 @@
 # 匯入Blueprint模組
-from flask import request, render_template, redirect, url_for
-from flask_login import login_required
+from flask import request, render_template
 from flask import Blueprint
-import os
-import uuid
 
 from utils import db
-from utils import common
 
-# 產生客戶服務藍圖
+# 產生contest服務藍圖
 contest_bp = Blueprint('contest_bp', __name__)
 
 #--------------------------
-# 在客戶服務藍圖加入路由
+# 在contest服務藍圖加入路由
 #--------------------------
-#員工新增表單
+#contest create form
 @contest_bp.route('/create/form')
 def contest_create_form():
     return render_template('create_contest.html') 
 
-#員工新增
+#create contest
 @contest_bp.route('/create', methods=['POST'])
 def contest_create():
     try:
-        # 从表单中获取数据
+        # 從表單獲取數據
         contest_name = request.form['contest_name']
         start_date = request.form['startTime']
         end_date = request.form['endTime']
@@ -33,10 +29,10 @@ def contest_create():
         #print("Received description:", description)
 
 
-        # 获取数据库连接
+        # 資料庫連接
         connection = db.connection()
 
-        # 使用 SQL 插入数据到 'contest' 数据表
+        # 新增到contest資料表
         cursor = connection.cursor()
         cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
                     (contest_name, start_date, end_date, description, type))
@@ -44,14 +40,14 @@ def contest_create():
         # 提交更改
         connection.commit()
 
-        # 若成功取得数据，重定向到问题列表页面
+        # 若成功取得數據，導向create_contest_success.html
         return render_template('create_contest_success.html')
     except Exception as e:
-        # 若发生错误，打印错误信息并返回创建失败页面
+        # 若發生錯誤，導向失敗頁面
         print("Error occurred:", e)
         #return render_template('login.html', error=str(e))
     finally:
-        # 关闭数据库连接
+        # 關閉資料庫連接
         connection.close()
 
 
@@ -62,7 +58,7 @@ def contest_join():
     conn = db.connection()  # Get database connection
     cursor = conn.cursor()
 
-    cursor.execute("SELECT contest_name, description FROM contest")
+    cursor.execute("SELECT contest_name, start_date, end_date, description, type FROM contest")
     contests = cursor.fetchall()
 
     # close db conn
