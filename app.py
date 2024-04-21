@@ -13,6 +13,9 @@ import uuid
 from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
+from authlib.integrations.flask_client import OAuth
+from authlib.jose import jwt
+
 #-----------------------
 # 匯入各個服務藍圖
 #-----------------------
@@ -20,6 +23,7 @@ from crawler.ZJ_submit import process_account
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
+from services.contest.app import contest_bp
 from utils import db,common
 
 
@@ -27,7 +31,22 @@ from utils import db,common
 # 產生主程式, 加入主畫面
 #-------------------------
 app = Flask(__name__)
-
+app.secret_key = 'your_secret_key'
+# google登入
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id='',
+    client_secret='',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    refresh_token_url=None,
+    refresh_token_params=None,
+    redirect_uri='http://127.0.0.1/google-callback',
+    client_kwargs={'scope': 'openid profile email'},
+)
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
@@ -134,6 +153,19 @@ def login():
             return redirect('/register')
     else:
         return render_template('./login.html')
+# google 登入
+@app.route('/login_google')
+def login_google():
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/google-callback')
+def authorize():
+    token = google.authorize_access_token()
+    user_info = google.parse_id_token(token)
+    # 在這裡處理使用者資訊，例如驗證、註冊等等
+    return 'Hello, {}!'.format(user_info['name'])
+
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
 def login_password():
@@ -283,23 +315,7 @@ def user_data():
     img=data[0][4]
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
-
-#懸浮視窗按鈕處理
-@app.route('/contest', methods=['POST'])
-def contest():
-    choice = request.form['choice']
-    if choice == 'A':
-        return contest(url_for('create_contest'))  # 跳到join_contest.html頁面
-    elif choice == 'B':
-        return contest(url_for('join_contest'))  # 跳到create_contest.html頁面
-
-@app.route('/join_contest.html')
-def join_contest():
-    return render_template('join_contest.html')  # 返回join_contest.html頁面的内容
-
-@app.route('/create_contest.html')
-def create_contest():
-    return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
+ 
 
 #-------------------------
 # 在主程式註冊各個服務
@@ -307,6 +323,7 @@ def create_contest():
 app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
+app.register_blueprint(contest_bp, url_prefix='/contest') 
 login_manager.init_app(app)  
 
 #-------------------------
