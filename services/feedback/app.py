@@ -3,14 +3,11 @@ from flask import request, render_template,redirect
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
-import getpass
 
 from utils import db
 
 # 產生反饋服務藍圖
 feedback_bp = Blueprint('feedback_bp', __name__)
-
-getpass.getuser()
 
 @feedback_bp.route('/feedback/form')
 def feedback_create_form():
