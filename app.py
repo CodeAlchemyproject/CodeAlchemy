@@ -298,7 +298,7 @@ def verify_forget_password():
 #登出 
 @app.route('/logout')
 def logout():
-    # session.clear()
+    session.clear()
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
