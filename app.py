@@ -14,7 +14,6 @@ from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
 from authlib.integrations.flask_client import OAuth
-from authlib.jose import jwt
 
 #-----------------------
 # 匯入各個服務藍圖
@@ -31,22 +30,20 @@ from utils import db,common
 # 產生主程式, 加入主畫面
 #-------------------------
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
 # google登入
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
     client_id='',
     client_secret='',
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-    authorize_params=None,
-    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_url= "https://www.googleapis.com/oauth2/v4/token",
     access_token_params=None,
-    refresh_token_url=None,
-    refresh_token_params=None,
-    redirect_uri='http://127.0.0.1/google-callback',
-    client_kwargs={'scope': 'openid profile email'},
-)
+    authorize_url= "https://accounts.google.com/o/oauth2/v2/auth",
+    authorize_params=None,
+    api_base_url= "https://www.googleapis.com/oauth2/v3/",
+    client_kwargs= {"scope": "openid email profile"},
+    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
@@ -162,9 +159,10 @@ def login_google():
 @app.route('/google-callback')
 def authorize():
     token = google.authorize_access_token()
-    user_info = google.parse_id_token(token)
+    session['token'] = token
+    print(session)
     # 在這裡處理使用者資訊，例如驗證、註冊等等
-    return 'Hello, {}!'.format(user_info['name'])
+    return redirect('/')
 
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
