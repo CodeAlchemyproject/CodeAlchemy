@@ -1,5 +1,5 @@
 # 匯入模組
-from flask import request, render_template,redirect
+from flask import request, render_template,redirect,session
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
@@ -9,16 +9,19 @@ from utils import db
 # 產生反饋服務藍圖
 feedback_bp = Blueprint('feedback_bp', __name__)
 
+#新增反饋表單
 @feedback_bp.route('/create/form')
 #@login_required
 def feedback_create_form():
     return render_template('feedback_create_form.html') 
-#送出反饋
+
+#新增反饋
 @feedback_bp.route('/create', methods=['POST'])
 #@login_required
 def submit_feedback():
     feedback_content = request.form['feedback_content']
-    user_id = request.form.get('user_id')
+    #user_id = request.form.get('user_id')
+    user_id = session['User_id']
     if feedback_content:
         #取得資料庫連線 
         connection = db.connection() 
@@ -40,7 +43,7 @@ def submit_feedback():
         # 渲染失敗畫面
         return render_template('create_fail.html')
     
-#回饋紀錄
+#反饋紀錄
 @feedback_bp.route('/list')
 @login_required
 def customer_list(): 
