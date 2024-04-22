@@ -1,36 +1,31 @@
-#----------------   -------
-# 匯入模組
-#-----------------------
+# 引入模組
 import os
-import threading
-from flask import Flask, json,render_template,session,request,redirect,make_response,jsonify, url_for
-from flask_mail import Mail,Message
-import subprocess
+from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
+from flask_mail import Mail, Message
 import math
 import time
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
-#-----------------------
-# 匯入各個服務藍圖
-#-----------------------
+from webdriver_manager.chrome import ChromeDriverManager
 
+# 匯入各個服務藍圖
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
-from utils import db,common
+from utils import db, common
 
-
-#-------------------------
 # 產生主程式, 加入主畫面
-#-------------------------
 app = Flask(__name__)
 
-#加密(登入/登出)
+# 在應用程序的外部初始化ChromeDriverManager
+chrome_driver_path = ChromeDriverManager().install()
+
+# 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
 
@@ -92,7 +87,7 @@ def problem_submit():
         'text/x-csrc': '.c',
         'text/x-c++src': '.cpp'
     }
-
+    
     if problem_id.split('-')[0]=="ZJ":
        problem_id=problem_id.split('-')[1]
     
@@ -106,7 +101,7 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    process_account(language)
+    process_account(language, chrome_driver_path)
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
