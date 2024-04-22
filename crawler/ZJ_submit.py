@@ -134,13 +134,14 @@ def process_account(language):
             print(csv_data)
             csv_data = csv_data.encode('big5').decode('utf-8')
             # 寫入 CSV 文件
-            with open('result.csv', 'a') as f:
-                f.write(csv_data.rstrip('\r\n') + '\n')  # 添加換行符
+            with open('result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+                f.write(csv_data)  # 直接寫入CSV數據
+                f.write('\n')  # 添加換行符
 
-    # # 刪除source資料夾下的所有檔案
-    # folder_path = './source'
-    # for file_name in os.listdir(folder_path):
-    #     file_path = os.path.join(folder_path, file_name)
-    #     os.remove(file_path)
+    # 刪除source資料夾下的所有檔案
+    folder_path = './source'
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        os.remove(file_path)
 
     driver.quit()
