@@ -27,24 +27,24 @@ def process_account(language):
     chrome_options.add_experimental_option('prefs', prefs)
     chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     chrome_options.add_extension('./crawler/reCAPTCHA_extension.crx')
-    chrome_options.add_extension('./crawler/vpn_extension.crx')
+    #chrome_options.add_extension('./crawler/vpn_extension.crx')
     #隱藏『Chrome正在受到自動軟體的控制』這項資訊
     chrome_options.add_argument("disable-infobars")  
     driver = webdriver.Chrome(service=s, options=chrome_options)
     driver.maximize_window()
     wait_max = 10
 
-    #啟動擴充套件連上VPN
-    #連結套件的html位置
-    driver.get("chrome-extension://bihmplhobchoageeokmgbdihknkjbknd/panel/index.html")
-    sleep(2)
-    #找到點擊的位置並且點擊
-    btn_connect = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "ConnectionButton")))
-    btn_connect.click()
-    sleep(2)
-    # 選擇要切換的視窗根據索引號或視窗標題來選擇
-    all_windows = driver.window_handles
-    driver.switch_to.window(all_windows[0])
+    # #啟動擴充套件連上VPN
+    # #連結套件的html位置
+    # driver.get("chrome-extension://bihmplhobchoageeokmgbdihknkjbknd/panel/index.html")
+    # sleep(2)
+    # #找到點擊的位置並且點擊
+    # btn_connect = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "ConnectionButton")))
+    # btn_connect.click()
+    # sleep(2)
+    # # 選擇要切換的視窗根據索引號或視窗標題來選擇
+    # all_windows = driver.window_handles
+    # driver.switch_to.window(all_windows[0])
     # 讀取所有檔案
     submit_program_dict = dict()
     py_files = glob.glob(f'./source/*.*')
@@ -132,7 +132,6 @@ def process_account(language):
             # 轉換 DataFrame 為字串
             csv_data = df.to_csv(index=False, header=False)  # 不寫入列名
             print(csv_data)
-            csv_data = csv_data.encode('big5').decode('utf-8')
             # 寫入 CSV 文件
             with open('result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
                 f.write(csv_data)  # 直接寫入CSV數據
