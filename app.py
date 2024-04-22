@@ -21,6 +21,7 @@ from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
+from services.feedback.app import feedback_bp
 from utils import db,common
 
 
@@ -293,6 +294,7 @@ app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
+app.register_blueprint(feedback_bp, url_prefix='/feedback') 
 login_manager.init_app(app)  
 
 #-------------------------
