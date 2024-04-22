@@ -151,12 +151,14 @@ def login_password():
         if check_password_hash(db.get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
+            session['User_id']=user_data[0][0]
             # 如果使用者有勾記住我
             if Rememberme==1:
                 resp = make_response(redirect('/'))
                 # cookie效期30天
                 resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
+                resp.set_cookie('user_id',user_data[0][0],max_age=60*60*24*30)
                 return resp
             else:
                 return redirect('/')
