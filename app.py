@@ -15,6 +15,8 @@ import pandas as pd
 from crawler.ZJ_submit import process_account
 # google登入
 from authlib.integrations.flask_client import OAuth
+# google憑證金鑰
+from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 
 #-----------------------
 # 匯入各個服務藍圖
@@ -36,18 +38,13 @@ app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id='',
-    client_secret='',
-    access_token_url= "https://www.googleapis.com/oauth2/v4/token",
-    access_token_params=None,
-    authorize_url= "https://accounts.google.com/o/oauth2/v2/auth",
-    authorize_params=None,
-    api_base_url= "https://www.googleapis.com/oauth2/v3/",
+    client_id=GOOGLE_CELENT_ID,
+    client_secret=GOOGLE_CELENT_SERRET,
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
+
 #加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
-
 
 #分頁功能
 def paginate(data,page, per_page):
