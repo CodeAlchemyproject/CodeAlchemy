@@ -30,7 +30,15 @@ from utils import db,common
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
-
+app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
+# google登入
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=GOOGLE_CELENT_ID,
+    client_secret=GOOGLE_CELENT_SERRET,
+    client_kwargs= {"scope": "openid email profile"},
+    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 # 在應用程序的外部初始化ChromeDriverManager
 chrome_driver_path = ChromeDriverManager().install()
 
