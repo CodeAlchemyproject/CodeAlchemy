@@ -1,36 +1,49 @@
-#----------------   -------
-# 匯入模組
-#-----------------------
+# 引入模組
 import os
-import threading
-from flask import Flask, json,render_template,session,request,redirect,make_response,jsonify, url_for
-from flask_mail import Mail,Message
-import subprocess
+from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
+from flask_mail import Mail, Message
 import math
 import time
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
-#-----------------------
-# 匯入各個服務藍圖
-#-----------------------
+# google登入
+from authlib.integrations.flask_client import OAuth
+# google憑證金鑰
+from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 
+#-----------------------
+from webdriver_manager.chrome import ChromeDriverManager
+
+# 匯入各個服務藍圖
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
+from services.contest.app import contest_bp
+from services.feedback.app import feedback_bp
+from utils import db, common
+from services.contest.app import contest_bp
 from utils import db,common
 
 
-#-------------------------
 # 產生主程式, 加入主畫面
-#-------------------------
 app = Flask(__name__)
+app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
+# google登入
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=GOOGLE_CELENT_ID,
+    client_secret=GOOGLE_CELENT_SERRET,
+    client_kwargs= {"scope": "openid email profile"},
+    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
+# 在應用程序的外部初始化ChromeDriverManager
+#chrome_driver_path = ChromeDriverManager().install()
 
-#加密(登入/登出)
+# 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
-
 
 #分頁功能
 def paginate(data,page, per_page):
@@ -90,7 +103,7 @@ def problem_submit():
         'text/x-csrc': '.c',
         'text/x-c++src': '.cpp'
     }
-
+    
     if problem_id.split('-')[0]=="ZJ":
        problem_id=problem_id.split('-')[1]
     
@@ -104,9 +117,7 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-
-    time.sleep(100)
-
+    process_account(language, chrome_driver_path)
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
@@ -136,6 +147,31 @@ def login():
             return redirect('/register')
     else:
         return render_template('./login.html')
+# google 登入
+@app.route('/login_google')
+def login_google():
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/google-callback')
+def authorize():
+    token = google.authorize_access_token()
+    # 使用获取的访问令牌来获取用户的信息
+    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    Email = user_info['email']
+    sql_user_command=f"SELECT * FROM user where email='{Email}'"
+    user_data=db.get_data(sql_user_command)
+    # 如果有註冊過
+    if len(user_data) == 1:
+        # 將Email存入session
+        session['Email'] = Email
+        session['logged_in']=True
+        session['User_name']=user_data[0][1]
+        return redirect('/')
+    # 在這裡處理使用者資訊，例如驗證、註冊等等
+    else:
+        return redirect('/register')
+
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
 def login_password():
@@ -156,12 +192,14 @@ def login_password():
         if check_password_hash(db.get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
+            session['User_id']=user_data[0][0]
             # 如果使用者有勾記住我
             if Rememberme==1:
                 resp = make_response(redirect('/'))
                 # cookie效期30天
                 resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
+                resp.set_cookie('user_id',str(user_data[0][0]),max_age=60*60*24*30)
                 return resp
             else:
                 return redirect('/')
@@ -268,7 +306,7 @@ def verify_forget_password():
 #登出 
 @app.route('/logout')
 def logout():
-    # session.clear()
+    session.clear()
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
@@ -285,23 +323,8 @@ def user_data():
     img=data[0][4]
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
-
-#懸浮視窗按鈕處理
-@app.route('/contest', methods=['POST'])
-def contest():
-    choice = request.form['choice']
-    if choice == 'A':
-        return contest(url_for('create_contest'))  # 跳到join_contest.html頁面
-    elif choice == 'B':
-        return contest(url_for('join_contest'))  # 跳到create_contest.html頁面
-
-@app.route('/join_contest.html')
-def join_contest():
-    return render_template('join_contest.html')  # 返回join_contest.html頁面的内容
-
-@app.route('/create_contest.html')
-def create_contest():
-    return render_template('create_contest.html')  # 返回create_contest.html頁面的内容
+ 
+ 
 
 #-------------------------
 # 在主程式註冊各個服務
@@ -309,6 +332,8 @@ def create_contest():
 app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
+app.register_blueprint(contest_bp, url_prefix='/contest') 
+app.register_blueprint(feedback_bp, url_prefix='/feedback') 
 login_manager.init_app(app)  
 
 #-------------------------
