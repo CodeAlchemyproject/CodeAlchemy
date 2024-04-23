@@ -1,62 +1,64 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1D4D9F; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-        <img src="/static/imgs/icon.svg" alt="" width="45" height="auto" class="d-inline-block align-text-top">
-        <b class="code-font">CodeAlchemy</b>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">題目</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="#" >排行榜</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+<nav class="navbar navbar-expand-lg navbar-dark"
+  style="background-color: #1D4D9F; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img src="/static/imgs/icon.svg" alt="" width="45" height="auto" class="d-inline-block align-text-top">
+      <b class="code-font">CodeAlchemy</b>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">題目</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">排行榜</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+            style="color: white;">
             競賽
-            </a>
-            <ul class="dropdown-menu">          
-              <li><a class="dropdown-item" href="/contest/create/form">創建比賽</a></li>
-              <li><a class="dropdown-item" href="/contest/join/form">加入比賽</a></li>                
-            </ul>
-          </li>
-          
-        </ul>
-        {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
-          <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button"
-                 data-bs-toggle="dropdown" aria-expanded="false">
-                {{session['User_name'] or request.cookies.get('user_name')}}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink" style="max-width: 200px;">  <li><a class="dropdown-item" href="./user_data">個人資料</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="/feedback/create/form">意見反饋</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="/logout">登出</a></li>
-              </ul>
-            </li>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/contest/create/form">創建比賽</a></li>
+            <li><a class="dropdown-item" href="/contest/join/form">加入比賽</a></li>
           </ul>
-        {% else %}
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/login">Login</a>
-            </li>
-            <li class="nav-item">
-              <a type="button" class="btn btn-warning">Sign-up</a>
-            </li>
-          </ul>
-        {% endif %}
-      </div>
-    </div>
-  </nav>
+        </li>
 
+      </ul>
+      {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+            style="color: white;">
+            {{session['User_name'] or request.cookies.get('user_name')}}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="./user_data">個人資料</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/feedback/create/form">意見反饋</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/logout">登出</a></li>
+          </ul>
+        </li>
+      </ul>
+      {% else %}
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a type="button" class="btn btn-warning">Sign-up</a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
