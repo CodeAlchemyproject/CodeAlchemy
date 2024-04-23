@@ -40,7 +40,7 @@ google = oauth.register(
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 # 在應用程序的外部初始化ChromeDriverManager
-chrome_driver_path = ChromeDriverManager().install()
+#chrome_driver_path = ChromeDriverManager().install()
 
 # 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
