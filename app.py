@@ -104,7 +104,9 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    process_account(language)
+
+    time.sleep(100)
+
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
