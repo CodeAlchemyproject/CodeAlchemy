@@ -199,7 +199,7 @@ def login_password():
                 # cookie效期30天
                 resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
-                resp.set_cookie('user_id',user_data[0][0],max_age=60*60*24*30)
+                resp.set_cookie('user_id',str(user_data[0][0]),max_age=60*60*24*30)
                 return resp
             else:
                 return redirect('/')
