@@ -143,7 +143,7 @@ def monitor_source_folder():
 if __name__ == "__main__":
     print("================== start =============")
     # crawler setting
-     # 禁用瀏覽器彈窗避免預設路徑載入失敗
+    # 禁用瀏覽器彈窗避免預設路徑載入失敗
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     s = Service(ChromeDriverManager().install())
     chrome_options = webdriver.ChromeOptions()

@@ -13,6 +13,7 @@ from crawler.ZJ_submit import process_account
 from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
 from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
+from threading import Thread
 
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
@@ -39,9 +40,11 @@ google = oauth.register(
     client_secret=GOOGLE_CELENT_SERRET,
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
-# 在應用程序的外部初始化ChromeDriverManager
-#chrome_driver_path = ChromeDriverManager().install()
 
+
+# 定義一個函式，用於執行 ZJ_submit.py
+def run_crawler():
+    os.system("./crawler/ZJ_submit.py")
 # 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
@@ -117,7 +120,6 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    process_account(language, chrome_driver_path)
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
@@ -323,8 +325,15 @@ def user_data():
     img=data[0][4]
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
- 
- 
+# 在 Flask 應用程式啟動時啟動執行序
+def start_crawler_thread():
+    crawler_thread = Thread(target=run_crawler)
+    crawler_thread.start() 
+# 在 Flask 應用程式中加入一個路由，用於手動啟動爬蟲任務
+@app.route('/start_crawler')
+def start_crawler():
+    start_crawler_thread()
+    return 'Crawler started successfully!'
 
 #-------------------------
 # 在主程式註冊各個服務
@@ -340,6 +349,8 @@ login_manager.init_app(app)
 # 啟動主程式
 #------------------------
 if __name__ == '__main__':
+    start_crawler_thread()
+
     app.run(
         host='0.0.0.0',
         port=80,
