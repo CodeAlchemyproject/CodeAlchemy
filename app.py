@@ -155,23 +155,32 @@ def login_google():
 
 @app.route('/google-callback')
 def authorize():
-    token = google.authorize_access_token()
     # 使用获取的访问令牌来获取用户的信息
+    token = google.authorize_access_token()
     user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    print(user_info)
+    Goole_ID=user_info['id']
     Email = user_info['email']
     sql_user_command=f"SELECT * FROM user where email='{Email}'"
     user_data=db.get_data(sql_user_command)
-    # 如果有註冊過
+    # 如果有用email註冊過
     if len(user_data) == 1:
-        # 將Email存入session
-        session['Email'] = Email
-        session['logged_in']=True
-        session['User_name']=user_data[0][1]
-        return redirect('/')
+        # 有連結過google帳號
+        print(user_data[0][3])
+        if user_data[0][3]==Goole_ID:
+            # 將Email存入session
+            session['Email'] = Email
+            session['logged_in']=True
+            session['User_name']=user_data[0][1]
+            return redirect('/')
+        else:
+            return redirect('/connect_google')
     # 在這裡處理使用者資訊，例如驗證、註冊等等
     else:
         return redirect('/register')
-
+@app.route('/connect_google')
+def connect_google():
+    return render_template('./connect_google.html')
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
 def login_password():
@@ -185,7 +194,7 @@ def login_password():
             Rememberme=1
         except Exception:
             Rememberme=0
-        # 取的使用者資料
+        # 取得使用者資料
         sql_common=f"SELECT * FROM user where email='{Email}'"
         user_data=db.get_data(sql_common)
         # 登入成功
