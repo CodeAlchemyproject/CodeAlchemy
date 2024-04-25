@@ -25,9 +25,6 @@ from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from utils import db, common
-from services.contest.app import contest_bp
-from utils import db,common
-
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
