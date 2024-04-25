@@ -44,9 +44,9 @@ def submit_feedback():
         return render_template('create_fail.html')
     
 #反饋紀錄
-@feedback_bp.route('/list')
-@login_required
-def customer_list(): 
+@feedback_bp.route('/feedback_history')
+#@login_required
+def feedback_history(): 
     #取得資料庫連線 
     connection = db.connection() 
     
@@ -62,11 +62,4 @@ def customer_list():
     connection.close()  
         
     #渲染網頁
-    if data:
-        return render_template('feedback_list.html', data=data) 
-    else:
-        return render_template('not_found.html')
-    
-    #取出資料
-    data = cursor.fetchall()    
-    print(data)
+    return render_template('feedback_history.html', data=data) 

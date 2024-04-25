@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回饋紀錄</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>回饋紀錄</h1>
+    {% if data %}
+        <table>
+            <tr>
+                <th>回饋內容</th>
+                <th>提交時間</th>
+                <th>回覆</th>
+            </tr>
+            {% for feedback in data %}
+                <tr>
+                    <td>{{ feedback[3] }}</td>
+                    <td>{{ feedback[4] }}</td>
+                    <td>{{ feedback[5] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>沒有回饋紀錄</p>
+    {% endif %}
+</body>
+</html>
