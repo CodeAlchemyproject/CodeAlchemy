@@ -24,26 +24,24 @@
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
-                        <h2 class="card-title text-center mb-5">登入或註冊</h2>
-                        <form action="/login" method="POST">
+                        <h2 class="card-title text-center mb-5">連結到Google帳號</h2>
+                        <form action="/connect_google" method="POST">
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="floatingInput"
-                                    placeholder="name@example.com" name="Email" required>
-                                <label for="floatingInput">Email address</label>
+                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                                    name="Password" required>
+                                <label for="floatingPassword">Password</label>
+                                <div class="invalid-feedback">
+                                    密碼錯誤
+                                </div>
+                                {% if result=='密碼錯誤' %}
+                                <a href="./forget_password" class="link-primary">忘記密碼？</a>
+                                {% endif %}
                             </div>
                             <div class="d-grid">
                                 <button class="btn btn-primary btn-login text-uppercase fw-bold"
                                     type="submit">送出</button>
                             </div>
                         </form>
-                        <hr class="my-4">
-                        <div class="d-grid mb-2">
-                            <a href="/login_google" class="btn btn-light">
-                                <!-- 嵌入 Google 圖示 SVG -->
-                                <img src="../static/imgs/google-icon-logo.svg" alt="Google 圖示" style="width: 5%;">
-                                使用Google登入
-                              </a>                         
-                        </div>
                     </div>
                 </div>
             </div>

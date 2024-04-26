@@ -1,37 +1,49 @@
-#----------------   -------
-# 匯入模組
-#-----------------------
+# 引入模組
 import os
-import threading
-from flask import Flask, json,render_template,session,request,redirect,make_response,jsonify, url_for
-from flask_mail import Mail,Message
-import subprocess
+from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
+from flask_mail import Mail, Message
 import math
 import time
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
-#-----------------------
-# 匯入各個服務藍圖
-#-----------------------
+# google登入
+from authlib.integrations.flask_client import OAuth
+# google憑證金鑰
+from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
+from threading import Thread
 
+#-----------------------
+from webdriver_manager.chrome import ChromeDriverManager
+
+# 匯入各個服務藍圖
 from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
-from utils import db,common
+from services.feedback.app import feedback_bp
+from utils import db, common
 
-
-#-------------------------
 # 產生主程式, 加入主畫面
-#-------------------------
 app = Flask(__name__)
+app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
+# google登入
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=GOOGLE_CELENT_ID,
+    client_secret=GOOGLE_CELENT_SERRET,
+    client_kwargs= {"scope": "openid email profile"},
+    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 
-#加密(登入/登出)
+
+# 定義一個函式，用於執行 ZJ_submit.py
+def run_crawler():
+    os.system("./crawler/ZJ_submit.py")
+# 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
-
 
 #分頁功能
 def paginate(data,page, per_page):
@@ -91,7 +103,7 @@ def problem_submit():
         'text/x-csrc': '.c',
         'text/x-c++src': '.cpp'
     }
-
+    
     if problem_id.split('-')[0]=="ZJ":
        problem_id=problem_id.split('-')[1]
     
@@ -105,7 +117,6 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    process_account(language)
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
@@ -135,6 +146,56 @@ def login():
             return redirect('/register')
     else:
         return render_template('./login.html')
+# google 登入
+@app.route('/login_google')
+def login_google():
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/google-callback')
+def authorize():
+    # 使用获取的访问令牌来获取用户的信息
+    token = google.authorize_access_token()
+    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    print(user_info)
+    Goole_ID=user_info['id']
+    Email = user_info['email']
+    sql_user_command=f"SELECT * FROM user where email='{Email}'"
+    user_data=db.get_data(sql_user_command)
+    # 如果有用email註冊過
+    if len(user_data) == 1:
+        # 將使用者資料存入session
+        session['Email'] = Email
+        session['logged_in']=True
+        session['User_name']=user_data[0][1]
+        session['google_id']=Goole_ID
+        if user_data[0][3]==Goole_ID:
+            return redirect('/')
+        else:
+            return redirect('/connect_google')
+    # 在這裡處理使用者資訊，例如驗證、註冊等等
+    else:
+        return redirect('/register')
+@app.route('/connect_google',methods=['GET','POST'])
+def connect_google():
+    google_id=session.get('google_id')
+    Email = session.get('Email')
+    if request.method=="POST":
+        Password=request.form['Password']
+        sql_common=f"SELECT * FROM user where email='{Email}'"
+        user_data=db.get_data(sql_common)
+        # 認證成功
+        if check_password_hash(db.get_data(sql_common)[0][2],Password):
+            session['logged_in']=True
+            session['User_name']=user_data[0][1]
+            session['User_id']=user_data[0][0]
+            sql_user_command=f"UPDATE user SET google_id ='{google_id}' where email='{Email}'"
+            db.edit_data(sql_user_command)
+            return redirect('/')
+        else:
+            result='密碼錯誤'
+            return render_template('/connect_google.html',result=result)
+    return render_template('./connect_google.html')
 # 輸入密碼
 @app.route('/login_password',methods=['GET','POST'])
 def login_password():
@@ -148,19 +209,21 @@ def login_password():
             Rememberme=1
         except Exception:
             Rememberme=0
-        # 取的使用者資料
+        # 取得使用者資料
         sql_common=f"SELECT * FROM user where email='{Email}'"
         user_data=db.get_data(sql_common)
         # 登入成功
         if check_password_hash(db.get_data(sql_common)[0][2],Password):
             session['logged_in']=True
             session['User_name']=user_data[0][1]
+            session['User_id']=user_data[0][0]
             # 如果使用者有勾記住我
             if Rememberme==1:
                 resp = make_response(redirect('/'))
                 # cookie效期30天
                 resp.set_cookie('logged_in','True',max_age=60*60*24*30)
                 resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
+                resp.set_cookie('user_id',str(user_data[0][0]),max_age=60*60*24*30)
                 return resp
             else:
                 return redirect('/')
@@ -267,7 +330,7 @@ def verify_forget_password():
 #登出 
 @app.route('/logout')
 def logout():
-    # session.clear()
+    session.clear()
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
@@ -284,7 +347,15 @@ def user_data():
     img=data[0][4]
     register_time=data[0][5]
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
- 
+# 在 Flask 應用程式啟動時啟動執行序
+def start_crawler_thread():
+    crawler_thread = Thread(target=run_crawler)
+    crawler_thread.start() 
+# 在 Flask 應用程式中加入一個路由，用於手動啟動爬蟲任務
+@app.route('/start_crawler')
+def start_crawler():
+    start_crawler_thread()
+    return 'Crawler started successfully!'
 
 #-------------------------
 # 在主程式註冊各個服務
@@ -293,12 +364,15 @@ app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
+app.register_blueprint(feedback_bp, url_prefix='/feedback') 
 login_manager.init_app(app)  
 
 #-------------------------
 # 啟動主程式
 #------------------------
 if __name__ == '__main__':
+    start_crawler_thread()
+
     app.run(
         host='0.0.0.0',
         port=80,
