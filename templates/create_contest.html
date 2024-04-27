@@ -74,6 +74,12 @@
             cursor: pointer;
             float: right;
         }
+        h1 {
+            margin-top: 10px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
 
     </style>
 </head>
@@ -81,6 +87,7 @@
     {% include "nav_bar.html" %}
     <div class="createform">
         <form id="competitionForm" action="/contest/create" method="post">
+            <h1><b>Create Competition</b></h1>
             <div class="form">
                 <span class="name">Competition Name:</span>
                 <span class="value">
