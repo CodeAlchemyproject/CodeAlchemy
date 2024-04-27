@@ -12,6 +12,7 @@ from crawler.ZJ_submit import process_account
 #驗證信模組
 from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
+from esn import esn
 # google登入
 from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
