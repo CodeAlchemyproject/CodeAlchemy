@@ -42,9 +42,7 @@ google = oauth.register(
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 
 
-# 定義一個函式，用於執行 ZJ_submit.py
-def run_crawler():
-    os.system("./crawler/ZJ_submit.py")
+
 # 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
 
@@ -107,9 +105,6 @@ def problem_submit():
         'text/x-c++src': '.cpp'
     }
     
-    if problem_id.split('-')[0]=="ZJ":
-       problem_id=problem_id.split('-')[1]
-    
     # 構建文件路徑
     file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
 
@@ -126,9 +121,14 @@ def problem_submit():
 
         # 獲取最後一行
         last_row = df.tail(1)
-
-        print(last_row)
-    return jsonify({'message': data})
+        score=last_row.split(',')
+        print(score)
+        problem_id = request.args.get('problem_id',type=str)
+        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        data=db.get_data(sql_problem_command)
+        example_inputs = data[0][5].split('|||')
+        example_outputs = data[0][6].split('|||')
+        return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
 
 
 # 查詢電子郵件有沒有註冊過
@@ -327,13 +327,8 @@ def user_data():
     return render_template('./user_data.html',User_name=User_name,Email=Email,img=img,register_time=register_time)
 # 在 Flask 應用程式啟動時啟動執行序
 def start_crawler_thread():
-    crawler_thread = Thread(target=run_crawler)
+    crawler_thread = Thread(target=os.system, args=("python ./crawler/ZJ_submit.py",))
     crawler_thread.start() 
-# 在 Flask 應用程式中加入一個路由，用於手動啟動爬蟲任務
-@app.route('/start_crawler')
-def start_crawler():
-    start_crawler_thread()
-    return 'Crawler started successfully!'
 
 #-------------------------
 # 在主程式註冊各個服務
@@ -348,10 +343,9 @@ login_manager.init_app(app)
 #-------------------------
 # 啟動主程式
 #------------------------
+# 啟動 Flask 應用程式
 if __name__ == '__main__':
+    # 在 Flask 應用程式啟動時，同時啟動爬蟲程式的執行緒
     start_crawler_thread()
-
-    app.run(
-        host='0.0.0.0',
-        port=80,
-        debug=True)
+    # 啟動 Flask 應用程式
+    app.run(host='0.0.0.0', port=80, debug=True)
