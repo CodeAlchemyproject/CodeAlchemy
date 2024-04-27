@@ -12,7 +12,7 @@ from crawler.ZJ_submit import process_account
 # google登入
 from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
-from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
+from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET,MAIL_PASSWORD,MAIL_USERNAME
 from threading import Thread
 
 #-----------------------
@@ -53,8 +53,8 @@ def paginate(data,page, per_page):
 # 傳送驗證電子郵件
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'codealchemyproject@gmail.com'
-app.config['MAIL_PASSWORD'] = 'zsog pref sqoh xagd'
+app.config['MAIL_USERNAME'] = MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
