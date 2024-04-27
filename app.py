@@ -1,7 +1,7 @@
 # 引入模組
 import os
 from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
-from flask_mail import Mail, Message
+
 import math
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,10 +9,13 @@ import uuid
 from queue import Queue
 import pandas as pd
 from crawler.ZJ_submit import process_account
+#驗證信模組
+from flask_mail import Mail, Message
+from config import MAIL_PASSWORD,MAIL_USERNAME
 # google登入
 from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
-from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET,MAIL_PASSWORD,MAIL_USERNAME
+from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 from threading import Thread
 
 #-----------------------
