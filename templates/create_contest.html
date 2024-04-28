@@ -64,16 +64,7 @@
         .container {
             position: relative;
         }
-        .add-button {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #ccc;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            float: right;
-        }
+
         h1 {
             margin-top: 10px;
             text-align: center;
@@ -81,6 +72,81 @@
             padding-bottom: 10px;
         }
 
+
+        /*add question css start*/
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="button"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        .question {
+            margin-bottom: 10px;
+        }
+
+        .question input[type="text"] {
+            width: calc(100% - 100px);
+        }
+
+        .question input[type="button"] {
+            margin-left: 10px;
+        }
+
+        /* 模擬懸浮視窗的樣式 */
+        .modal {
+            display: none; /* 預設隱藏 */
+            position: fixed; /* 使視窗固定在螢幕上 */
+            z-index: 1; /* 確保視窗位於其他元素之上 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 添加捲動條以便適應視窗大小 */
+            background-color: rgb(0,0,0); /* 使用深灰色作為背景 */
+            background-color: rgba(0,0,0,0.4); /* 添加透明度 */
+            padding-top: 60px; /* 上方空間，以免標題區域被遮擋 */
+        }
+
+        /* 模擬懸浮視窗的內容 */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 居中顯示 */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* 視窗寬度 */
+        }
+
+        /* 關閉按鈕樣式 */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -106,14 +172,14 @@
                         <option value="private">private</option>
                     </select>
                 </span>
-
-                <span class="name">Chose topic:</span>
                 
-                    <span class="value">
-                        <input type="text" class="form-control" id="topic" placeholder="description" name="topic" required>
-                    </span>
-                    <!--<button class="add-button" id="myBtn">+</button>-->
-                
+                <span class="name">Add question:</span>
+                <div>                
+                    <div id="questionContainer">
+                    <!-- 這裡會動態添加所選擇的題目 -->
+                    </div>
+                    <input type="button" value="Add Question" onclick="openQuestionModal()"></span>
+                </div>
                 
                
                 <span class="name">languages:</span>
@@ -145,8 +211,81 @@
                 </span>
             </div>
         </form>
-    </div>      
+    </div>    
+    
+    
+    <!-- 懸浮視窗 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeQuestionModal()">&times;</span>
+            <h3>Select a Question</h3>
+            <ul id="questionList">
+                <!-- 這裡會顯示來自資料庫的題目 -->
+                <li>Question 1</li>
+                <li>Question 2</li>
+                <li>Question 3</li>
+                <!-- 可以使用JavaScript動態生成或填充題目 -->
+            </ul>
+        </div>
+    </div>
 
+    <script>
+        // 假設這是從資料庫獲取的題目列表
+        var questionListFromDatabase = ["Question 1", "Question 2", "Question 3", "Question 4"];
+    
+        // 開啟懸浮視窗
+        function openQuestionModal() {
+            var modal = document.getElementById("myModal");
+            var questionList = document.getElementById("questionList");
+            questionList.innerHTML = ""; // 清空題目列表
+    
+            // 將從資料庫獲取的題目列表添加到懸浮視窗中
+            questionListFromDatabase.forEach(function(question) {
+                var li = document.createElement("li");
+                li.textContent = question;
+                li.onclick = function() {
+                    // 點擊選擇題目後將其添加到表格中
+                    addSelectedQuestion(question);
+                    closeQuestionModal();
+                };
+                questionList.appendChild(li);
+            });
+    
+            // 顯示懸浮視窗
+            modal.style.display = "block";
+        }
+    
+        // 關閉懸浮視窗
+        function closeQuestionModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+    
+        // 將選擇的題目添加到表格中
+        function addSelectedQuestion(question) {
+            var questionContainer = document.getElementById('questionContainer');
+            var newDiv = document.createElement('div');
+            newDiv.classList.add('question');
+    
+            var newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'selectedQuestions[]');
+            newInput.setAttribute('value', question);
+            newInput.readOnly = true; // 使 input 元素為只讀
+    
+            var removeButton = document.createElement('input');
+            removeButton.setAttribute('type', 'button');
+            removeButton.setAttribute('value', 'Remove');
+            removeButton.onclick = function() {
+                questionContainer.removeChild(newDiv);
+            };
+    
+            newDiv.appendChild(newInput);
+            newDiv.appendChild(removeButton);
+    
+            questionContainer.appendChild(newDiv);
+        }
+    </script>
 
 </body>
 </html>

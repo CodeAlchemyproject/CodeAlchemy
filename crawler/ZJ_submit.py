@@ -96,6 +96,7 @@ def monitor_source_folder():
         if files:
             print("New file detected:", files)
             for file_name in files:
+                
                 # 取得檔案的副檔名
                 _, extension = os.path.splitext(file_name)
                 # 將副檔名轉換為小寫
@@ -115,8 +116,8 @@ def monitor_source_folder():
 
                 with open(os.path.join(source_folder, file_name), 'r', encoding='utf-8') as file:
                     content = file.read()
-                    submit_program_dict = {os.path.basename(file_name).split('.')[0]: content}
-
+                    submit_program_dict = {os.path.basename(file_name).replace("ZJ-", "").split('.')[0]: content}
+                
                 # 讀取帳戶資訊
                 with open('./crawler/account.json', 'r') as file:
                     accounts = json.load(file)['account']
@@ -141,7 +142,7 @@ def monitor_source_folder():
         sleep(5)
 
 if __name__ == "__main__":
-    print("================== start =============")
+    print("==================crawler start ========================")
     # crawler setting
     # 禁用瀏覽器彈窗避免預設路徑載入失敗
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
