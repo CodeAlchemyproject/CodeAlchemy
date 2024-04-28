@@ -19,11 +19,11 @@
         }
 
         #competitionForm {
-            width: 400px;
+            width: 800px;
             padding: 20px;
-            background-color: #f9f9f9;
+            margin-top: auto;            
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
         }
 
         label {
@@ -61,19 +61,40 @@
             box-sizing: border-box;
         }
 
-        </style>
+        .container {
+            position: relative;
+        }
+        .add-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #ccc;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            float: right;
+        }
+        h1 {
+            margin-top: 10px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+    </style>
 </head>
 <body>
     {% include "nav_bar.html" %}
     <div class="createform">
         <form id="competitionForm" action="/contest/create" method="post">
+            <h1><b>Create Competition</b></h1>
             <div class="form">
                 <span class="name">Competition Name:</span>
                 <span class="value">
                     <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
                 </span>
 
-                <span class="name">description</span>
+                <span class="name">Description</span>
                 <span class="value">
                     <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
                 </span>
@@ -85,7 +106,16 @@
                         <option value="private">private</option>
                     </select>
                 </span>
+
+                <span class="name">Chose topic:</span>
                 
+                    <span class="value">
+                        <input type="text" class="form-control" id="topic" placeholder="description" name="topic" required>
+                    </span>
+                    <!--<button class="add-button" id="myBtn">+</button>-->
+                
+                
+               
                 <span class="name">languages:</span>
                 <span class="value">
                     <div class="checkbox-row">
@@ -116,6 +146,7 @@
             </div>
         </form>
     </div>      
-  
+
+
 </body>
 </html>
