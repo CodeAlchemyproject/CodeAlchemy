@@ -11,13 +11,11 @@ feedback_bp = Blueprint('feedback_bp', __name__)
 
 #新增反饋表單
 @feedback_bp.route('/create/form')
-#@login_required
 def feedback_create_form():
     return render_template('feedback_create_form.html') 
 
 #新增反饋
 @feedback_bp.route('/create', methods=['POST'])
-#@login_required
 def submit_feedback():
     feedback_content = request.form['feedback_content']
     #user_id = request.form.get('user_id')
@@ -45,7 +43,6 @@ def submit_feedback():
     
 #反饋紀錄
 @feedback_bp.route('/feedback_history')
-#@login_required
 def feedback_history(): 
     #取得資料庫連線 
     connection = db.connection() 
@@ -54,7 +51,8 @@ def feedback_history():
     cursor = connection.cursor()     
 
     #取得傳入參數, 執行sql命令並取回資料  
-    user_id = request.values.get('user_id').strip().upper()
+    #user_id = request.values.get('user_id').strip().upper()
+    user_id = session.get('User_id')
     cursor.execute('SELECT * FROM feedback WHERE user_id=%s', (user_id,))
     data = cursor.fetchone()
 
