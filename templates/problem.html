@@ -137,17 +137,18 @@
                 </div>
                 <!-- codemirror+測試+上傳的js -->
                 <script src="../static/js/codemirro.js"></script>
-                <div class="mt-5 bg-success p-2 text-white round rounded-2" style="display: none;">
-                    <h4>通過</h4>
-                    <h5>Run time:10ms</h5>
-                    <h5>Memory:</h5>
+                {% if status == "通過" %}
+                <div class="mt-5 bg-success p-2 text-white round rounded-2">
+                    <h4>{{ status }}</h4>
+                    <h5>Run time:{{run_time}}</h5>
+                    <h5>Memory:{{memory}}</h5>
                 </div>
-                <div class="mt-5 bg-danger p-2 text-white round rounded-2" style="display: none;">
-                    <h4>錯誤</h4>
-                    <h6>Run time:10ms</h6>
-                    <h6>Memory:</h6>
-                    <h6>錯誤原因:</h6>
-                    <h6></h6>
+                {% elif status == "答案錯誤" %}
+                <div class="mt-5 bg-danger p-2 text-white round rounded-2">
+                    <h4>{{ status }}</h4>
+                    <h6>{{ error_reason }}</h6>
+                </div>
+                {% endif %}
                 </div>
             </div>
         </div>

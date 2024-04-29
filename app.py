@@ -1,14 +1,15 @@
 # 引入模組
 import os
+import re
 from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
-
+import csv
 import math
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from queue import Queue
 import pandas as pd
-from crawler.ZJ_submit import process_account
+from crawler.submit import ZeroJudge_Submit
 #驗證信模組
 from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
@@ -115,21 +116,66 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
+    #ZeroJudge_Submit()
     
-    
-    if type=="test":
-        # 讀取CSV文件
-        df = pd.read_csv('result.csv')
-        # 獲取最後一行
-        last_row = df.tail(1)
-        score=last_row.split(',')
-        print(score)
-        problem_id = request.args.get('problem_id',type=str)
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        data=db.get_data(sql_problem_command)
-        example_inputs = data[0][5].split('|||')
-        example_outputs = data[0][6].split('|||')
-        return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs,score=score)
+    # 開啟 CSV 文件
+    with open('result.csv', 'r' ,encoding='utf-8') as csvfile:
+        # 讀取所有行
+        lines = csvfile.readlines()
+        line = lines[-1]
+        # 印出結果
+        score = line.split(',')[-3]
+        
+        if "MB" in score: 
+            index = score.find("MB")
+            if index != -1:
+                memory = score[:index + 2]
+            index = line.split(',')[-4].find("(")
+            if index != -1:
+                run_time = line.split(',')[-4][index + 1:]  # 不包括 "(" 本身
+            
+            score=line.split(',')[-4][:3][1:]
+            print(memory)
+            print(run_time)
+            print(score)
+        else:
+            score=score[:2]
+        # 印出結果
+        
+
+    # sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    # data=db.get_data(sql_problem_command)
+    # example_inputs = data[0][5].split('|||')
+    # example_outputs = data[0][6].split('|||')
+    # #根據 score 的前兩個字來決定顯示不同的內容
+    # if score.startswith("AC"):
+    #     status = "通過"
+    #     run_time = score.split(',')[0].split('(')[1].strip()  # 提取運行時間
+    #     memory = score.split(',')[1].split(')')[0].strip()  # 提取記憶體使用情況
+    #     return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+    # elif score.startswith("NA"):
+    #     status = "未通過所有測資點"
+    # elif score.startswith("WA"):
+    #     status = "答案錯誤"
+    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
+    # elif score.startswith("TLE"):
+    #     status = "執行超過時間限制"
+    # elif score.startswith("MLE"):
+    #     status = "程序執行超過記憶體限制"
+    # elif score.startswith("OLE"):
+    #     status = "程序輸出檔超過限制"
+    # elif score.startswith("RE"):
+    #     status = "執行時錯誤"
+    # elif score.startswith("RF"):
+    #     status = "使用了被禁止使用的函式"
+    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
+    # elif score.startswith("CE"):
+    #     status = "編譯錯誤"
+    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
+    # elif score.startswith("SE"):
+    #     status = "系統錯誤"
+    return render_template('./problem.html', status='status', error_reason='error_reason')
+        
 
 
 # 查詢電子郵件有沒有註冊過
