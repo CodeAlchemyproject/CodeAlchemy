@@ -115,10 +115,11 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
+    
+    
     if type=="test":
         # 讀取CSV文件
         df = pd.read_csv('result.csv')
-
         # 獲取最後一行
         last_row = df.tail(1)
         score=last_row.split(',')
@@ -128,7 +129,7 @@ def problem_submit():
         data=db.get_data(sql_problem_command)
         example_inputs = data[0][5].split('|||')
         example_outputs = data[0][6].split('|||')
-        return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
+        return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs,score=score)
 
 
 # 查詢電子郵件有沒有註冊過
@@ -372,6 +373,5 @@ login_manager.init_app(app)
 # 啟動 Flask 應用程式
 if __name__ == '__main__':
     # 在 Flask 應用程式啟動時，同時啟動爬蟲程式的執行緒
-    start_crawler_thread()
     # 啟動 Flask 應用程式
     app.run(host='0.0.0.0', port=80, debug=True)
