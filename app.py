@@ -347,10 +347,10 @@ def user_data():
     data=db.get_data(sql_command)
     User_id=data[0][0]
     User_name=data[0][1]
-    Email=data[0][3]
-    img=data[0][4]
-    register_time=data[0][5]
-    return render_template('./user_data.html',User_name=User_name,User_id=User_id,Email=Email,img=img,register_time=register_time)
+    Email=data[0][4]
+    img=data[0][5]
+    register_time=data[0][8]
+    return render_template('./user_data.html',User_id=User_id,User_name=User_name,Email=Email,img=img,register_time=register_time)
 # 在 Flask 應用程式啟動時啟動執行序
 def start_crawler_thread():
     crawler_thread = Thread(target=os.system, args=("python ./crawler/ZJ_submit.py",))
