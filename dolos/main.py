@@ -4,4 +4,4 @@ import os
 os.chdir('dolos')
 
 # 运行命令
-os.system('wsl dolos run -f web student_P.zip --host 192.168.0.1')
+os.system("wsl dolos run -f web student_P.zip --host '0.0.0.0'")
