@@ -46,6 +46,7 @@
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.089) !important;
     cursor: pointer !important;
     background-color: transparent !important;
+    padding: 0 !important;
 }
 
 .leftContainer {
@@ -55,7 +56,7 @@
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px;
+    gap: 8px !important;
 }
 
 .leftContainer .like {
@@ -76,27 +77,28 @@
 }
 
 .likeCount::before {
-    height: 8px !important;
-    width: 8px !important;
-    position: absolute !important;
-    content: "" !important;
-    background-color: rgb(255, 255, 255) !important;
-    transform: rotate(45deg) !important;
-    left: -4px !important;
+    height: 8px;
+    width: 8px;
+    position: absolute;
+    content: "";
+    background-color: rgb(255, 255, 255);
+    transform: rotate(45deg);
+    left: -4px;
 }
 
 .Btn:hover .leftContainer {
-    background-color: rgb(219, 0, 0) !important;
+    background-color: rgb(219, 0, 0);
 }
 
 .Btn:active .leftContainer {
-    background-color: rgb(201, 0, 0) !important;
+    background-color: rgb(201, 0, 0);
 }
 
 .Btn:active .leftContainer svg {
-    transform: scale(1.15) !important;
-    transform-origin: top !important;
+    transform: scale(1.15);
+    transform-origin: top;
 }
+
 
 #overlay {
     display: none;
@@ -105,7 +107,8 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 半透明黑色背景 */
     z-index: 999;
 }
 
@@ -121,7 +124,8 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     width: 90%;
-    max-width: 500px; /* 最大寬度為 500 像素 */
+    max-width: 500px;
+    /* 最大寬度為 500 像素 */
     animation: slideUp 0.5s ease forwards;
 }
 
@@ -130,6 +134,7 @@
         top: 100%;
         opacity: 0;
     }
+
     to {
         top: 50%;
         opacity: 1;
@@ -139,7 +144,8 @@
 .button-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px; /* 按鈕之間的上邊距 */
+    margin-top: 20px;
+    /* 按鈕之間的上邊距 */
 }
 
 button {
