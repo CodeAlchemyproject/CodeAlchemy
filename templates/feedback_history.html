@@ -18,6 +18,7 @@
         table {
             border-collapse: collapse;
             width: 100%;
+            margin-bottom: 20px;
         }
         th, td {
             border: 1px solid #dddddd;
@@ -36,19 +37,18 @@
     {% include "nav_bar.html" %}
     {{data}}
     
-    <h1>回饋紀錄</h1>
-    {% if data %}
+    {% if feedback_history %}
         <table>
             <tr>
                 <th>回饋內容</th>
                 <th>提交時間</th>
-                <th>回覆</th>
+                <!--<th>回覆</th>-->
             </tr>
-            {% for feedback in data %}
+            {% for feedback in feedback_history %}
                 <tr>
                     <td>{{ feedback[3] }}</td>
                     <td>{{ feedback[4] }}</td>
-                    <td>{{ feedback[5] }}</td>
+                    <!--<td>{{ feedback[5] }}</td>-->
                 </tr>
             {% endfor %}
         </table>

@@ -18,8 +18,7 @@ def feedback_create_form():
 @feedback_bp.route('/create', methods=['POST'])
 def submit_feedback():
     feedback_content = request.form['feedback_content']
-    #user_id = request.form.get('user_id')
-    user_id = session['User_id']
+    user_name = session['User_name']
     if feedback_content:
         #取得資料庫連線 
         connection = db.connection() 
@@ -29,10 +28,11 @@ def submit_feedback():
 
         # 將反饋資料存入資料庫
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO feedback (user_id, type, content, created_at) VALUES (%s, %s, %s, %s)",
-                        (user_id, 'user', feedback_content, created_at))
+        cursor.execute("INSERT INTO feedback (user_name, type, content, created_at) VALUES (%s, %s, %s, %s)",
+                        (user_name, 'user', feedback_content, created_at))
         
         #關閉資料庫連線 
+        connection.commit()
         connection.close()
 
         # 渲染成功畫面
@@ -51,13 +51,12 @@ def feedback_history():
     cursor = connection.cursor()     
 
     #取得傳入參數, 執行sql命令並取回資料  
-    #user_id = request.values.get('user_id').strip().upper()
-    user_id = session.get('User_id')
-    cursor.execute('SELECT * FROM feedback WHERE user_id=%s', (user_id,))
-    data = cursor.fetchone()
+    user_name = session.get('User_name')
+    cursor.execute('SELECT * FROM feedback WHERE user_name=%s', (user_name,))
+    feedback_history = cursor.fetchone()
 
     #關閉連線   
     connection.close()  
         
     #渲染網頁
-    return render_template('feedback_history.html', data=data) 
+    return render_template('feedback_history.html', feedback_history=feedback_history) 
