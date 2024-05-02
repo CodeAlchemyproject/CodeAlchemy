@@ -15,7 +15,6 @@ import glob
 import traceback
 
 
-
 def ZeroJudge_Submit():
     # crawler setting
     main_url = 'https://zerojudge.tw/Login'
@@ -23,7 +22,9 @@ def ZeroJudge_Submit():
     prefs = {'profile.default_content_setting_values':{'notifications': 2}}
     
     try:
+        print(1)
         s = Service(ChromeDriverManager().install())
+        print(2)
         chrome_options = webdriver.ChromeOptions()
         #將擴充套件放入至Webdriver的開啟網頁內容
         chrome_options.add_experimental_option('prefs', prefs)
@@ -69,7 +70,7 @@ def ZeroJudge_Submit():
                 language = 'cpp'
             with open(file_name, 'r', encoding='utf-8') as file:
                 content = file.read()
-                submit_program_dict[os.path.basename(file_name).split('.')[0]] = content
+                submit_program_dict = {os.path.basename(file_name).replace("ZJ-", "").split('.')[0]: content}
         # 讀取帳戶資訊
         with open('./crawler/account.json', 'r') as file: 
             accounts = json.load(file)['account']
