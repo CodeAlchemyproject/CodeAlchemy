@@ -87,6 +87,7 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
+
     #ZeroJudge_Submit()
     
     # 開啟 CSV 文件
@@ -96,56 +97,50 @@ def problem_submit():
         line = lines[-1]
         # 印出結果
         score = line.split(',')[-3]
-        
         if "MB" in score: 
             index = score.find("MB")
             if index != -1:
-                memory = score[:index + 2]
+                memory = score[:index + 2].strip()
             index = line.split(',')[-4].find("(")
             if index != -1:
-                run_time = line.split(',')[-4][index + 1:]  # 不包括 "(" 本身
-            
-            score=line.split(',')[-4][:3][1:]
-            print(memory)
-            print(run_time)
-            print(score)
+                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
+            score=line.split(',')[-4][:3][1:].strip()    
         else:
             score=score[:2]
-        # 印出結果
-        
-
-    # sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    # data=db.get_data(sql_problem_command)
-    # example_inputs = data[0][5].split('|||')
-    # example_outputs = data[0][6].split('|||')
-    # #根據 score 的前兩個字來決定顯示不同的內容
-    # if score.startswith("AC"):
-    #     status = "通過"
-    #     run_time = score.split(',')[0].split('(')[1].strip()  # 提取運行時間
-    #     memory = score.split(',')[1].split(')')[0].strip()  # 提取記憶體使用情況
-    #     return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
-    # elif score.startswith("NA"):
-    #     status = "未通過所有測資點"
-    # elif score.startswith("WA"):
-    #     status = "答案錯誤"
-    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
-    # elif score.startswith("TLE"):
-    #     status = "執行超過時間限制"
-    # elif score.startswith("MLE"):
-    #     status = "程序執行超過記憶體限制"
-    # elif score.startswith("OLE"):
-    #     status = "程序輸出檔超過限制"
-    # elif score.startswith("RE"):
-    #     status = "執行時錯誤"
-    # elif score.startswith("RF"):
-    #     status = "使用了被禁止使用的函式"
-    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
-    # elif score.startswith("CE"):
-    #     status = "編譯錯誤"
-    #     error_reason = score.split(":")[1].strip()  # 提取錯誤原因
-    # elif score.startswith("SE"):
-    #     status = "系統錯誤"
-    return render_template('./problem.html', status='status', error_reason='error_reason')
+    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    data=db.get_data(sql_problem_command)
+    print(data)
+    example_inputs = data[0][5].split('|||')
+    print(example_inputs)
+    example_outputs = data[0][6].split('|||')
+    print(example_outputs)
+    #根據 score 的前兩個字來決定顯示不同的內容
+    print(1)
+    if score.startswith("AC"):
+        status = "通過"
+        return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+    elif score.startswith("NA"):
+        error_reason = "未通過所有測資點"
+    elif score.startswith("WA"):
+        error_reason = '答案錯誤'  
+    elif score.startswith("TLE"):
+        error_reason='執行超過時間限制'
+    elif score.startswith("MLE"):
+        error_reason = "程序執行超過記憶體限制"
+    elif score.startswith("OLE"):
+        error_reason = "程序輸出檔超過限制"
+    elif score.startswith("RE"):
+        error_reason = "執行時錯誤"
+    elif score.startswith("RF"):
+        error_reason = "使用了被禁止使用的函式"
+    elif score.startswith("CE"):
+        error_reason = "編譯錯誤"
+    elif score.startswith("SE"):
+        error_reason = "系統錯誤"
+    else:
+        error_reason = "未知錯誤"
+    print('GAWA')
+    return render_template('./problem.html', status = '未通過', error_reason=error_reason)
         
 
 @app.route('/user_data',methods=['GET'])
