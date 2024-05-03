@@ -25,7 +25,7 @@
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
                         <h2 class="card-title text-center mb-5">登入或註冊</h2>
-                        <form action="/login" method="POST">
+                        <form action="/auth/login" method="POST">
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="floatingInput"
                                     placeholder="name@example.com" name="Email" required>
@@ -38,7 +38,7 @@
                         </form>
                         <hr class="my-4">
                         <div class="d-grid mb-2">
-                            <a href="/login_google" class="btn btn-light">
+                            <a href="/auth/google" class="btn btn-light">
                                 <!-- 嵌入 Google 圖示 SVG -->
                                 <img src="../static/imgs/google-icon-logo.svg" alt="Google 圖示" style="width: 5%;">
                                 使用Google登入
