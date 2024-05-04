@@ -1,20 +1,17 @@
 # 引入模組
 import os
 import re
-from flask import Flask, render_template, session, request, redirect, make_response, jsonify, url_for
-from flask_mail import Mail
+from flask import Flask, render_template, session, request
 import csv
 import math
 import time
 from queue import Queue
 import pandas as pd
 from crawler.submit import ZeroJudge_Submit
-from config import MAIL_PASSWORD,MAIL_USERNAME
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
-from services.customer.app import customer_bp
 from services.problem.app import problem_bp
 from services.auth.app import auth_bp
 from services.contest.app import contest_bp
@@ -23,6 +20,7 @@ from utils import db, common
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
+
 # google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
 
@@ -162,7 +160,6 @@ def user_data():
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
-app.register_blueprint(customer_bp, url_prefix='/customer')
 app.register_blueprint(auth_bp, url_prefix='/auth')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
