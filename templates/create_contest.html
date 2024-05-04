@@ -255,39 +255,12 @@
 
             },
             error: function () {
-                alert('数据加载失败，请检查后端服务。');
+                alert('數據載入失敗。');
             }
         });
     });
 });
-        /*
-        $(document).ready(function () {
-        // 当模态窗口打开之前会触发事件获取数据
-        $('#loginModal').on('show.bs.modal', function (e) {
-            // 发送 AJAX 请求到后端获取数据
-            $.ajax({
-                url: '/contest/get_problems', // 后端路由
-                type: 'GET',
-                success: function (data) {
-                    var contestTableBody = $("#contestTableBody");
-                    contestTableBody.empty(); // 清空表格内容
-                    // 循环遍历数据并添加到表格中
-                    data.forEach(function (contest) {
-                        var row = `<tr>
-                                        <td>${contest.title}</td>
-                                        <td>${contest.content}</td>
-                                        <td>${contest.difficulty}</td>
-                                        <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
-                                    </tr>`;
-                        contestTableBody.append(row);
-                    });
-                },
-                error: function () {
-                    alert('数据加载失败，请检查后端服务。');
-                }
-            });
-        });
-    });*/
+        
     </script>
 
 </body>
