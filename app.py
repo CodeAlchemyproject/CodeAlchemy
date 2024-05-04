@@ -1,25 +1,10 @@
 # 引入模組
 import os
-import re
 from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
-import csv
 import math
-import time
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from queue import Queue
-import pandas as pd
 from crawler.submit import ZeroJudge_Submit
-import tester
-from tester import Scraper
-from rq import Queue as RQQueue
-from rq.job import Job
-from red import conn
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.chrome.service import Service
 #驗證信模組
 from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
@@ -33,9 +18,9 @@ from threading import Thread
 from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
-from services.customer.app import customer_bp
+#from services.customer.app import customer_bp
 from services.problem.app import problem_bp
-from services.user.app import user_bp, login_manager
+#from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from utils import db, common
@@ -43,8 +28,6 @@ from utils import db, common
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
-basedir = os.path.abspath(os.path.dirname(__file__))
-q = RQQueue(connection=conn)
 # google登入
 oauth = OAuth(app)
 google = oauth.register(
@@ -53,8 +36,6 @@ google = oauth.register(
     client_secret=GOOGLE_CELENT_SERRET,
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
-
-
 
 # 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
@@ -111,6 +92,11 @@ def problem_submit():
     problem_id = data.get('problem_id')
     language = data.get('language')
     code = data.get('code')
+
+    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    data=db.get_data(sql_problem_command)
+    example_inputs = data[0][5].split('|||')
+    example_outputs = data[0][6].split('|||')
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
@@ -131,37 +117,64 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    score=ZeroJudge_Submit(file_name)
+    if type=='test':
+        # 使用示例
+            problem = {
+                "id": 1,
+                "title": "A+B Problem",
+                "sample_input": "1 2\n",
+                "sample_output": "3\n"
+            }
+            user_code = """
+            a, b = map(int, input().split())
+            print(a + b)
+            """
+            result, message, execution_time = common.evaluate(problem, user_code)
+            if result:
+                print(message)
+                execution_time_ms = execution_time * 1000
+                print("執行時間：", round(execution_time_ms, 4), "毫秒")
+            else:
+                print(message)
+    elif type =='upload':
+        if "ZJ" in file_name:
+            score=ZeroJudge_Submit(file_name)
 
-    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data=db.get_data(sql_problem_command)
-    example_inputs = data[0][5].split('|||')
-    example_outputs = data[0][6].split('|||')
-    #根據 score 的前兩個字來決定顯示不同的內容
-    if score.startswith("AC"):
-        status = "通過"
-        return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
-    elif score.startswith("NA"):
-        error_reason = "未通過所有測資點"
-    elif score.startswith("WA"):
-        error_reason = '答案錯誤'  
-    elif score.startswith("TLE"):
-        error_reason='執行超過時間限制'
-    elif score.startswith("MLE"):
-        error_reason = "程序執行超過記憶體限制"
-    elif score.startswith("OLE"):
-        error_reason = "程序輸出檔超過限制"
-    elif score.startswith("RE"):
-        error_reason = "執行時錯誤"
-    elif score.startswith("RF"):
-        error_reason = "使用了被禁止使用的函式"
-    elif score.startswith("CE"):
-        error_reason = "編譯錯誤"
-    elif score.startswith("SE"):
-        error_reason = "系統錯誤"
-    else:
-        error_reason = "未知錯誤"
-    return render_template('./problem.html', status = '未通過', error_reason=error_reason)
+        if "MB" in score: 
+            index = score.find("MB")
+            if index != -1:
+                memory = score[:index + 2].strip()
+            index = line.split(',')[-4].find("(")
+            if index != -1:
+                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
+            score=line.split(',')[-4][:3][1:].strip()    
+        else:
+            score=score[:2]
+            #根據 score 的前兩個字來決定顯示不同的內容
+            if score.startswith("AC"):
+                status = "通過"
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+            elif score.startswith("NA"):
+                error_reason = "未通過所有測資點"
+            elif score.startswith("WA"):
+                error_reason = '答案錯誤'  
+            elif score.startswith("TLE"):
+                error_reason='執行超過時間限制'
+            elif score.startswith("MLE"):
+                error_reason = "程序執行超過記憶體限制"
+            elif score.startswith("OLE"):
+                error_reason = "程序輸出檔超過限制"
+            elif score.startswith("RE"):
+                error_reason = "執行時錯誤"
+            elif score.startswith("RF"):
+                error_reason = "使用了被禁止使用的函式"
+            elif score.startswith("CE"):
+                error_reason = "編譯錯誤"
+            elif score.startswith("SE"):
+                error_reason = "系統錯誤"
+            else:
+                error_reason = "未知錯誤"
+            return render_template('./problem.html', status = '未通過', error_reason=error_reason)
 
 
 # 查詢電子郵件有沒有註冊過

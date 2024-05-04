@@ -182,4 +182,4 @@ def ZeroJudge_Submit(file_name):
     finally:
         if driver:
             driver.quit()
-
+            return results[4][:2]
