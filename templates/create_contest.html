@@ -74,18 +74,22 @@
             text-align: center;
             position: relative;
             padding-bottom: 10px;
-        }
+        }               
 
-
-        /*add question css start*/
-        input[type="text"],
-        textarea {
+        /*start*/
+        .modal-header h3 {
+            font-size: 30px;
+            /* 置中 */
+            position: absolute;
+            top: 7%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }        
+        
+        .modal-body form .btn {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+            font-size: 25px;
+            color: white;
         }
 
         input[type="button"] {
@@ -96,62 +100,9 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
-        input[type="button"]:hover {
-            background-color: #45a049;
-        }
-
-        .question {
-            margin-bottom: 10px;
-        }
-
-        .question input[type="text"] {
-            width: calc(100% - 100px);
-        }
-
-        .question input[type="button"] {
-            margin-left: 10px;
-        }
-        
-
-        /*start*/
-        .modal-header h3 {
-            font-size: 30px;
-            /* 置中 */
-            position: absolute;
-            top: 7%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        
-
-        .modal-body form .account,
-        .modal-body form .password {
-            margin: 100px;
-            width: 90%;
-            border-radius: 20px;
-        }
-
-        .remember {
-            margin-bottom: 20px;
-        }
-
-        .modal-body form .btn {
-            width: 100%;
-            font-size: 25px;
-            color: white;
-        }
-
-
-
     </style>
-
-
-
     
 </head>
-
 
 <body>
     {% include "nav_bar.html" %}
@@ -203,7 +154,6 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">#</th>
                                                 <th scope="col">Title</th>
                                                 <th scope="col">Description</th>
                                                 <th scope="col">Difficulty</th>
@@ -272,7 +222,6 @@
             var contestTableBody = $("#contestTableBody");
             contests.forEach(function(contest, index) {
                 var row = `<tr>
-                                <th scope="row">${(index + 1)}</th>
                                 <td>${contest[0]}</td>
                                 <td>${contest[1]}</td>
                                 <td>${contest[2]}</td>
@@ -285,8 +234,7 @@
         // 直接调用success函数模拟数据成功被加载
         success(mockData);
     });
-    </script>
-    
+    </script>    
 
 
 </body>
