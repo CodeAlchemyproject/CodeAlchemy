@@ -74,34 +74,31 @@ def contest_join():
 
 
 # Mock database
-mock_db = [
-    {'title': 'Two Sum', 'description': 'Given an array of integers, return indices...', 'difficulty': 'Easy'},
-    {'title': 'Add Binary', 'description': 'Given two binary strings, return their sum...', 'difficulty': 'Medium'},
-    {'title': 'Max Points', 'description': 'Given an array of points on the plane, find...', 'difficulty': 'Hard'}
-]
-
-
+#mock_db = [
+#    {'title': 'Two Sum', 'description': 'Given an array of integers, return indices...', 'difficulty': 'Easy'},
+#    {'title': 'Add Binary', 'description': 'Given two binary strings, return their sum...', 'difficulty': 'Medium'},
+#    {'title': 'Max Points', 'description': 'Given an array of points on the plane, find...', 'difficulty': 'Hard'}
+#]
 
 @contest_bp.route('/get_problems')
-def get_problems():
-    return jsonify(mock_db)
 #def get_problems():
+#    return jsonify(mock_db)
+def get_problems():
     # 连接到您的数据库（这里假设数据库的名字是database.db）
-#    conn = db.connection()
-#    cur = conn.cursor()
+    conn = db.connection()
+    cur = conn.cursor()
     
     # 执行查询操作
-#    cur.execute("SELECT title, content, difficulty FROM problem")
-#    problems_data = cur.fetchall()
+    cur.execute("SELECT title, content, difficulty FROM problem")
+    problems_data = cur.fetchall()
     
     # 关闭连接
-#    cur.close()
-#    conn.close()
-
-    # 这里将会打印到控制台（终端）
-#    print('Fetched data from database:', json.dumps(problems_data))
+    cur.close()
+    conn.close()
   
     # 返回查询结果给前端
-#    return jsonify(problems_data)
+    print(problems_data)
+    return jsonify(problems_data)
+    
 
 

@@ -23,7 +23,6 @@
             padding: 20px;
             margin-top: auto;
             border-radius: 10px;
-
         }
 
         label {
@@ -102,6 +101,7 @@
             font-size: 25px;
             color: white;
         }
+
     </style>
 
 </head>
@@ -215,34 +215,79 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-
-            // 模拟从API接收到的数据
-            var mockData = {
-                "contests": [
-                    ["Two Sum", "Given an array of integers, return indices of the two numbers such that they add up to a specific target.", 2],
-                    ["Add Binary", "Given two binary strings, return their sum (also a binary string).", 1],
-                    ["Max Points on a Line", "Given an array of points on the cartesian plane, find the maximum number of points that lie on the same straight line.", 3]
-                ]
-            };
-
-            // 将模拟数据作为响应传递给success回调函数
-            function success(data) {
-                var contests = data.contests;
+    $('#loginModal').on('show.bs.modal', function (e) {
+        $.ajax({
+            url: '/contest/get_problems',
+            type: 'GET',
+            success: function (data) {
                 var contestTableBody = $("#contestTableBody");
-                contests.forEach(function (contest, index) {
+                contestTableBody.empty(); // 清空表格内容
+
+                // 函数用来简化内容并创建一个可点击的更多链接
+                function simplifyContent(content, maxLength) {
+                    if (content.length > maxLength) {
+                        return content.substring(0, maxLength) + 
+                               `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
+                    }
+                    return content;
+                }
+
+                // 循环遍历返回的数据
+                data.forEach(function (problem) {
+                    var title = problem[0]; // 标题
+                    var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
+                    var difficulty = problem[2]; // 难度
                     var row = `<tr>
-                                <td>${contest[0]}</td>
-                                <td>${contest[1]}</td>
-                                <td>${contest[2]}</td>
-                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td> <!-- 新添加的单元格 -->
-                            </tr>`;
+                                    <td>${title}</td>
+                                    <td>${content}</td>
+                                    <td>${difficulty}</td>
+                                    <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                                </tr>`;
                     contestTableBody.append(row);
                 });
-            }
 
-            // 直接调用success函数模拟数据成功被加载
-            success(mockData);
+                // 添加点击事件来显示全部内容
+                contestTableBody.on('click', '.more-link', function (e) {
+                    e.preventDefault();
+                    var fullContent = decodeURIComponent($(this).data('content'));
+                    $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
+                });
+
+            },
+            error: function () {
+                alert('数据加载失败，请检查后端服务。');
+            }
         });
+    });
+});
+        /*
+        $(document).ready(function () {
+        // 当模态窗口打开之前会触发事件获取数据
+        $('#loginModal').on('show.bs.modal', function (e) {
+            // 发送 AJAX 请求到后端获取数据
+            $.ajax({
+                url: '/contest/get_problems', // 后端路由
+                type: 'GET',
+                success: function (data) {
+                    var contestTableBody = $("#contestTableBody");
+                    contestTableBody.empty(); // 清空表格内容
+                    // 循环遍历数据并添加到表格中
+                    data.forEach(function (contest) {
+                        var row = `<tr>
+                                        <td>${contest.title}</td>
+                                        <td>${contest.content}</td>
+                                        <td>${contest.difficulty}</td>
+                                        <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                                    </tr>`;
+                        contestTableBody.append(row);
+                    });
+                },
+                error: function () {
+                    alert('数据加载失败，请检查后端服务。');
+                }
+            });
+        });
+    });*/
     </script>
 
 </body>
