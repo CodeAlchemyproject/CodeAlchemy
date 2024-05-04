@@ -72,18 +72,6 @@
             padding-bottom: 10px;
         }
 
-
-        /*add question css start*/
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
         input[type="button"] {
             background-color: #4caf50;
             color: white;
@@ -95,18 +83,6 @@
 
         input[type="button"]:hover {
             background-color: #45a049;
-        }
-
-        .question {
-            margin-bottom: 10px;
-        }
-
-        .question input[type="text"] {
-            width: calc(100% - 100px);
-        }
-
-        .question input[type="button"] {
-            margin-left: 10px;
         }
 
 
@@ -121,18 +97,6 @@
         }
 
 
-
-        .modal-body form .account,
-        .modal-body form .password {
-            margin: 100px;
-            width: 90%;
-            border-radius: 20px;
-        }
-
-        .remember {
-            margin-bottom: 20px;
-        }
-
         .modal-body form .btn {
             width: 100%;
             font-size: 25px;
@@ -140,11 +104,7 @@
         }
     </style>
 
-
-
-
 </head>
-
 
 <body>
     {% include "nav_bar.html" %}
@@ -199,7 +159,6 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">#</th>
                                                 <th scope="col">Title</th>
                                                 <th scope="col">Description</th>
                                                 <th scope="col">Difficulty</th>
@@ -272,7 +231,6 @@
                 var contestTableBody = $("#contestTableBody");
                 contests.forEach(function (contest, index) {
                     var row = `<tr>
-                                <th scope="row">${(index + 1)}</th>
                                 <td>${contest[0]}</td>
                                 <td>${contest[1]}</td>
                                 <td>${contest[2]}</td>
@@ -286,8 +244,6 @@
             success(mockData);
         });
     </script>
-
-
 
 </body>
 
