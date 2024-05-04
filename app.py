@@ -10,6 +10,16 @@ import uuid
 from queue import Queue
 import pandas as pd
 from crawler.submit import ZeroJudge_Submit
+import tester
+from tester import Scraper
+from rq import Queue as RQQueue
+from rq.job import Job
+from red import conn
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.chrome.service import Service
 #驗證信模組
 from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
@@ -33,6 +43,8 @@ from utils import db, common
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
+basedir = os.path.abspath(os.path.dirname(__file__))
+q = RQQueue(connection=conn)
 # google登入
 oauth = OAuth(app)
 google = oauth.register(
@@ -60,6 +72,7 @@ app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -105,10 +118,12 @@ def problem_submit():
         'text/x-csrc': '.c',
         'text/x-c++src': '.cpp'
     }
-    
+    # 生成 6 位數的亂碼
+    random_code = str(uuid.uuid4())[:6]
     # 構建文件路徑
-    file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
-
+    file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+    file_path = os.path.join('./source', file_name)
+    
     #確保目錄存在
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
@@ -116,35 +131,13 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
+    score=ZeroJudge_Submit(file_name)
 
-    #ZeroJudge_Submit()
-    
-    # 開啟 CSV 文件
-    with open('result.csv', 'r' ,encoding='utf-8') as csvfile:
-        # 讀取所有行
-        lines = csvfile.readlines()
-        line = lines[-1]
-        # 印出結果
-        score = line.split(',')[-3]
-        if "MB" in score: 
-            index = score.find("MB")
-            if index != -1:
-                memory = score[:index + 2].strip()
-            index = line.split(',')[-4].find("(")
-            if index != -1:
-                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
-            score=line.split(',')[-4][:3][1:].strip()    
-        else:
-            score=score[:2]
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=db.get_data(sql_problem_command)
-    print(data)
     example_inputs = data[0][5].split('|||')
-    print(example_inputs)
     example_outputs = data[0][6].split('|||')
-    print(example_outputs)
     #根據 score 的前兩個字來決定顯示不同的內容
-    print(1)
     if score.startswith("AC"):
         status = "通過"
         return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
@@ -168,9 +161,7 @@ def problem_submit():
         error_reason = "系統錯誤"
     else:
         error_reason = "未知錯誤"
-    print('GAWA')
     return render_template('./problem.html', status = '未通過', error_reason=error_reason)
-        
 
 
 # 查詢電子郵件有沒有註冊過
@@ -415,4 +406,4 @@ login_manager.init_app(app)
 if __name__ == '__main__':
     # 在 Flask 應用程式啟動時，同時啟動爬蟲程式的執行緒
     # 啟動 Flask 應用程式
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True,use_reloader=True)
