@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+
     {% include "_site_header.html" %}
     <!-- 響應式網站 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Boostrap 導入程式 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
     <!-- css連結 -->
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
-        .createform {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
         #competitionForm {
             width: 800px;
             padding: 20px;
-            margin-top: auto;            
+            margin-top: auto;
             border-radius: 10px;
-            
+
         }
 
         label {
@@ -112,7 +108,7 @@
         .question input[type="button"] {
             margin-left: 10px;
         }
-        
+
 
         /*start*/
         .modal-header h3 {
@@ -124,7 +120,7 @@
             transform: translate(-50%, -50%);
         }
 
-        
+
 
         .modal-body form .account,
         .modal-body form .password {
@@ -142,33 +138,32 @@
             font-size: 25px;
             color: white;
         }
-
-
-
     </style>
 
 
 
-    
+
 </head>
 
 
 <body>
     {% include "nav_bar.html" %}
-    <div class="createform">
+    <div class="d-flex justify-content-center">
         <form id="competitionForm" action="/contest/create" method="post">
             <h1><b>Create Competition</b></h1>
             <div class="form">
                 <span class="name">Competition Name:</span>
                 <span class="value">
-                    <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
+                    <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name"
+                        required>
                 </span>
 
                 <span class="name">Description</span>
                 <span class="value">
-                    <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
+                    <input type="text" class="form-control" id="description" placeholder="description"
+                        name="description" required>
                 </span>
-                
+
                 <span class="name">Type:</span>
                 <span class="value">
                     <select class="form-select" id="state">
@@ -176,14 +171,15 @@
                         <option value="private">private</option>
                     </select>
                 </span>
-                
-                
+
+
                 <span class="name">Add question:</span>
-                <div>                
+                <div>
                     <div id="questionContainer">
-                    <!-- 這裡會動態添加所選擇的題目 -->
+                        <!-- 這裡會動態添加所選擇的題目 -->
                     </div>
-                    <input href="#" type="button" value="Add Question" data-bs-toggle="modal" data-bs-target="#loginModal"></span>
+                    <input href="#" type="button" value="Add Question" data-bs-toggle="modal"
+                        data-bs-target="#loginModal"></span>
                 </div>
 
                 <!-- 跳出視窗內容 -->
@@ -216,25 +212,28 @@
                                     </table>
                                 </form>
                             </div>
-                            <!-- Footer -->                           
+                            <!-- Footer -->
                         </div>
                     </div>
                 </div>
-                
-               
+
+
                 <span class="name">languages:</span>
                 <span class="value">
                     <div class="checkbox-row">
-                        <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages" value="Python">
+                        <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages"
+                            value="Python">
                         <label for="python">Python</label>
                         <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
-                        <label for="c">C</label>  
-                        <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages" value="C++">
+                        <label for="c">C</label>
+                        <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages"
+                            value="C++">
                         <label for="cpp">C++</label>
-                        <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages" value="Java">
-                        <label for="java">Java</label>                              
-                    </div>             
-                </span> 
+                        <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages"
+                            value="Java">
+                        <label for="java">Java</label>
+                    </div>
+                </span>
 
                 <span class="name">Start Time:</span>
                 <span class="value">
@@ -247,47 +246,49 @@
                 </span>
 
                 <span class="value">
-                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">Create Competition</button>
+                    <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">Create
+                        Competition</button>
                 </span>
             </div>
         </form>
-    </div>   
-    
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            
-        // 模拟从API接收到的数据
-        var mockData = {
-            "contests": [
-                ["Two Sum", "Given an array of integers, return indices of the two numbers such that they add up to a specific target.", 2],
-                ["Add Binary", "Given two binary strings, return their sum (also a binary string).", 1],
-                ["Max Points on a Line", "Given an array of points on the cartesian plane, find the maximum number of points that lie on the same straight line.", 3]
-            ]
-        };
-        
-        // 将模拟数据作为响应传递给success回调函数
-        function success(data) {
-            var contests = data.contests;
-            var contestTableBody = $("#contestTableBody");
-            contests.forEach(function(contest, index) {
-                var row = `<tr>
+        $(document).ready(function () {
+
+            // 模拟从API接收到的数据
+            var mockData = {
+                "contests": [
+                    ["Two Sum", "Given an array of integers, return indices of the two numbers such that they add up to a specific target.", 2],
+                    ["Add Binary", "Given two binary strings, return their sum (also a binary string).", 1],
+                    ["Max Points on a Line", "Given an array of points on the cartesian plane, find the maximum number of points that lie on the same straight line.", 3]
+                ]
+            };
+
+            // 将模拟数据作为响应传递给success回调函数
+            function success(data) {
+                var contests = data.contests;
+                var contestTableBody = $("#contestTableBody");
+                contests.forEach(function (contest, index) {
+                    var row = `<tr>
                                 <th scope="row">${(index + 1)}</th>
                                 <td>${contest[0]}</td>
                                 <td>${contest[1]}</td>
                                 <td>${contest[2]}</td>
                                 <td><button class="btn btn-primary add-btn" type="button">Add</button></td> <!-- 新添加的单元格 -->
                             </tr>`;
-                contestTableBody.append(row);
-            });
-        }
-        
-        // 直接调用success函数模拟数据成功被加载
-        success(mockData);
-    });
+                    contestTableBody.append(row);
+                });
+            }
+
+            // 直接调用success函数模拟数据成功被加载
+            success(mockData);
+        });
     </script>
-    
+
 
 
 </body>
+
 </html>
