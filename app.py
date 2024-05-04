@@ -57,7 +57,8 @@ def problem():
     data=db.get_data(sql_problem_command)
     example_inputs = data[0][5].split('|||')
     example_outputs = data[0][6].split('|||')
-    return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
+    like = data[0][12]
+    return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
 
 #題目提交
 @app.route('/problem_submit', methods=['POST'])
