@@ -18,9 +18,8 @@ from threading import Thread
 from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
-#from services.customer.app import customer_bp
+from services.auth.app import auth_bp
 from services.problem.app import problem_bp
-#from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from utils import db, common
@@ -140,41 +139,41 @@ def problem_submit():
         if "ZJ" in file_name:
             score=ZeroJudge_Submit(file_name)
 
-        if "MB" in score: 
-            index = score.find("MB")
-            if index != -1:
-                memory = score[:index + 2].strip()
-            index = line.split(',')[-4].find("(")
-            if index != -1:
-                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
-            score=line.split(',')[-4][:3][1:].strip()    
-        else:
-            score=score[:2]
-            #根據 score 的前兩個字來決定顯示不同的內容
-            if score.startswith("AC"):
-                status = "通過"
-                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
-            elif score.startswith("NA"):
-                error_reason = "未通過所有測資點"
-            elif score.startswith("WA"):
-                error_reason = '答案錯誤'  
-            elif score.startswith("TLE"):
-                error_reason='執行超過時間限制'
-            elif score.startswith("MLE"):
-                error_reason = "程序執行超過記憶體限制"
-            elif score.startswith("OLE"):
-                error_reason = "程序輸出檔超過限制"
-            elif score.startswith("RE"):
-                error_reason = "執行時錯誤"
-            elif score.startswith("RF"):
-                error_reason = "使用了被禁止使用的函式"
-            elif score.startswith("CE"):
-                error_reason = "編譯錯誤"
-            elif score.startswith("SE"):
-                error_reason = "系統錯誤"
-            else:
-                error_reason = "未知錯誤"
-            return render_template('./problem.html', status = '未通過', error_reason=error_reason)
+        # if "MB" in score: 
+        #     index = score.find("MB")
+        #     if index != -1:
+        #         memory = score[:index + 2].strip()
+        #     index = line.split(',')[-4].find("(")
+        #     if index != -1:
+        #         run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
+        #     score=line.split(',')[-4][:3][1:].strip()    
+        # else:
+        #     score=score[:2]
+        #     #根據 score 的前兩個字來決定顯示不同的內容
+        #     if score.startswith("AC"):
+        #         status = "通過"
+        #         return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+        #     elif score.startswith("NA"):
+        #         error_reason = "未通過所有測資點"
+        #     elif score.startswith("WA"):
+        #         error_reason = '答案錯誤'  
+        #     elif score.startswith("TLE"):
+        #         error_reason='執行超過時間限制'
+        #     elif score.startswith("MLE"):
+        #         error_reason = "程序執行超過記憶體限制"
+        #     elif score.startswith("OLE"):
+        #         error_reason = "程序輸出檔超過限制"
+        #     elif score.startswith("RE"):
+        #         error_reason = "執行時錯誤"
+        #     elif score.startswith("RF"):
+        #         error_reason = "使用了被禁止使用的函式"
+        #     elif score.startswith("CE"):
+        #         error_reason = "編譯錯誤"
+        #     elif score.startswith("SE"):
+        #         error_reason = "系統錯誤"
+        #     else:
+        #         error_reason = "未知錯誤"
+        #     return render_template('./problem.html', status = '未通過', error_reason=error_reason)
 
 
 # 查詢電子郵件有沒有註冊過
@@ -405,12 +404,10 @@ def start_crawler_thread():
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
-app.register_blueprint(customer_bp, url_prefix='/customer')
-app.register_blueprint(user_bp, url_prefix='/user')  
+app.register_blueprint(auth_bp, url_prefix='/auth')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
 app.register_blueprint(feedback_bp, url_prefix='/feedback') 
-login_manager.init_app(app)  
 
 #-------------------------
 # 啟動主程式
