@@ -1,18 +1,13 @@
 # 引入模組
 import os
 from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
-
 import math
-import time
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from queue import Queue
-import pandas as pd
-from crawler.ZJ_submit import process_account
+from crawler.submit import ZeroJudge_Submit
 #驗證信模組
 from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
-from esn import esn
 # google登入
 from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
@@ -23,9 +18,9 @@ from threading import Thread
 from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
-from services.customer.app import customer_bp
+#from services.customer.app import customer_bp
 from services.problem.app import problem_bp
-from services.user.app import user_bp, login_manager
+#from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from utils import db, common
@@ -41,8 +36,6 @@ google = oauth.register(
     client_secret=GOOGLE_CELENT_SERRET,
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
-
-
 
 # 加密(登入/登出)
 app.config['SECRET_KEY'] = 'itismysecretkey'
@@ -60,6 +53,7 @@ app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -98,6 +92,11 @@ def problem_submit():
     problem_id = data.get('problem_id')
     language = data.get('language')
     code = data.get('code')
+
+    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    data=db.get_data(sql_problem_command)
+    example_inputs = data[0][5].split('|||')
+    example_outputs = data[0][6].split('|||')
     # 定義語言對應的文件擴展名字典
     file_extensions = {
         'python': '.py',
@@ -105,10 +104,12 @@ def problem_submit():
         'text/x-csrc': '.c',
         'text/x-c++src': '.cpp'
     }
-    
+    # 生成 6 位數的亂碼
+    random_code = str(uuid.uuid4())[:6]
     # 構建文件路徑
-    file_path = os.path.join('./source', f'{problem_id}{file_extensions[language]}')
-
+    file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+    file_path = os.path.join('./source', file_name)
+    
     #確保目錄存在
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
@@ -116,20 +117,64 @@ def problem_submit():
     with open(file_path, 'w') as file:
         file.write(code)
         print(f"程式碼已成功寫入至 {file_path}")
-    if type=="test":
-        # 讀取CSV文件
-        df = pd.read_csv('result.csv')
+    if type=='test':
+        # 使用示例
+            problem = {
+                "id": 1,
+                "title": "A+B Problem",
+                "sample_input": "1 2\n",
+                "sample_output": "3\n"
+            }
+            user_code = """
+            a, b = map(int, input().split())
+            print(a + b)
+            """
+            result, message, execution_time = common.evaluate(problem, user_code)
+            if result:
+                print(message)
+                execution_time_ms = execution_time * 1000
+                print("執行時間：", round(execution_time_ms, 4), "毫秒")
+            else:
+                print(message)
+    elif type =='upload':
+        if "ZJ" in file_name:
+            score=ZeroJudge_Submit(file_name)
 
-        # 獲取最後一行
-        last_row = df.tail(1)
-        score=last_row.split(',')
-        print(score)
-        problem_id = request.args.get('problem_id',type=str)
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        data=db.get_data(sql_problem_command)
-        example_inputs = data[0][5].split('|||')
-        example_outputs = data[0][6].split('|||')
-        return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
+        if "MB" in score: 
+            index = score.find("MB")
+            if index != -1:
+                memory = score[:index + 2].strip()
+            index = line.split(',')[-4].find("(")
+            if index != -1:
+                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
+            score=line.split(',')[-4][:3][1:].strip()    
+        else:
+            score=score[:2]
+            #根據 score 的前兩個字來決定顯示不同的內容
+            if score.startswith("AC"):
+                status = "通過"
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+            elif score.startswith("NA"):
+                error_reason = "未通過所有測資點"
+            elif score.startswith("WA"):
+                error_reason = '答案錯誤'  
+            elif score.startswith("TLE"):
+                error_reason='執行超過時間限制'
+            elif score.startswith("MLE"):
+                error_reason = "程序執行超過記憶體限制"
+            elif score.startswith("OLE"):
+                error_reason = "程序輸出檔超過限制"
+            elif score.startswith("RE"):
+                error_reason = "執行時錯誤"
+            elif score.startswith("RF"):
+                error_reason = "使用了被禁止使用的函式"
+            elif score.startswith("CE"):
+                error_reason = "編譯錯誤"
+            elif score.startswith("SE"):
+                error_reason = "系統錯誤"
+            else:
+                error_reason = "未知錯誤"
+            return render_template('./problem.html', status = '未通過', error_reason=error_reason)
 
 
 # 查詢電子郵件有沒有註冊過
@@ -348,10 +393,10 @@ def user_data():
     data=db.get_data(sql_command)
     User_id=data[0][0]
     User_name=data[0][1]
-    Email=data[0][3]
-    img=data[0][4]
-    register_time=data[0][5]
-    return render_template('./user_data.html',User_name=User_name,User_id=User_id,Email=Email,img=img,register_time=register_time)
+    Email=data[0][4]
+    img=data[0][5]
+    register_time=data[0][8]
+    return render_template('./user_data.html',User_id=User_id,User_name=User_name,Email=Email,img=img,register_time=register_time)
 # 在 Flask 應用程式啟動時啟動執行序
 def start_crawler_thread():
     crawler_thread = Thread(target=os.system, args=("python ./crawler/ZJ_submit.py",))
@@ -373,6 +418,5 @@ login_manager.init_app(app)
 # 啟動 Flask 應用程式
 if __name__ == '__main__':
     # 在 Flask 應用程式啟動時，同時啟動爬蟲程式的執行緒
-    start_crawler_thread()
     # 啟動 Flask 應用程式
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True,use_reloader=True)
