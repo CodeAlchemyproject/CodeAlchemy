@@ -70,22 +70,18 @@
             text-align: center;
             position: relative;
             padding-bottom: 10px;
-        }               
+        }
 
-        /*start*/
-        .modal-header h3 {
-            font-size: 30px;
-            /* 置中 */
-            position: absolute;
-            top: 7%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }        
-        
-        .modal-body form .btn {
+
+        /*add question css start*/
+        input[type="text"],
+        textarea {
             width: 100%;
-            font-size: 25px;
-            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
         input[type="button"] {
@@ -149,6 +145,7 @@
 
 </head>
 
+
 <body>
     {% include "nav_bar.html" %}
     <div class="d-flex justify-content-center">
@@ -202,6 +199,7 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
+                                                <th scope="col">#</th>
                                                 <th scope="col">Title</th>
                                                 <th scope="col">Description</th>
                                                 <th scope="col">Difficulty</th>
