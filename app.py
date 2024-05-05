@@ -1,22 +1,13 @@
 # 引入模組
 import os
 from random import randint
-from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
+from flask import Flask, render_template, session, request
 import math
-from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import re
 from crawler.submit import ZeroJudge_Submit
-#驗證信模組
-from flask_mail import Mail, Message
-from config import MAIL_PASSWORD,MAIL_USERNAME
-# google登入
-from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
-from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 from threading import Thread
-
-
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -29,32 +20,13 @@ from utils import db, common
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
+# google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
-# google登入
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    client_id=GOOGLE_CELENT_ID,
-    client_secret=GOOGLE_CELENT_SERRET,
-    client_kwargs= {"scope": "openid email profile"},
-    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
-
-# 加密(登入/登出)
-app.config['SECRET_KEY'] = 'itismysecretkey'
 
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
-
-# 傳送驗證電子郵件
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = MAIL_USERNAME
-app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
 
 #主畫面
 @app.route('/', methods=['GET'])
