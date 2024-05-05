@@ -6,7 +6,6 @@ import math
 import uuid
 import re
 from crawler.submit import ZeroJudge_Submit
-# google憑證金鑰
 from threading import Thread
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
