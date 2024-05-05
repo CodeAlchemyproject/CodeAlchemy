@@ -170,7 +170,7 @@ def ZeroJudge_Submit(file_name):
                 # 轉換 DataFrame 為字串
                 csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
                 # 寫入 CSV 文件
-                with open('result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+                with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
                     f.write(csv_data)  # 直接寫入CSV數據
                     f.write('\n')  # 添加換行符
         # 刪除傳入的檔案

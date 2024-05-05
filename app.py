@@ -1,9 +1,11 @@
 # 引入模組
 import os
+from random import randint
 from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
 import math
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
+import re
 from crawler.submit import ZeroJudge_Submit
 #驗證信模組
 from flask_mail import Mail, Message
@@ -13,6 +15,7 @@ from authlib.integrations.flask_client import OAuth
 # google憑證金鑰
 from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 from threading import Thread
+
 
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
@@ -95,64 +98,65 @@ def problem_submit():
 
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=db.get_data(sql_problem_command)
+
     example_inputs = data[0][5].split('|||')
     example_outputs = data[0][6].split('|||')
-    # 定義語言對應的文件擴展名字典
-    file_extensions = {
-        'python': '.py',
-        'text/x-java': '.java',
-        'text/x-csrc': '.c',
-        'text/x-c++src': '.cpp'
-    }
-    # 生成 6 位數的亂碼
-    random_code = str(uuid.uuid4())[:6]
-    # 構建文件路徑
-    file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
-    file_path = os.path.join('./source', file_name)
+    r=randint(1,len(example_inputs))
     
-    #確保目錄存在
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-    #寫入內容到文件中
-    with open(file_path, 'w') as file:
-        file.write(code)
-        print(f"程式碼已成功寫入至 {file_path}")
     if type=='test':
-        # 使用示例
+            run_time = None
+            memory = None
             problem = {
-                "id": 1,
-                "title": "A+B Problem",
-                "sample_input": "1 2\n",
-                "sample_output": "3\n"
+                "id": problem_id,
+                "example_inputs ": re.sub(r'<[^>]*>', '', example_inputs[r-1]),
+                "example_outputs": re.sub(r'<[^>]*>', '', example_outputs[r-1])
             }
-            user_code = """
-            a, b = map(int, input().split())
-            print(a + b)
-            """
-            result, message, execution_time = common.evaluate(problem, user_code)
+            user_code = code
+            result, message, run_time, memory = common.evaluate(problem, user_code)
             if result:
+                # 只有在通過測試時才使用 run_time 和 memory 變量
                 print(message)
-                execution_time_ms = execution_time * 1000
-                print("執行時間：", round(execution_time_ms, 4), "毫秒")
+                run_time = round(run_time * 1000, 4)
+                status='通過'
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
             else:
                 print(message)
-    elif type =='upload':
-        if "ZJ" in file_name:
-            score=ZeroJudge_Submit(file_name)
+                status='未通過'
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=None, memory=None,error_reason=message)
 
-        if "MB" in score: 
-            index = score.find("MB")
-            if index != -1:
-                memory = score[:index + 2].strip()
-            index = line.split(',')[-4].find("(")
-            if index != -1:
-                run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
-            score=line.split(',')[-4][:3][1:].strip()    
-        else:
+    elif type =='upload':
+        # 定義語言對應的文件擴展名字典
+        file_extensions = {
+            'python': '.py',
+            'text/x-java': '.java',
+            'text/x-csrc': '.c',
+            'text/x-c++src': '.cpp'
+        }
+        # 生成 6 位數的亂碼
+        random_code = str(uuid.uuid4())[:6]
+        # 構建文件路徑
+        file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+        file_path = os.path.join('./source', file_name)
+        
+        #確保目錄存在
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        #寫入內容到文件中
+        with open(file_path, 'w') as file:
+            file.write(code)
+            print(f"程式碼已成功寫入至 {file_path}")
+        if "ZJ" in file_name:
+            # 調用 ZeroJudge_Submit 函數進行題目提交
+            score=ZeroJudge_Submit(file_name)
             score=score[:2]
             #根據 score 的前兩個字來決定顯示不同的內容
             if score.startswith("AC"):
                 status = "通過"
+                # 使用正規表達式從 score 中提取 run_time 和 memory
+                match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
+                if match:
+                    run_time = match.group(1)
+                    memory = match.group(2)
                 return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
             elif score.startswith("NA"):
                 error_reason = "未通過所有測資點"
@@ -405,12 +409,12 @@ def start_crawler_thread():
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
-app.register_blueprint(customer_bp, url_prefix='/customer')
-app.register_blueprint(user_bp, url_prefix='/user')  
+#app.register_blueprint(customer_bp, url_prefix='/customer')
+#app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
 app.register_blueprint(feedback_bp, url_prefix='/feedback') 
-login_manager.init_app(app)  
+#login_manager.init_app(app)  
 
 #-------------------------
 # 啟動主程式

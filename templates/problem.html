@@ -139,7 +139,7 @@
                     <h5>Run time:{{run_time}}</h5>
                     <h5>Memory:{{memory}}</h5>
                 </div>
-                {% elif status == "答案錯誤" %}
+                {% else %}
                 <div class="mt-5 bg-danger p-2 text-white round rounded-2">
                     <h4>{{ status }}</h4>
                     <h6>{{ error_reason }}</h6>
