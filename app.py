@@ -408,19 +408,10 @@ def start_crawler_thread():
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
-<<<<<<< HEAD
-#app.register_blueprint(customer_bp, url_prefix='/customer')
-#app.register_blueprint(user_bp, url_prefix='/user')  
-app.register_blueprint(problem_bp, url_prefix='/problem') 
-app.register_blueprint(contest_bp, url_prefix='/contest') 
-app.register_blueprint(feedback_bp, url_prefix='/feedback') 
-#login_manager.init_app(app)  
-=======
 app.register_blueprint(auth_bp, url_prefix='/auth')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
 app.register_blueprint(feedback_bp, url_prefix='/feedback') 
->>>>>>> 10cd91f43727678e7dc6e0a89fbdd4ac0d94d0c4
 
 #-------------------------
 # 啟動主程式
