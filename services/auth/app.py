@@ -239,4 +239,3 @@ def logout():
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
     return resp
-
