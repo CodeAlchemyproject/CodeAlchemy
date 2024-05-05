@@ -1,19 +1,12 @@
 # 引入模組
 import os
-from flask import Flask, json, render_template, session, request, redirect, make_response, jsonify, url_for
+from random import randint
+from flask import Flask, render_template, session, request
 import math
-from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
+import re
 from crawler.submit import ZeroJudge_Submit
-#驗證信模組
-from flask_mail import Mail, Message
-from config import MAIL_PASSWORD,MAIL_USERNAME
-# google登入
-from authlib.integrations.flask_client import OAuth
-# google憑證金鑰
-from config import GOOGLE_CELENT_ID,GOOGLE_CELENT_SERRET
 from threading import Thread
-
 #-----------------------
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -26,32 +19,13 @@ from utils import db, common
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
+# google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
-# google登入
-oauth = OAuth(app)
-google = oauth.register(
-    name='google',
-    client_id=GOOGLE_CELENT_ID,
-    client_secret=GOOGLE_CELENT_SERRET,
-    client_kwargs= {"scope": "openid email profile"},
-    server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
-
-# 加密(登入/登出)
-app.config['SECRET_KEY'] = 'itismysecretkey'
 
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
-
-# 傳送驗證電子郵件
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = MAIL_USERNAME
-app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
 
 #主畫面
 @app.route('/', methods=['GET'])
@@ -94,296 +68,87 @@ def problem_submit():
 
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
     data=db.get_data(sql_problem_command)
+
     example_inputs = data[0][5].split('|||')
     example_outputs = data[0][6].split('|||')
-    # 定義語言對應的文件擴展名字典
-    file_extensions = {
-        'python': '.py',
-        'text/x-java': '.java',
-        'text/x-csrc': '.c',
-        'text/x-c++src': '.cpp'
-    }
-    # 生成 6 位數的亂碼
-    random_code = str(uuid.uuid4())[:6]
-    # 構建文件路徑
-    file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
-    file_path = os.path.join('./source', file_name)
+    r=randint(1,len(example_inputs))
     
-    #確保目錄存在
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-    #寫入內容到文件中
-    with open(file_path, 'w') as file:
-        file.write(code)
-        print(f"程式碼已成功寫入至 {file_path}")
     if type=='test':
-        # 使用示例
+            run_time = None
+            memory = None
             problem = {
-                "id": 1,
-                "title": "A+B Problem",
-                "sample_input": "1 2\n",
-                "sample_output": "3\n"
+                "id": problem_id,
+                "example_inputs ": re.sub(r'<[^>]*>', '', example_inputs[r-1]),
+                "example_outputs": re.sub(r'<[^>]*>', '', example_outputs[r-1])
             }
-            user_code = """
-            a, b = map(int, input().split())
-            print(a + b)
-            """
-            result, message, execution_time = common.evaluate(problem, user_code)
+            user_code = code
+            result, message, run_time, memory = common.evaluate(problem, user_code)
             if result:
+                # 只有在通過測試時才使用 run_time 和 memory 變量
                 print(message)
-                execution_time_ms = execution_time * 1000
-                print("執行時間：", round(execution_time_ms, 4), "毫秒")
+                run_time = round(run_time * 1000, 4)
+                status='通過'
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
             else:
                 print(message)
+                status='未通過'
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=None, memory=None,error_reason=message)
+
     elif type =='upload':
+        # 定義語言對應的文件擴展名字典
+        file_extensions = {
+            'python': '.py',
+            'text/x-java': '.java',
+            'text/x-csrc': '.c',
+            'text/x-c++src': '.cpp'
+        }
+        # 生成 6 位數的亂碼
+        random_code = str(uuid.uuid4())[:6]
+        # 構建文件路徑
+        file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+        file_path = os.path.join('./source', file_name)
+        
+        #確保目錄存在
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        #寫入內容到文件中
+        with open(file_path, 'w') as file:
+            file.write(code)
+            print(f"程式碼已成功寫入至 {file_path}")
         if "ZJ" in file_name:
+            # 調用 ZeroJudge_Submit 函數進行題目提交
             score=ZeroJudge_Submit(file_name)
-
-        # if "MB" in score: 
-        #     index = score.find("MB")
-        #     if index != -1:
-        #         memory = score[:index + 2].strip()
-        #     index = line.split(',')[-4].find("(")
-        #     if index != -1:
-        #         run_time = line.split(',')[-4][index + 1:].strip()  # 不包括 "(" 本身 
-        #     score=line.split(',')[-4][:3][1:].strip()    
-        # else:
-        #     score=score[:2]
-        #     #根據 score 的前兩個字來決定顯示不同的內容
-        #     if score.startswith("AC"):
-        #         status = "通過"
-        #         return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
-        #     elif score.startswith("NA"):
-        #         error_reason = "未通過所有測資點"
-        #     elif score.startswith("WA"):
-        #         error_reason = '答案錯誤'  
-        #     elif score.startswith("TLE"):
-        #         error_reason='執行超過時間限制'
-        #     elif score.startswith("MLE"):
-        #         error_reason = "程序執行超過記憶體限制"
-        #     elif score.startswith("OLE"):
-        #         error_reason = "程序輸出檔超過限制"
-        #     elif score.startswith("RE"):
-        #         error_reason = "執行時錯誤"
-        #     elif score.startswith("RF"):
-        #         error_reason = "使用了被禁止使用的函式"
-        #     elif score.startswith("CE"):
-        #         error_reason = "編譯錯誤"
-        #     elif score.startswith("SE"):
-        #         error_reason = "系統錯誤"
-        #     else:
-        #         error_reason = "未知錯誤"
-        #     return render_template('./problem.html', status = '未通過', error_reason=error_reason)
-
-
-# 查詢電子郵件有沒有註冊過
-@app.route('/login',methods=['GET','POST'])
-def login():
-    # 收到電子郵件
-    if request.method=="POST":
-        Email=request.form['Email']
-        sql_user_command=f"SELECT * FROM user where email='{Email}'"
-        user_data=db.get_data(sql_user_command)
-        # 如果有註冊過
-        if len(user_data) == 1:
-            # 將Email存入session
-            session['Email'] = Email
-            return redirect('/login_password')
-        # 如果沒有註冊過跳轉到註冊頁面
-        else:
-            return redirect('/register')
-    else:
-        return render_template('./login.html')
-# google 登入
-@app.route('/login_google')
-def login_google():
-    redirect_uri = url_for('authorize', _external=True)
-    return google.authorize_redirect(redirect_uri)
-
-@app.route('/google-callback')
-def authorize():
-    # 使用获取的访问令牌来获取用户的信息
-    token = google.authorize_access_token()
-    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    print(user_info)
-    Goole_ID=user_info['id']
-    Email = user_info['email']
-    sql_user_command=f"SELECT * FROM user where email='{Email}'"
-    user_data=db.get_data(sql_user_command)
-    # 如果有用email註冊過
-    if len(user_data) == 1:
-        # 將使用者資料存入session
-        session['Email'] = Email
-        session['logged_in']=True
-        session['User_name']=user_data[0][1]
-        session['google_id']=Goole_ID
-        if user_data[0][3]==Goole_ID:
-            return redirect('/')
-        else:
-            return redirect('/connect_google')
-    # 在這裡處理使用者資訊，例如驗證、註冊等等
-    else:
-        return redirect('/register')
-@app.route('/connect_google',methods=['GET','POST'])
-def connect_google():
-    google_id=session.get('google_id')
-    Email = session.get('Email')
-    if request.method=="POST":
-        Password=request.form['Password']
-        sql_common=f"SELECT * FROM user where email='{Email}'"
-        user_data=db.get_data(sql_common)
-        # 認證成功
-        if check_password_hash(db.get_data(sql_common)[0][2],Password):
-            session['logged_in']=True
-            session['User_name']=user_data[0][1]
-            session['User_id']=user_data[0][0]
-            sql_user_command=f"UPDATE user SET google_id ='{google_id}' where email='{Email}'"
-            db.edit_data(sql_user_command)
-            return redirect('/')
-        else:
-            result='密碼錯誤'
-            return render_template('/connect_google.html',result=result)
-    return render_template('./connect_google.html')
-# 輸入密碼
-@app.route('/login_password',methods=['GET','POST'])
-def login_password():
-    # 收到密碼
-    if request.method=="POST":
-        Email = session.get('Email')
-        Password=request.form['Password']
-        # 記住我
-        try:
-            Rememberme=request.form['Rememberme']
-            Rememberme=1
-        except Exception:
-            Rememberme=0
-        # 取得使用者資料
-        sql_common=f"SELECT * FROM user where email='{Email}'"
-        user_data=db.get_data(sql_common)
-        # 登入成功
-        if check_password_hash(db.get_data(sql_common)[0][2],Password):
-            session['logged_in']=True
-            session['User_name']=user_data[0][1]
-            session['User_id']=user_data[0][0]
-            # 如果使用者有勾記住我
-            if Rememberme==1:
-                resp = make_response(redirect('/'))
-                # cookie效期30天
-                resp.set_cookie('logged_in','True',max_age=60*60*24*30)
-                resp.set_cookie('user_name',user_data[0][1],max_age=60*60*24*30)
-                resp.set_cookie('user_id',str(user_data[0][0]),max_age=60*60*24*30)
-                return resp
+            score=score[:2]
+            #根據 score 的前兩個字來決定顯示不同的內容
+            if score.startswith("AC"):
+                status = "通過"
+                # 使用正規表達式從 score 中提取 run_time 和 memory
+                match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
+                if match:
+                    run_time = match.group(1)
+                    memory = match.group(2)
+                return render_template('./problem.html',status=status,data=data,example_inputs=example_inputs,example_outputs=example_outputs, run_time=run_time, memory=memory)
+            elif score.startswith("NA"):
+                error_reason = "未通過所有測資點"
+            elif score.startswith("WA"):
+                error_reason = '答案錯誤'  
+            elif score.startswith("TLE"):
+                error_reason='執行超過時間限制'
+            elif score.startswith("MLE"):
+                error_reason = "程序執行超過記憶體限制"
+            elif score.startswith("OLE"):
+                error_reason = "程序輸出檔超過限制"
+            elif score.startswith("RE"):
+                error_reason = "執行時錯誤"
+            elif score.startswith("RF"):
+                error_reason = "使用了被禁止使用的函式"
+            elif score.startswith("CE"):
+                error_reason = "編譯錯誤"
+            elif score.startswith("SE"):
+                error_reason = "系統錯誤"
             else:
-                return redirect('/')
-        # 密碼錯誤登入失敗
-        else:
-            result='密碼錯誤'
-            return render_template('./login_password.html',result=result)
-    else:
-        return render_template('./login_password.html')
-# 註冊
-@app.route('/register' ,methods=['GET','POST'])
-def register():
-    if request.method == "POST":
-        user_name=request.form['Username']
-        Email=request.form['Email']
-        Password=request.form['Password']
-        if db.get_data(f"SELECT * FROM user where email='{Email}'"):
-            result='此Email已經註冊過'
-            return redirect('/login')
-        else:
-            token=str(uuid.uuid4())
-            sql_user_command=f"INSERT INTO user(user_name,password,email,permission,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','Default user','{token}')"
-            db.edit_data(sql_user_command)
-            html=f'http://140.131.114.141/verify_register?uuid={token}'
-            msg_title = 'Welcome to CodeAlchemy'
-            msg_recipients=[Email]
-            msg_html =f'<p>親愛的 {user_name}，<br>感謝您註冊成為我們平台的一員！為了確保您的帳戶安全，請點擊以下連結驗證您的電子郵件地址：<a href="{html}">驗證連結</a>。<br>如果您無法點擊上述連結，請將以下網址複製並粘貼到瀏覽器地址欄中：<a href="{html}">{html}</a>。<br>請完成這一步驟以啟用您的帳戶。如果您遇到任何問題或需要協助，請隨時聯繫我們的客戶服務團隊，我們將竭誠為您服務。<br>謝謝您的合作！<br>祝您有個愉快的體驗！</p>'
-            msg = Message(
-                subject=msg_title,
-                sender = 'codealchemyproject@gmail.com',
-                recipients=msg_recipients,
-                html=msg_html
-            )
-            mail.send(msg)
-            result='註冊成功'
-        return render_template('./register_result.html',result=result)
-    else:
-        return render_template('./register.html')
-# 忘記密碼
-@app.route('/forget_password' ,methods=['GET','POST'])
-def forget_password():
-    if request.method == "POST":
-        Email=request.form['Email']
-        user_name=db.get_data(f"SELECT * FROM user where email='{Email}'")[0][1]
-        token=str(uuid.uuid4())
-        db.edit_data(f"UPDATE user SET uuid = '{token}' WHERE email='{Email}'")
-        html=f'http://140.131.114.141/verify_forget_password?uuid={token}'
-        msg_title = 'Forget CodeAlchemy Password'
-        msg_recipients=[Email]
-        msg_html =f'<p>親愛的{user_name},</p><p>我們注意到您最近嘗試登入您的帳號時遇到了一些問題。如果您忘記了您的密碼，請不要擔心，我們很樂意協助您重設密碼。</p><p>請點擊以下連結以重設您的密碼：</p><a href="{html}">重設密碼</a><p>如果點擊上述連結無法正常工作，請複製並粘貼以下網址至您的瀏覽器中：</p><p>{html}</p><p>請注意，此連結將在收到此郵件後的24小時內有效。請盡快完成密碼重設流程。</p><p>如果您沒有請求重設密碼，請忽略此郵件。您的帳號安全是我們的首要關注。</p><p>如果您有任何疑問或需要進一步協助，請隨時回覆此郵件與我們聯繫。</p>'
-        msg = Message(
-            subject=msg_title,
-            sender = 'codealchemyproject@gmail.com',
-            recipients=msg_recipients,
-            html=msg_html
-        )
-        mail.send(msg)
-        return redirect('/login')
-    else:
-        return render_template('./forget_password.html')
-# 註冊驗證
-@app.route('/verify_register',methods=['GET'])
-def verify_register():
-    # 獲得uuid
-    uuid = request.args.get('uuid',None,type=str)
-    sql_command=f"SELECT * FROM user where uuid='{uuid}'"
-    data=db.get_data(sql_command)
-    if len(data)==1:
-        sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
-        db.edit_data(sql_command)
-        sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
-        db.edit_data(sql_command)
-        result='驗證成功'
-        return render_template('./verify_register.html',result=result)
-    else:
-        result='驗證失敗'
-        return render_template('./verify_register.html',result=result)
-# 忘記密碼驗證
-@app.route('/verify_forget_password',methods=['GET','POST'])
-def verify_forget_password():
-    # 獲得UUID
-    uuid = request.args.get('uuid',None,type=str)
-    if request.method == "POST":
-            uuid=request.form['uuid']
-    # 檢查UUID是否存在
-    sql_command=f"SELECT * FROM user where uuid='{uuid}'"
-    data=db.get_data(sql_command)
-    if len(data)==1:
-        if request.method == "POST":
-            uuid=request.form['uuid']
-            Password=request.form['Password']
-            Password=generate_password_hash(Password)
-            sql_command = f"UPDATE user SET password = '{Password}' WHERE uuid='{uuid}'"
-            db.edit_data(sql_command)
-            sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
-            db.edit_data(sql_command)
-            result='變更成功'
-            return render_template('./verify_forget_password_result.html',result=result)
-        else:
-            return render_template('./verify_forget_password.html',uuid=uuid)
-    else:
-        result='錯誤'
-        return render_template('./verify_forget_password_result.html',result=result)
-#登出 
-@app.route('/logout')
-def logout():
-    session.clear()
-    resp = make_response(redirect('/'))
-    resp.set_cookie('logged_in','',expires=0)
-    resp.set_cookie('user_name','',expires=0)
-    return resp
-
+                error_reason = "未知錯誤"
+            return render_template('./problem.html', status = '未通過', error_reason=error_reason)
 
 @app.route('/user_data',methods=['GET'])
 def user_data():

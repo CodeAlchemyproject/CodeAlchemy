@@ -46,3 +46,26 @@ document.getElementById("test_btn").addEventListener("click", function () {
   };
   xhr.send(formData);
 });
+//上傳
+document.getElementById("upload_btn").addEventListener("click", function () {
+  var type = 'upload'
+  var problem_id = document.getElementById('problem_id').innerHTML
+  var language = mode
+  // 获取所有具有类名为 'CodeMirror-line' 的 <pre> 元素
+  var code = editor.getValue();;
+  var formData = new FormData();
+  formData.append("type", type)
+  formData.append("problem_id", problem_id)
+  formData.append("language", language);
+  formData.append("code", code);
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/problem_submit");
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      console.log(xhr.responseText);
+    } else {
+      console.error(xhr.responseText);
+    }
+  };
+  xhr.send(formData);
+});

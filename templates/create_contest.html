@@ -17,250 +17,177 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        #competitionForm {
-            width: 800px;
-            padding: 20px;
-            margin-top: auto;
-            border-radius: 10px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="datetime-local"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .checkbox-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-        }
-
-        .form-select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .container {
-            position: relative;
-        }
-
-        h1 {
-            margin-top: 10px;
-            text-align: center;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        input[type="button"] {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="button"]:hover {
-            background-color: #45a049;
-        }
-
-
-        /*start*/
-        .modal-header h3 {
-            font-size: 30px;
-            /* 置中 */
-            position: absolute;
-            top: 7%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-
-        .modal-body form .btn {
-            width: 100%;
-            font-size: 25px;
-            color: white;
-        }
-
-    </style>
 
 </head>
 
 <body>
     {% include "nav_bar.html" %}
-    <div class="d-flex justify-content-center">
-        <form id="competitionForm" action="/contest/create" method="post">
-            <h1><b>Create Competition</b></h1>
-            <div class="form">
-                <span class="name">Competition Name:</span>
-                <span class="value">
-                    <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name"
-                        required>
-                </span>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <form id="competitionForm" action="/contest/create" method="post">
+                            <h1><b>Create Competition</b></h1>
+                            <div class="form">
+                                <div class="mb-3">
+                                    <label class="form-label">Competition Name:</label>
+                                    <input type="text" class="form-control" id="contest_name" placeholder="name"
+                                        name="contest_name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="description" placeholder="description"
+                                        name="description" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Type:</label>
+                                    <select class="form-select" id="state">
+                                        <option value="public">public</option>
+                                        <option value="private">private</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Add question:</label>
+                                    <div>
+                                        <div id="questionContainer">
+                                            <!-- 這裡會動態添加所選擇的題目 -->
+                                        </div>
+                                        <input href="#" class="btn btn-success" type="button" value="Add Question"
+                                            data-bs-toggle="modal" data-bs-target="#loginModal"></span>
+                                    </div>
+                                </div>
+                                <!-- 跳出視窗內容 -->
 
-                <span class="name">Description</span>
-                <span class="value">
-                    <input type="text" class="form-control" id="description" placeholder="description"
-                        name="description" required>
-                </span>
+                                <div class="modal fade" id="loginModal">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <!-- Header -->
+                                            <div class="modal-header">
+                                                <h3>problem list</h3>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <!-- Body -->
+                                            <div class="modal-body">
+                                                <form>
+                                                    <!-- 題目列表的表格 -->
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Title</th>
+                                                                <th scope="col">Description</th>
+                                                                <th scope="col">Difficulty</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="contestTableBody">
+                                                            <!-- 表格內容將在這裡使用javascript動態添加 -->
+                                                        </tbody>
+                                                    </table>
+                                                </form>
+                                            </div>
+                                            <!-- Footer -->
+                                        </div>
+                                    </div>
+                                </div>
 
-                <span class="name">Type:</span>
-                <span class="value">
-                    <select class="form-select" id="state">
-                        <option value="public">public</option>
-                        <option value="private">private</option>
-                    </select>
-                </span>
-
-
-                <span class="name">Add question:</span>
-                <div>
-                    <div id="questionContainer">
-                        <!-- 這裡會動態添加所選擇的題目 -->
+                                <div class="mb-3">
+                                    <label class="form-label">Languages:</label>
+                                    <span class="value">
+                                        <div class="checkbox-row">
+                                            <input class="form-check-input" type="checkbox" id="python"
+                                                name="programmingLanguages" value="Python">
+                                            <label class="form-check-label" for="python">Python</label>
+                                            <input class="form-check-input" type="checkbox" id="c"
+                                                name="programmingLanguages" value="C">
+                                            <label for="c">C</label>
+                                            <input class="form-check-input" type="checkbox" id="cpp"
+                                                name="programmingLanguages" value="C++">
+                                            <label for="cpp">C++</label>
+                                            <input class="form-check-input" type="checkbox" id="java"
+                                                name="programmingLanguages" value="Java">
+                                            <label for="java">Java</label>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="name">Start Time:</span>
+                                    <span class="value">
+                                        <input type="datetime-local" class="form-control" id="startTime"
+                                            name="startTime" required>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="name">End Time:</span>
+                                    <span class="value">
+                                        <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+                                            required>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="value">
+                                        <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
+                                            value="create">Create
+                                            Competition</button>
+                                    </span>
+                                </div>
+                        </form>
                     </div>
-                    <input href="#" type="button" value="Add Question" data-bs-toggle="modal"
-                        data-bs-target="#loginModal"></span>
                 </div>
-
-                <!-- 跳出視窗內容 -->
-
-                <div class="modal fade" id="loginModal">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <!-- Header -->
-                            <div class="modal-header">
-                                <h3>problem list</h3>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <!-- Body -->
-                            <div class="modal-body">
-                                <form>
-                                    <!-- 題目列表的表格 -->
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Title</th>
-                                                <th scope="col">Description</th>
-                                                <th scope="col">Difficulty</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="contestTableBody">
-                                            <!-- 表格內容將在這裡使用javascript動態添加 -->
-                                        </tbody>
-                                    </table>
-                                </form>
-                            </div>
-                            <!-- Footer -->
-                        </div>
-                    </div>
-                </div>
-
-
-                <span class="name">languages:</span>
-                <span class="value">
-                    <div class="checkbox-row">
-                        <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages"
-                            value="Python">
-                        <label for="python">Python</label>
-                        <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
-                        <label for="c">C</label>
-                        <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages"
-                            value="C++">
-                        <label for="cpp">C++</label>
-                        <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages"
-                            value="Java">
-                        <label for="java">Java</label>
-                    </div>
-                </span>
-
-                <span class="name">Start Time:</span>
-                <span class="value">
-                    <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
-                </span>
-
-                <span class="name">End Time:</span>
-                <span class="value">
-                    <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
-                </span>
-
-                <span class="value">
-                    <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">Create
-                        Competition</button>
-                </span>
             </div>
-        </form>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-    $('#loginModal').on('show.bs.modal', function (e) {
-        $.ajax({
-            url: '/contest/get_problems',
-            type: 'GET',
-            success: function (data) {
-                var contestTableBody = $("#contestTableBody");
-                contestTableBody.empty(); // 清空表格内容
+            $('#loginModal').on('show.bs.modal', function (e) {
+                $.ajax({
+                    url: '/contest/get_problems',
+                    type: 'GET',
+                    success: function (data) {
+                        var contestTableBody = $("#contestTableBody");
+                        contestTableBody.empty(); // 清空表格内容
 
-                // 函数用来简化内容并创建一个可点击的更多链接
-                function simplifyContent(content, maxLength) {
-                    if (content.length > maxLength) {
-                        return content.substring(0, maxLength) + 
-                               `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
-                    }
-                    return content;
-                }
+                        // 函数用来简化内容并创建一个可点击的更多链接
+                        function simplifyContent(content, maxLength) {
+                            if (content.length > maxLength) {
+                                return content.substring(0, maxLength) +
+                                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
+                            }
+                            return content;
+                        }
 
-                // 循环遍历返回的数据
-                data.forEach(function (problem) {
-                    var title = problem[0]; // 标题
-                    var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
-                    var difficulty = problem[2]; // 难度
-                    var row = `<tr>
+                        // 循环遍历返回的数据
+                        data.forEach(function (problem) {
+                            var title = problem[0]; // 标题
+                            var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
+                            var difficulty = problem[2]; // 难度
+                            var row = `<tr>
                                     <td>${title}</td>
                                     <td>${content}</td>
                                     <td>${difficulty}</td>
                                     <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
                                 </tr>`;
-                    contestTableBody.append(row);
-                });
+                            contestTableBody.append(row);
+                        });
 
-                // 添加点击事件来显示全部内容
-                contestTableBody.on('click', '.more-link', function (e) {
-                    e.preventDefault();
-                    var fullContent = decodeURIComponent($(this).data('content'));
-                    $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
-                });
+                        // 添加点击事件来显示全部内容
+                        contestTableBody.on('click', '.more-link', function (e) {
+                            e.preventDefault();
+                            var fullContent = decodeURIComponent($(this).data('content'));
+                            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
+                        });
 
-            },
-            error: function () {
-                alert('數據載入失敗。');
-            }
+                    },
+                    error: function () {
+                        alert('數據載入失敗。');
+                    }
+                });
+            });
         });
-    });
-});
-        
+
     </script>
 
 </body>
