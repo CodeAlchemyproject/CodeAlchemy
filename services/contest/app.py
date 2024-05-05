@@ -1,5 +1,6 @@
 # 匯入Blueprint模組
-from flask import request, render_template
+from flask import request, render_template, jsonify, json
+import sqlite3
 from flask import Blueprint
 
 from utils import db
@@ -10,10 +11,13 @@ contest_bp = Blueprint('contest_bp', __name__)
 #--------------------------
 # 在contest服務藍圖加入路由
 #--------------------------
+
+
 #contest create form
 @contest_bp.route('/create/form')
 def contest_create_form():
     return render_template('create_contest.html') 
+
 
 #create contest
 @contest_bp.route('/create', methods=['POST'])
@@ -51,6 +55,7 @@ def contest_create():
         connection.close()
 
 
+
 #contest_list
 @contest_bp.route('/join/form')
 def contest_join(): 
@@ -66,3 +71,34 @@ def contest_join():
 
     # 渲染 join_contest.html 
     return render_template('join_contest.html', contests=contests)
+
+
+# Mock database
+#mock_db = [
+#    {'title': 'Two Sum', 'description': 'Given an array of integers, return indices...', 'difficulty': 'Easy'},
+#    {'title': 'Add Binary', 'description': 'Given two binary strings, return their sum...', 'difficulty': 'Medium'},
+#    {'title': 'Max Points', 'description': 'Given an array of points on the plane, find...', 'difficulty': 'Hard'}
+#]
+
+@contest_bp.route('/get_problems')
+#def get_problems():
+#    return jsonify(mock_db)
+def get_problems():
+    # 连接到您的数据库（这里假设数据库的名字是database.db）
+    conn = db.connection()
+    cur = conn.cursor()
+    
+    # 执行查询操作
+    cur.execute("SELECT title, content, difficulty FROM problem")
+    problems_data = cur.fetchall()
+    
+    # 关闭连接
+    cur.close()
+    conn.close()
+  
+    # 返回查询结果给前端
+    print(problems_data)
+    return jsonify(problems_data)
+    
+
+

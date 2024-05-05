@@ -18,9 +18,9 @@
     <div>
         {% for feedback in data %}
             <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
-                <p><strong>User Name:</strong> {{ feedback[1] }}</p>
-                <p><strong>Content:</strong> {{ feedback[3] }}</p>
-                <p><a href="/reply_feedback?feedback_id={{ feedback[0] }}">Reply</a></p>
+                <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
+                <p><strong>內容:</strong> {{ feedback[3] }}</p>
+                <p><a href="/reply_feedback?feedback_id={{ feedback[0] }}">回覆</a></p>
             </div>
         {% endfor %}
     </div>

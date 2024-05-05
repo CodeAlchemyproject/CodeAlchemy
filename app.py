@@ -21,9 +21,8 @@ from threading import Thread
 from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
-#from services.customer.app import customer_bp
+from services.auth.app import auth_bp
 from services.problem.app import problem_bp
-#from services.user.app import user_bp, login_manager
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from utils import db, common
@@ -409,12 +408,19 @@ def start_crawler_thread():
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
+<<<<<<< HEAD
 #app.register_blueprint(customer_bp, url_prefix='/customer')
 #app.register_blueprint(user_bp, url_prefix='/user')  
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
 app.register_blueprint(feedback_bp, url_prefix='/feedback') 
 #login_manager.init_app(app)  
+=======
+app.register_blueprint(auth_bp, url_prefix='/auth')  
+app.register_blueprint(problem_bp, url_prefix='/problem') 
+app.register_blueprint(contest_bp, url_prefix='/contest') 
+app.register_blueprint(feedback_bp, url_prefix='/feedback') 
+>>>>>>> 10cd91f43727678e7dc6e0a89fbdd4ac0d94d0c4
 
 #-------------------------
 # 啟動主程式

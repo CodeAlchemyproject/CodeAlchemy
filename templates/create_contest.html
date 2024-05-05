@@ -1,291 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+
     {% include "_site_header.html" %}
-    <!-- Bootstrap CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+    <!-- 響應式網站 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Boostrap 導入程式 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
+    <!-- css連結 -->
+
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        .createform {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
 
-        #competitionForm {
-            width: 800px;
-            padding: 20px;
-            margin-top: auto;            
-            border-radius: 10px;
-            
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="datetime-local"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .checkbox-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-        }
-
-        .form-select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .container {
-            position: relative;
-        }
-
-        h1 {
-            margin-top: 10px;
-            text-align: center;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-
-        /*add question css start*/
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        input[type="button"] {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="button"]:hover {
-            background-color: #45a049;
-        }
-
-        .question {
-            margin-bottom: 10px;
-        }
-
-        .question input[type="text"] {
-            width: calc(100% - 100px);
-        }
-
-        .question input[type="button"] {
-            margin-left: 10px;
-        }
-
-        /* 模擬懸浮視窗的樣式 */
-        .modal {
-            display: none; /* 預設隱藏 */
-            position: fixed; /* 使視窗固定在螢幕上 */
-            z-index: 1; /* 確保視窗位於其他元素之上 */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* 添加捲動條以便適應視窗大小 */
-            background-color: rgb(0,0,0); /* 使用深灰色作為背景 */
-            background-color: rgba(0,0,0,0.4); /* 添加透明度 */
-            padding-top: 60px; /* 上方空間，以免標題區域被遮擋 */
-        }
-
-        /* 模擬懸浮視窗的內容 */
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; /* 居中顯示 */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* 視窗寬度 */
-        }
-
-        /* 關閉按鈕樣式 */
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
+
 <body>
     {% include "nav_bar.html" %}
-    <div class="createform">
-        <form id="competitionForm" action="/contest/create" method="post">
-            <h1><b>Create Competition</b></h1>
-            <div class="form">
-                <span class="name">Competition Name:</span>
-                <span class="value">
-                    <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
-                </span>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <form id="competitionForm" action="/contest/create" method="post">
+                            <h1><b>Create Competition</b></h1>
+                            <div class="form">
+                                <div class="mb-3">
+                                    <label class="form-label">Competition Name:</label>
+                                    <input type="text" class="form-control" id="contest_name" placeholder="name"
+                                        name="contest_name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="description" placeholder="description"
+                                        name="description" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Type:</label>
+                                    <select class="form-select" id="state">
+                                        <option value="public">public</option>
+                                        <option value="private">private</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Add question:</label>
+                                    <div>
+                                        <div id="questionContainer">
+                                            <!-- 這裡會動態添加所選擇的題目 -->
+                                        </div>
+                                        <input href="#" class="btn btn-success" type="button" value="Add Question"
+                                            data-bs-toggle="modal" data-bs-target="#loginModal"></span>
+                                    </div>
+                                </div>
+                                <!-- 跳出視窗內容 -->
 
-                <span class="name">Description</span>
-                <span class="value">
-                    <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
-                </span>
-                
-                <span class="name">Type:</span>
-                <span class="value">
-                    <select class="form-select" id="state">
-                        <option value="public">public</option>
-                        <option value="private">private</option>
-                    </select>
-                </span>
-                
-                <span class="name">Add question:</span>
-                <div>                
-                    <div id="questionContainer">
-                    <!-- 這裡會動態添加所選擇的題目 -->
+                                <div class="modal fade" id="loginModal">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <!-- Header -->
+                                            <div class="modal-header">
+                                                <h3>problem list</h3>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <!-- Body -->
+                                            <div class="modal-body">
+                                                <form>
+                                                    <!-- 題目列表的表格 -->
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Title</th>
+                                                                <th scope="col">Description</th>
+                                                                <th scope="col">Difficulty</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="contestTableBody">
+                                                            <!-- 表格內容將在這裡使用javascript動態添加 -->
+                                                        </tbody>
+                                                    </table>
+                                                </form>
+                                            </div>
+                                            <!-- Footer -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Languages:</label>
+                                    <span class="value">
+                                        <div class="checkbox-row">
+                                            <input class="form-check-input" type="checkbox" id="python"
+                                                name="programmingLanguages" value="Python">
+                                            <label class="form-check-label" for="python">Python</label>
+                                            <input class="form-check-input" type="checkbox" id="c"
+                                                name="programmingLanguages" value="C">
+                                            <label for="c">C</label>
+                                            <input class="form-check-input" type="checkbox" id="cpp"
+                                                name="programmingLanguages" value="C++">
+                                            <label for="cpp">C++</label>
+                                            <input class="form-check-input" type="checkbox" id="java"
+                                                name="programmingLanguages" value="Java">
+                                            <label for="java">Java</label>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="name">Start Time:</span>
+                                    <span class="value">
+                                        <input type="datetime-local" class="form-control" id="startTime"
+                                            name="startTime" required>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="name">End Time:</span>
+                                    <span class="value">
+                                        <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+                                            required>
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="value">
+                                        <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
+                                            value="create">Create
+                                            Competition</button>
+                                    </span>
+                                </div>
+                        </form>
                     </div>
-                    <input type="button" value="Add Question" onclick="openQuestionModal()"></span>
                 </div>
-                
-               
-                <span class="name">languages:</span>
-                <span class="value">
-                    <div class="checkbox-row">
-                        <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages" value="Python">
-                        <label for="python">Python</label>
-                        <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
-                        <label for="c">C</label>  
-                        <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages" value="C++">
-                        <label for="cpp">C++</label>
-                        <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages" value="Java">
-                        <label for="java">Java</label>                              
-                    </div>             
-                </span> 
-
-                <span class="name">Start Time:</span>
-                <span class="value">
-                    <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
-                </span>
-
-                <span class="name">End Time:</span>
-                <span class="value">
-                    <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
-                </span>
-
-                <span class="value">
-                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">Create Competition</button>
-                </span>
             </div>
-        </form>
-    </div>    
-    
-    
-    <!-- 懸浮視窗 -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeQuestionModal()">&times;</span>
-            <h3>Select a Question</h3>
-            <ul id="questionList">
-                <!-- 這裡會顯示來自資料庫的題目 -->
-                <li>Question 1</li>
-                <li>Question 2</li>
-                <li>Question 3</li>
-                <!-- 可以使用JavaScript動態生成或填充題目 -->
-            </ul>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // 假設這是從資料庫獲取的題目列表
-        var questionListFromDatabase = ["Question 1", "Question 2", "Question 3", "Question 4"];
-    
-        // 開啟懸浮視窗
-        function openQuestionModal() {
-            var modal = document.getElementById("myModal");
-            var questionList = document.getElementById("questionList");
-            questionList.innerHTML = ""; // 清空題目列表
-    
-            // 將從資料庫獲取的題目列表添加到懸浮視窗中
-            questionListFromDatabase.forEach(function(question) {
-                var li = document.createElement("li");
-                li.textContent = question;
-                li.onclick = function() {
-                    // 點擊選擇題目後將其添加到表格中
-                    addSelectedQuestion(question);
-                    closeQuestionModal();
-                };
-                questionList.appendChild(li);
+        $(document).ready(function () {
+            $('#loginModal').on('show.bs.modal', function (e) {
+                $.ajax({
+                    url: '/contest/get_problems',
+                    type: 'GET',
+                    success: function (data) {
+                        var contestTableBody = $("#contestTableBody");
+                        contestTableBody.empty(); // 清空表格内容
+
+                        // 函数用来简化内容并创建一个可点击的更多链接
+                        function simplifyContent(content, maxLength) {
+                            if (content.length > maxLength) {
+                                return content.substring(0, maxLength) +
+                                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
+                            }
+                            return content;
+                        }
+
+                        // 循环遍历返回的数据
+                        data.forEach(function (problem) {
+                            var title = problem[0]; // 标题
+                            var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
+                            var difficulty = problem[2]; // 难度
+                            var row = `<tr>
+                                    <td>${title}</td>
+                                    <td>${content}</td>
+                                    <td>${difficulty}</td>
+                                    <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                                </tr>`;
+                            contestTableBody.append(row);
+                        });
+
+                        // 添加点击事件来显示全部内容
+                        contestTableBody.on('click', '.more-link', function (e) {
+                            e.preventDefault();
+                            var fullContent = decodeURIComponent($(this).data('content'));
+                            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
+                        });
+
+                    },
+                    error: function () {
+                        alert('數據載入失敗。');
+                    }
+                });
             });
-    
-            // 顯示懸浮視窗
-            modal.style.display = "block";
-        }
-    
-        // 關閉懸浮視窗
-        function closeQuestionModal() {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-    
-        // 將選擇的題目添加到表格中
-        function addSelectedQuestion(question) {
-            var questionContainer = document.getElementById('questionContainer');
-            var newDiv = document.createElement('div');
-            newDiv.classList.add('question');
-    
-            var newInput = document.createElement('input');
-            newInput.setAttribute('type', 'text');
-            newInput.setAttribute('name', 'selectedQuestions[]');
-            newInput.setAttribute('value', question);
-            newInput.readOnly = true; // 使 input 元素為只讀
-    
-            var removeButton = document.createElement('input');
-            removeButton.setAttribute('type', 'button');
-            removeButton.setAttribute('value', 'Remove');
-            removeButton.onclick = function() {
-                questionContainer.removeChild(newDiv);
-            };
-    
-            newDiv.appendChild(newInput);
-            newDiv.appendChild(removeButton);
-    
-            questionContainer.appendChild(newDiv);
-        }
+        });
+
     </script>
 
 </body>
+
 </html>
