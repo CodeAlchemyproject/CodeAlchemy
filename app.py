@@ -56,7 +56,48 @@ def problem():
     example_inputs = problem_data[0][5].split('|||')
     example_outputs = problem_data[0][6].split('|||')
     if request.method=="POST":
-        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+        data = request.form
+        type = data.get('type')
+        problem_id = data.get('problem_id')
+        language = data.get('language')
+        code = data.get('code')
+
+        sql_problem_command = f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data = db.get_data(sql_problem_command)
+
+        example_inputs = problem_data[0][5].split('|||')
+        example_outputs = problem_data[0][6].split('|||')
+        r = randint(1, len(example_inputs))
+
+        if type == 'test':
+            status = None
+            run_time = None
+            memory = None
+            error_reason = None
+            problem = {
+                "id": problem_id,
+                "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
+                "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
+            }
+            user_code = code
+            print(user_code)
+            result, message, run_time, memory = common.evaluate(problem, user_code)
+            if result:
+                print(message)
+                status = 'passed'
+                # 只有在通過測試時才使用 run_time 和 memory 變量
+                run_time = round(run_time * 1000, 4)
+                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+                                example_outputs=example_outputs, run_time=run_time, memory=memory,
+                                error_reason=error_reason)
+            else:
+                print(message)
+                status = 'failed'
+                error_reason = message
+
+                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
+                                    error_reason=error_reason)
     else:
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
 
@@ -129,7 +170,6 @@ def problem_submit():
         if "ZJ" in file_name:
             # 調用 ZeroJudge_Submit 函數進行題目提交
             score = ZeroJudge_Submit(file_name)
-            score = score[:2]
             # 根據 score 的前兩個字來決定顯示不同的內容
             if score.startswith("AC"):
                 status = "通過"
