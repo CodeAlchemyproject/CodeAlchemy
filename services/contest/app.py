@@ -97,7 +97,6 @@ def get_problems():
     conn.close()
   
     # 返回查询结果给前端
-    print(problems_data)
     return jsonify(problems_data)
     
 
