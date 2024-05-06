@@ -136,19 +136,18 @@
                     <textarea id="editor" name="editor">
 </textarea>
                 </div>
-
-
                 {% if status == "passed" %}
                 <div class="mt-5 bg-success p-3 text-white rounded">
                     <h4>{{ status }}</h4>
                     <p>執行時間: {{ run_time }}</p>
                     <p>記憶體占用: {{ memory }}</p>
                 </div>
-                {% else %}
+                {% elif status == "failed"%}
                 <div class="mt-5 bg-danger p-3 text-white rounded">
                     <h4>{{ status }}</h4>
                     <p>{{ error_reason }}</p>
                 </div>
+                {% else %}
                 {% endif %}
             </div>
         </div>

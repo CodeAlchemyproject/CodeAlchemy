@@ -50,25 +50,20 @@ def index():
 #題目
 @app.route('/problem',methods=['GET','POST'])
 def problem():
-    problem_id = request.args.get('problem_id',type=str)
-    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    problem_data=db.get_data(sql_problem_command)
-    example_inputs = problem_data[0][5].split('|||')
-    example_outputs = problem_data[0][6].split('|||')
     if request.method=="POST":
+        # 從傳入封包取得資料
         data = request.form
         type = data.get('type')
         problem_id = data.get('problem_id')
         language = data.get('language')
-        code = data.get('code')
-
-        sql_problem_command = f"SELECT * FROM problem where problem_id='{problem_id}'"
-        problem_data = db.get_data(sql_problem_command)
-
+        #code = data.get('code')
+        code = ''' print(f'hello, {input()}') '''
+        # 重新取得題目
+        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         r = randint(1, len(example_inputs))
-
         if type == 'test':
             status = None
             run_time = None
@@ -83,22 +78,26 @@ def problem():
             print(user_code)
             result, message, run_time, memory = common.evaluate(problem, user_code)
             if result:
-                print(message)
                 status = 'passed'
                 # 只有在通過測試時才使用 run_time 和 memory 變量
                 run_time = round(run_time * 1000, 4)
-                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
-                                example_outputs=example_outputs, run_time=run_time, memory=memory,
-                                error_reason=error_reason)
+                return render_template('./problem.html', status='passed', data=problem_data, example_inputs=example_inputs,
+                                    example_outputs=example_outputs,run_time=run_time, memory=memory,
+                                    error_reason=error_reason)
             else:
                 print(message)
                 status = 'failed'
                 error_reason = message
-
+                print(error_reason)
                 return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
                                     example_outputs=example_outputs, run_time=run_time, memory=memory,
                                     error_reason=error_reason)
     else:
+        problem_id = request.args.get('problem_id',type=str)
+        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_problem_command)
+        example_inputs = problem_data[0][5].split('|||')
+        example_outputs = problem_data[0][6].split('|||')
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
 
 @app.route('/problem_submit', methods=['POST'])
