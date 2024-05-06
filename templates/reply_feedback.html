@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回覆反饋</title>
+</head>
+<body>
+    <h1>回覆反饋</h1>
+    <form action="feedback/reply_feedback" method="post">
+        <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
+        <label for="reply_content">回覆:</label><br>
+        <textarea name="reply_content" rows="5" cols="50"></textarea><br>
+        <input type="submit" value="Reply Feedback">
+    </form>
+</body>
+</html>
