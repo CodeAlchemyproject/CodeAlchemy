@@ -2,7 +2,7 @@ import subprocess
 import time
 import psutil
 
-def run_user_code(user_code, problem):
+def evaluate(user_code, problem):
     # 啟動子進程執行用戶代碼
     start_time = time.time()  # 開始計時
     process = subprocess.Popen(['python', '-c', user_code], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
