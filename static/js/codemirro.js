@@ -37,13 +37,6 @@ document.getElementById("test_btn").addEventListener("click", function () {
   formData.append("code", code);
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/problem_submit");
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      console.log(xhr.responseText);
-    } else {
-      console.error(xhr.responseText);
-    }
-  };
   xhr.send(formData);
 });
 //上傳
@@ -60,12 +53,5 @@ document.getElementById("upload_btn").addEventListener("click", function () {
   formData.append("code", code);
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/problem_submit");
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      console.log(xhr.responseText);
-    } else {
-      console.error(xhr.responseText);
-    }
-  };
   xhr.send(formData);
 });
