@@ -56,8 +56,7 @@ def problem():
         type = data.get('type')
         problem_id = data.get('problem_id')
         language = data.get('language')
-        #code = data.get('code')
-        code = ''' print(f'hello, {input()}') '''
+        code = data.get('code')
         # 重新取得題目
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
         problem_data=db.get_data(sql_problem_command)
@@ -126,7 +125,7 @@ def problem_submit():
             "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
             "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
         }
-        user_code = code
+        user_code = str(code)
         print(user_code)
         result, message, run_time, memory = common.evaluate(problem, user_code)
         if result:
