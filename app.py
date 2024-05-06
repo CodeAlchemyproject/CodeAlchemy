@@ -57,6 +57,8 @@ def problem():
     example_outputs = problem_data[0][6].split('|||')
     if request.method=="POST":
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+    else:
+        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
 
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
