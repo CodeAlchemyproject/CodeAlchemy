@@ -29,3 +29,23 @@ def evaluate(user_code, problem):
     
     return result, stderr.decode(), execution_time, memory_usage
 
+# 題目範例
+problem = {
+    "id": "ZJ-a001",
+    "example_input": "C++",
+    "example_output": "hello, C++"
+}
+
+# 用戶代碼
+user_code = '''print(f'hello, {input()}')'''
+
+# 執行函數並打印結果
+is_correct, error, time_taken, memory_used = evaluate(user_code, problem)
+if is_correct:
+    print("測試通過")
+else:
+    print("測試失敗")
+    if error:
+        print("錯誤信息：", error)
+print("執行時間：", time_taken, "秒")
+print("記憶體使用量：", memory_used, "MB")
