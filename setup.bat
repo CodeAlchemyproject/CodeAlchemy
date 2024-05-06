@@ -8,6 +8,8 @@ pip install selenium
 pip install webdriver_manager
 pip install pandas
 pip install authlib
+pip install psutil
+pip install bs4
 echo 安裝成功
 pause
 exit
