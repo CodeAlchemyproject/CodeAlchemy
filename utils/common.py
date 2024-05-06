@@ -4,6 +4,7 @@ import psutil
 
 # 評測函式，接受題目資料和使用者提交的程式碼
 def evaluate(problem, user_code):
+    print(problem)
     try:
         # 使用 subprocess 執行程式碼
         process = subprocess.Popen(['python3', '-c', user_code],
@@ -12,11 +13,11 @@ def evaluate(problem, user_code):
                                    stderr=subprocess.PIPE,
                                    text=True)
         # 將題目的輸入作為 stdin 傳遞
-        process.stdin.write(problem["example_inputs"])
+        process.stdin.write(problem["example_input"])
         process.stdin.close()  # 關閉標準輸入，以便程式碼知道已經結束輸入
         # 開始計時
         start_time = time.time()
-        # 將題目的輸入提供給使用者程式碼
+        # 等待程式碼執行完畢或超時
         stdout, stderr = process.communicate(timeout=5)
         # 結束計時
         end_time = time.time()
