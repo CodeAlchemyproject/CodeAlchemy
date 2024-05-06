@@ -75,6 +75,7 @@ def problem():
                 "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
             }
             user_code = code
+            
             print(user_code)
             result, message, run_time, memory = common.evaluate(problem, user_code)
             if result:
