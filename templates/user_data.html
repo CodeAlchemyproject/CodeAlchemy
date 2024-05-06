@@ -11,10 +11,83 @@
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
 <body>
     <!-- ------- -->
     <!-- nav-bar -->
     <!-- ------- -->
     {% include "nav_bar.html" %}
     {{data}}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-9 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <div class="row mt-4">
+                            <form>
+                                <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">個人檔案圖片</label>
+                                    {% if img %}
+                                    <img src="{{ img }}" style="width: 96px;" class="rounded-circle">
+                                    {% else %}
+                                    {% endif %}
+                                </div>
+                                <div class="input-group mb-3">
+                                <label for="inputEmail3" class="col-sm-2 col-form-label">上傳個人檔案圖片</label>
+                                <input type="file" class="form-control" id="inputGroupFile01">
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">使用者ID</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" readonly class="form-control" id="User_id"
+                                            value="{{ User_id }}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">使用者名稱</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="User_name" value="{{User_name}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" class="form-control" id="inputEmail3" value="{{Email}}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label">連結到Google</label>
+                                    <div class="col-sm-10">
+                                        {% if Google_id %}
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">已連結到Google</label>
+                                        {% else %}
+                                        <input type="radio" class="btn-check" name="options-outlined"
+                                            id="success-outlined" autocomplete="off">
+                                        <a href="/auth/google" class="btn btn-light">
+                                            <!-- 嵌入 Google 圖示 SVG -->
+                                            <img src="../static/imgs/google-icon-logo.svg" alt="Google 圖示"
+                                                style="width: 3%;">
+                                            使用Google登入
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">密碼</label>
+                                    <div class="col-sm-10">
+                                        <input type="radio" class="btn-check" name="options-outlined"
+                                            id="success-outlined" autocomplete="off">
+                                        <a href="/auth/change_password" class="btn btn-primary">
+                                            變更密碼
+                                        </a>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">儲存</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
