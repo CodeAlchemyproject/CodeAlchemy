@@ -48,14 +48,16 @@ def index():
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 
 #題目
-@app.route('/problem',methods=['GET'])
+@app.route('/problem',methods=['GET','POST'])
 def problem():
     problem_id = request.args.get('problem_id',type=str)
     sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data=db.get_data(sql_problem_command)
-    example_inputs = data[0][5].split('|||')
-    example_outputs = data[0][6].split('|||')
-    return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
+    problem_data=db.get_data(sql_problem_command)
+    example_inputs = problem_data[0][5].split('|||')
+    example_outputs = problem_data[0][6].split('|||')
+    if request.method=="POST":
+        
+    return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
 
 @app.route('/problem_submit', methods=['POST'])
 def problem_submit():
@@ -66,10 +68,10 @@ def problem_submit():
     code = data.get('code')
 
     sql_problem_command = f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data = db.get_data(sql_problem_command)
+    problem_data = db.get_data(sql_problem_command)
 
-    example_inputs = data[0][5].split('|||')
-    example_outputs = data[0][6].split('|||')
+    example_inputs = problem_data[0][5].split('|||')
+    example_outputs = problem_data[0][6].split('|||')
     r = randint(1, len(example_inputs))
 
     if type == 'test':
@@ -90,13 +92,15 @@ def problem_submit():
             status = 'passed'
             # 只有在通過測試時才使用 run_time 和 memory 變量
             run_time = round(run_time * 1000, 4)
-            
+            return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+                               example_outputs=example_outputs, run_time=run_time, memory=memory,
+                               error_reason=error_reason)
         else:
             print(message)
             status = 'failed'
             error_reason = message
 
-        return render_template('./problem.html', status=status, data=data, example_inputs=example_inputs,
+        return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
                                example_outputs=example_outputs, run_time=run_time, memory=memory,
                                error_reason=error_reason)
 
@@ -156,7 +160,7 @@ def problem_submit():
                 else:
                     error_reason = "未知錯誤"
 
-            return render_template('./problem.html', status=status, data=data, example_inputs=example_inputs,
+            return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
                                    error_reason=error_reason)
 
