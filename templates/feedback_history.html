@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回饋紀錄</title>
 
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
@@ -10,10 +13,7 @@
         crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>回饋紀錄</title>
+    
     <style>
         table {
             border-collapse: collapse;
@@ -36,17 +36,19 @@
     <!-- ------- -->
     {% include "nav_bar.html" %}
     {{data}}
-    
+
     {% if feedback_history %}
         <table>
             <tr>
                 <th>回饋內容</th>
                 <th>提交時間</th>
+                <th>回覆</th>
             </tr>
             {% for feedback in feedback_history %}
                 <tr>
                     <td>{{ feedback[3] }}</td>
                     <td>{{ feedback[4] }}</td>
+                    <td>{{ feedback[5] }}</td>
                 </tr>
             {% endfor %}
         </table>

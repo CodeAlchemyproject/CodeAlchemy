@@ -52,9 +52,8 @@ def feedback_history():
 
     #取得傳入參數, 執行sql命令並取回資料  
     user_name = session.get('User_name')
-    #user_name = session['User_name']
     cursor.execute('SELECT * FROM feedback WHERE user_name=%s', (user_name,))
-    feedback_history = cursor.fetchone()
+    feedback_history = cursor.fetchall()
 
     #關閉連線   
     connection.close()  
@@ -78,6 +77,7 @@ def admin_dashboard():
     connection.close()  
 
     return render_template('admin_dashboard.html', data=data)
+
 #回覆反饋
 @feedback_bp.route('/reply_feedback', methods=['GET', 'POST'])
 def reply_feedback():
