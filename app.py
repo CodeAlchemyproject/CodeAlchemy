@@ -96,6 +96,7 @@ def problem():
                                     example_outputs=example_outputs, run_time=run_time, memory=memory,
                                     error_reason=error_reason)
         elif type == 'upload':
+            print("GAWA")
             # 定義語言對應的文件擴展名字典
             file_extensions = {
                 'python': '.py',

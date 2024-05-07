@@ -52,6 +52,6 @@ document.getElementById("upload_btn").addEventListener("click", function () {
   formData.append("language", language);
   formData.append("code", code);
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/problem_submit");
+  xhr.open("POST", "/problem");
   xhr.send(formData);
 });
