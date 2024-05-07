@@ -76,7 +76,10 @@ def problem():
             user_code = code
             print(user_code)
             result, message, run_time, memory = common.evaluate(user_code, problem)
-
+            print("測試結果：", result)
+            print("訊息：", message)
+            print("執行時間：", round(run_time*1000), "毫秒")
+            print("記憶體使用量：", memory, "MB")
             if result:
                 status = 'passed'
                 # 只有在通過測試時才使用 run_time 和 memory 變量
