@@ -15,6 +15,7 @@ from services.auth.app import auth_bp
 from services.problem.app import problem_bp
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
+from services.user.
 from utils import db, common
 
 # 產生主程式, 加入主畫面
@@ -266,19 +267,6 @@ def problem():
 #                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
 #                                    error_reason=error_reason)
 
-@app.route('/user_data',methods=['GET'])
-def user_data():
-    Email = session.get('Email')
-    sql_command=f"SELECT * FROM user where email='{Email}'"
-    data=db.get_data(sql_command)
-    User_id=data[0][0]
-    User_name=data[0][1]
-    Google_id=data[0][3]
-    Email=data[0][4]
-    img=data[0][5]
-    register_time=data[0][8]
-    print(User_id)
-    return render_template('./user_data.html',User_id=User_id,User_name=User_name,Google_id=Google_id,Email=Email,img=img,register_time=register_time)
 # 在 Flask 應用程式啟動時啟動執行序
 def start_crawler_thread():
     crawler_thread = Thread(target=os.system, args=("python ./crawler/ZJ_submit.py",))
