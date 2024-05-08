@@ -24,8 +24,9 @@
             padding: 10px;
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-            text-align: center; /* 讓內容置中 */
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* 讓內容置中 */
         }
 
         h1 {
@@ -34,53 +35,42 @@
         }
 
         form {
-            display:inline;
+            display: inline;
             padding: 10px;
         }
 
         textarea {
-            width: 600px; /* 調整寬度 */
-            height: 250px; /* 調整高度 */
+            width: 600px;
+            /* 調整寬度 */
+            height: 250px;
+            /* 調整高度 */
             display: block;
-            margin: 0 auto; /* 水平置中 */
+            margin: 0 auto;
+            /* 水平置中 */
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-
-        input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        input[type="submit"]:focus {
-            outline: none;
-        }
     </style>
 </head>
+
 <body>
     <!-- ------- -->
     <!-- nav-bar -->
     <!-- ------- -->
     {% include "nav_bar.html" %}
     {{data}}
-
-    <h1>請提供您的回饋:</h1>
-    <form action="/feedback/create" method="post">
-        <textarea name="feedback_content" ></textarea><br>
-        <input type="submit" value="提交回饋">
-    </form>
-    <form action="/feedback/feedback_history">
-        <input type="submit" value="回饋紀錄">
-    </form>
+    <div class="container">
+        <h1>請提供您的回饋:</h1>
+        <form action="/feedback/create" method="post">
+            <textarea class="form-control" name="feedback_content"></textarea><br>
+            <button type="submit" class="btn btn-primary">提交回饋</button>
+        </form>
+        <form action="/feedback/feedback_history">
+            <button type="submit" class="btn btn-primary">回饋紀錄</button>
+        </form>
+    </div>
 </body>
+
 </html>
