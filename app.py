@@ -48,117 +48,223 @@ def index():
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 
 #題目
-@app.route('/problem',methods=['GET'])
+@app.route('/problem',methods=['GET','POST'])
 def problem():
-    problem_id = request.args.get('problem_id',type=str)
-    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data=db.get_data(sql_problem_command)
-    example_inputs = data[0][5].split('|||')
-    example_outputs = data[0][6].split('|||')
-    return render_template('./problem.html',data=data,example_inputs=example_inputs,example_outputs=example_outputs)
-
-@app.route('/problem_submit', methods=['POST'])
-def problem_submit():
-    data = request.form
-    type = data.get('type')
-    problem_id = data.get('problem_id')
-    language = data.get('language')
-    code = data.get('code')
-
-    sql_problem_command = f"SELECT * FROM problem where problem_id='{problem_id}'"
-    data = db.get_data(sql_problem_command)
-
-    example_inputs = data[0][5].split('|||')
-    example_outputs = data[0][6].split('|||')
-    r = randint(1, len(example_inputs))
-
-    if type == 'test':
-        status = None
-        run_time = None
-        memory = None
-        error_reason = None
-        problem = {
-            "id": problem_id,
-            "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
-            "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
-        }
-        user_code = code
-        print(user_code)
-        result, message, run_time, memory = common.evaluate(problem, user_code)
-        if result:
-            print(message)
-            status = 'passed'
-            # 只有在通過測試時才使用 run_time 和 memory 變量
-            run_time = round(run_time * 1000, 4)
-            
-        else:
-            print(message)
-            status = 'failed'
-            error_reason = message
-
-        return render_template('./problem.html', status=status, data=data, example_inputs=example_inputs,
-                               example_outputs=example_outputs, run_time=run_time, memory=memory,
-                               error_reason=error_reason)
-
-    elif type == 'upload':
-        # 定義語言對應的文件擴展名字典
-        file_extensions = {
-            'python': '.py',
-            'text/x-java': '.java',
-            'text/x-csrc': '.c',
-            'text/x-c++src': '.cpp'
-        }
-        # 生成 6 位數的亂碼
-        random_code = str(uuid.uuid4())[:6]
-        # 構建文件路徑
-        file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
-        file_path = os.path.join('./source', file_name)
-
-        # 確保目錄存在
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-        # 寫入內容到文件中
-        with open(file_path, 'w') as file:
-            file.write(code)
-            print(f"程式碼已成功寫入至 {file_path}")
-        if "ZJ" in file_name:
-            # 調用 ZeroJudge_Submit 函數進行題目提交
-            score = ZeroJudge_Submit(file_name)
-            score = score[:2]
-            # 根據 score 的前兩個字來決定顯示不同的內容
-            if score.startswith("AC"):
-                status = "通過"
-                # 使用正規表達式從 score 中提取 run_time 和 memory
-                match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
-                if match:
-                    run_time = match.group(1)
-                    memory = match.group(2) 
+    if request.method=="POST":
+        # 從傳入封包取得資料
+        data = request.form
+        type = data.get('type')
+        problem_id = data.get('problem_id')
+        language = data.get('language')
+        code = data.get('code')
+        # 重新取得題目
+        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_problem_command)
+        example_inputs = problem_data[0][5].split('|||')
+        example_outputs = problem_data[0][6].split('|||')
+        r = randint(1, len(example_inputs))
+        if type == 'test':
+            status = None
+            run_time = None
+            memory = None
+            error_reason = None
+            problem = {
+                "id": problem_id,
+                "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
+                "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
+            }
+            user_code = code
+            print(user_code)
+            result, message, run_time, memory = common.evaluate(user_code, problem)
+            print("測試結果：", result)
+            print("訊息：", message)
+            print("執行時間：", round(run_time*1000), "毫秒")
+            print("記憶體使用量：", memory, "MB")
+            if result:
+                status = 'passed'
+                # 只有在通過測試時才使用 run_time 和 memory 變量
+                run_time = round(run_time * 1000, 4)
+                return render_template('./problem.html', status='passed', data=problem_data, example_inputs=example_inputs,
+                                    example_outputs=example_outputs,run_time=run_time, memory=memory,
+                                    error_reason=error_reason)
             else:
-                status = '未通過'
-                if score.startswith("NA"):
-                    error_reason = "未通過所有測資點"
-                elif score.startswith("WA"):
-                    error_reason = '答案錯誤'
-                elif score.startswith("TLE"):
-                    error_reason = '執行超過時間限制'
-                elif score.startswith("MLE"):
-                    error_reason = "程序執行超過記憶體限制"
-                elif score.startswith("OLE"):
-                    error_reason = "程序輸出檔超過限制"
-                elif score.startswith("RE"):
-                    error_reason = "執行時錯誤"
-                elif score.startswith("RF"):
-                    error_reason = "使用了被禁止使用的函式"
-                elif score.startswith("CE"):
-                    error_reason = "編譯錯誤"
-                elif score.startswith("SE"):
-                    error_reason = "系統錯誤"
-                else:
-                    error_reason = "未知錯誤"
+                print(message)
+                status = 'failed'
+                error_reason = message
+                print(error_reason)
+                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
+                                    error_reason=error_reason)
+        elif type == 'upload':
+            print("GAWA")
+            # 定義語言對應的文件擴展名字典
+            file_extensions = {
+                'python': '.py',
+                'text/x-java': '.java',
+                'text/x-csrc': '.c',
+                'text/x-c++src': '.cpp'
+            }
+            # 生成 6 位數的亂碼
+            random_code = str(uuid.uuid4())[:6]
+            # 構建文件路徑
+            file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+            file_path = os.path.join('./source', file_name)
 
-            return render_template('./problem.html', status=status, data=data, example_inputs=example_inputs,
-                                   example_outputs=example_outputs, run_time=run_time, memory=memory,
-                                   error_reason=error_reason)
+            # 確保目錄存在
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+            # 寫入內容到文件中
+            with open(file_path, 'w') as file:
+                file.write(code)
+                print(f"程式碼已成功寫入至 {file_path}")
+            if "ZJ" in file_name:
+                # 調用 ZeroJudge_Submit 函數進行題目提交
+                score = ZeroJudge_Submit(file_name)
+                # 根據 score 的前兩個字來決定顯示不同的內容
+                if score.startswith("AC"):
+                    status = "通過"
+                    # 使用正規表達式從 score 中提取 run_time 和 memory
+                    match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
+                    if match:
+                        run_time = match.group(1)
+                        memory = match.group(2) 
+                else:
+                    status = '未通過'
+                    if score.startswith("NA"):
+                        error_reason = "未通過所有測資點"
+                    elif score.startswith("WA"):
+                        error_reason = '答案錯誤'
+                    elif score.startswith("TLE"):
+                        error_reason = '執行超過時間限制'
+                    elif score.startswith("MLE"):
+                        error_reason = "程序執行超過記憶體限制"
+                    elif score.startswith("OLE"):
+                        error_reason = "程序輸出檔超過限制"
+                    elif score.startswith("RE"):
+                        error_reason = "執行時錯誤"
+                    elif score.startswith("RF"):
+                        error_reason = "使用了被禁止使用的函式"
+                    elif score.startswith("CE"):
+                        error_reason = "編譯錯誤"
+                    elif score.startswith("SE"):
+                        error_reason = "系統錯誤"
+                    else:
+                        error_reason = "未知錯誤"
+
+                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
+                                    error_reason=error_reason)
+    else:
+        problem_id = request.args.get('problem_id',type=str)
+        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_problem_command)
+        example_inputs = problem_data[0][5].split('|||')
+        example_outputs = problem_data[0][6].split('|||')
+        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+
+# @app.route('/problem_submit', methods=['POST'])
+# def problem_submit():
+#     data = request.form
+#     type = data.get('type')
+#     problem_id = data.get('problem_id')
+#     language = data.get('language')
+#     code = data.get('code')
+#     print(type(code))
+#     sql_problem_command = f"SELECT * FROM problem where problem_id='{problem_id}'"
+#     problem_data = db.get_data(sql_problem_command)
+
+#     example_inputs = problem_data[0][5].split('|||')
+#     example_outputs = problem_data[0][6].split('|||')
+#     r = randint(1, len(example_inputs))
+
+#     if type == 'test':
+#         status = None
+#         run_time = None
+#         memory = None
+#         error_reason = None
+#         problem = {
+#             "id": problem_id,
+#             "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
+#             "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
+#         }
+#         print(problem)
+#         user_code = code
+#         result, message, run_time, memory = common.evaluate(user_code, problem)
+#         if result:
+#             print(message)
+#             status = 'passed'
+#             # 只有在通過測試時才使用 run_time 和 memory 變量
+#             run_time = round(run_time * 1000, 4)
+#             return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+#                                example_outputs=example_outputs, run_time=run_time, memory=memory,
+#                                error_reason=error_reason)
+#         else:
+#             print(message)
+#             status = 'failed'
+#             error_reason = message
+
+#         return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+#                                example_outputs=example_outputs, run_time=run_time, memory=memory,
+#                                error_reason=error_reason)
+
+#     elif type == 'upload':
+#         # 定義語言對應的文件擴展名字典
+#         file_extensions = {
+#             'python': '.py',
+#             'text/x-java': '.java',
+#             'text/x-csrc': '.c',
+#             'text/x-c++src': '.cpp'
+#         }
+#         # 生成 6 位數的亂碼
+#         random_code = str(uuid.uuid4())[:6]
+#         # 構建文件路徑
+#         file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+#         file_path = os.path.join('./source', file_name)
+
+#         # 確保目錄存在
+#         os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+#         # 寫入內容到文件中
+#         with open(file_path, 'w') as file:
+#             file.write(code)
+#             print(f"程式碼已成功寫入至 {file_path}")
+#         if "ZJ" in file_name:
+#             # 調用 ZeroJudge_Submit 函數進行題目提交
+#             score = ZeroJudge_Submit(file_name)
+#             # 根據 score 的前兩個字來決定顯示不同的內容
+#             if score.startswith("AC"):
+#                 status = "通過"
+#                 # 使用正規表達式從 score 中提取 run_time 和 memory
+#                 match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
+#                 if match:
+#                     run_time = match.group(1)
+#                     memory = match.group(2) 
+#             else:
+#                 status = '未通過'
+#                 if score.startswith("NA"):
+#                     error_reason = "未通過所有測資點"
+#                 elif score.startswith("WA"):
+#                     error_reason = '答案錯誤'
+#                 elif score.startswith("TLE"):
+#                     error_reason = '執行超過時間限制'
+#                 elif score.startswith("MLE"):
+#                     error_reason = "程序執行超過記憶體限制"
+#                 elif score.startswith("OLE"):
+#                     error_reason = "程序輸出檔超過限制"
+#                 elif score.startswith("RE"):
+#                     error_reason = "執行時錯誤"
+#                 elif score.startswith("RF"):
+#                     error_reason = "使用了被禁止使用的函式"
+#                 elif score.startswith("CE"):
+#                     error_reason = "編譯錯誤"
+#                 elif score.startswith("SE"):
+#                     error_reason = "系統錯誤"
+#                 else:
+#                     error_reason = "未知錯誤"
+
+#             return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
+#                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
+#                                    error_reason=error_reason)
 
 @app.route('/user_data',methods=['GET'])
 def user_data():

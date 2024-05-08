@@ -30,20 +30,24 @@
                     <div class="col-6">
                         <div id="problem_id" style="display: none;">{{data[0][0]}}</div>
                         <h1 class="display-6 mt-4">{{data[0][0]}}{{data[0][1]}}</h1>
-                        <h1 >{{ status }}{{ run_time }}</h1>
+                        <h1>{{ status }}{{ run_time }}</h1>
 
                     </div>
                     <!-- 收藏按鈕 -->
                     <div class="col-6 d-flex justify-content-center align-items-center">
                         <button class="Btn">
                             <span class="leftContainer">
-                              <svg fill="white" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"></path></svg>
-                              <span class="like">Like</span>
+                                <svg fill="white" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z">
+                                    </path>
+                                </svg>
+                                <span class="like">Like</span>
                             </span>
                             <span class="likeCount">
-                              {{like}}
+                                {{like}}
                             </span>
-                          </button>
+                        </button>
                     </div>
 
                     <div class="col-12">
@@ -115,11 +119,10 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- 進度條動畫 -->
-                        <script src="../static/js/progress.js"></script>
-                        <button type="button" class="btn btn-outline-success"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up"
-                                viewBox="0 0 16 16">
+                        <!-- 進度條視窗 -->
+                        <button type="button" class="btn btn-outline-success" id="upload_btn" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
                                     d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
                                 <path
@@ -133,29 +136,31 @@
                     <textarea id="editor" name="editor">
 </textarea>
                 </div>
-                <!-- codemirror+測試+上傳的js -->
-                <script src="../static/js/codemirro.js"></script>
-
                 {% if status == "passed" %}
                 <div class="mt-5 bg-success p-3 text-white rounded">
                     <h4>{{ status }}</h4>
                     <p>執行時間: {{ run_time }}</p>
                     <p>記憶體占用: {{ memory }}</p>
                 </div>
-                {% else %}
+                {% elif status == "failed"%}
                 <div class="mt-5 bg-danger p-3 text-white rounded">
                     <h4>{{ status }}</h4>
                     <p>{{ error_reason }}</p>
                 </div>
+                {% else %}
                 {% endif %}
-                </div>
             </div>
         </div>
     </div>
-                
+    </div>
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
     crossorigin="anonymous"></script>
+<!-- codemirror+測試+上傳的js -->
+<script src="../static/js/codemirro.js"></script>
+<!-- 進度條動畫 -->
+<script src="../static/js/progress.js"></script>
 
 </html>

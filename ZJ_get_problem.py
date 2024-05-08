@@ -35,6 +35,8 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 problem_theinput = str(problem_theinput_div)
                 problem_theoutput = str(problem_theoutput_div)
                 problem_title = span_element.text.split()
+                if type(problem_title)==list:
+                    problem_title = ' '.join(problem_title)
                 # 使用正規表達式將第一個<p>前面的所有文字和最後一個</p>後面的文字去除
                 problem_content = re.sub(r'^.*?<p>', '<p>', problem_content, 1)
                 problem_content = re.sub(r'</p>.*?$', '</p>', problem_content, 1)
@@ -105,7 +107,8 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 # 使用整數值插入
                 values = ('ZJ-' + problem_id, problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
                           examples_combined_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
-
+                print(problem_id,problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
+                          examples_combined_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
                 # 執行 SQL 插入
                 cursor.execute(sql_insert, values)
 
@@ -113,14 +116,13 @@ def scrape_problem_content_and_save_to_sql_server(problem_id):
                 conn.commit()
 
                 print(f'已將題目編號 {problem_id} 的資料儲存到 My SQL 資料庫中')
-                response.close()
             else:
                 print('未找到指定的 div 元素')
         except Exception as e:
             print(f'處理題目編號 {problem_id} 時出錯: {str(e)}')
     else:
         print(f'網頁請求失敗，狀態碼: {response.status_code}')
-
+    response.close()
 # 讀取 CSV 文件中的問題編號
 csv_file_path = './ZJ_problem_list.csv'
 with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
@@ -129,4 +131,3 @@ with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
         problem_id = row[0]
         scrape_problem_content_and_save_to_sql_server(problem_id)
         time.sleep(random.randint(10,20))
-print("完成")

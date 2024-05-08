@@ -1,4 +1,6 @@
+import threading
 from flask import Flask,Blueprint,render_template,session,request,url_for,redirect,make_response
+from flask_login import LoginManager, UserMixin,login_user,logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 # google登入
@@ -10,6 +12,7 @@ from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
 # 匯入其他藍圖
 from utils import db
+from crawler import registration
 
 app=Flask(__name__)
 auth_bp = Blueprint('auth', __name__)
@@ -22,6 +25,22 @@ app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail =Mail(app)
+
+# (登入管理)使用者的類別
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id   
+# (登入管理)產生一個管理者
+login_manager = LoginManager()
+
+# (登入管理)取出登入者物件
+@login_manager.user_loader  
+def user_loader(id): 
+    return User(id) 
+# (登入管理)未授權頁面
+@login_manager.unauthorized_handler
+def unauthorized():
+    return 0
 # google登入
 oauth = OAuth(app)
 google = oauth.register(
@@ -123,6 +142,8 @@ def login_password():
             session['logged_in']=True
             session['User_name']=user_data[0][1]
             session['User_id']=user_data[0][0]
+            user = User(session['User_id'])   #(登入管理)產生一個user物件  
+            login_user(user)     #(登入管理)在session中保存此user物件 
             # 如果使用者有勾記住我
             if Rememberme==1:
                 resp = make_response(redirect('/'))
@@ -198,12 +219,18 @@ def verify_register():
     uuid = request.args.get('uuid',None,type=str)
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
+    number=data[1]+'-'+str(uuid.uuid4())[:6]
     if len(data)==1:
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
+        #註冊Zerojudge帳號
+        registration_thread = threading.Thread(target=registration, args=(number,))
+        registration_thread.start()
         sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         result='驗證成功'
+        db.edit_data(sql_command)
+        
         return render_template('verify_register.html',result=result)
     else:
         result='驗證失敗'
@@ -264,6 +291,7 @@ def change_password():
 @auth_bp.route('/logout')
 def logout():
     session.clear()
+    logout_user() 
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
