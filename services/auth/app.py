@@ -87,6 +87,7 @@ def authorize():
         session['Email'] = Email
         session['logged_in'] = True
         session['User_name'] = user_data[0][1]
+        session['Permission']=user_data[0][6]
         session['google_id'] = Goole_ID
         session['imgs'] = imgs
         # 如果數據庫中的 Google ID 與 Google 返回的 ID 一致，則重定向到首頁
@@ -121,6 +122,7 @@ def connect_google():
             session['User_name'] = user_data[0][1]
             # 將用戶 ID 存入 session
             session['User_id'] = user_data[0][0]
+            session['Permission']=user_data[0][6]
             # 更新數據庫中的 Google ID 和圖片
             sql_user_command = f"UPDATE user SET google_id = '{google_id}', image = '{imgs}' WHERE email = '{Email}'"
             db.edit_data(sql_user_command)
@@ -158,6 +160,8 @@ def login_password():
             session['User_name']=user_data[0][1]
             # 將用戶 ID 存入 session
             session['User_id']=user_data[0][0]
+            # 將用戶權限存入 session
+            session['Permission']=user_data[0][6]
             # 如果使用者有勾選「記住我」
             if Rememberme==1:
                 resp = make_response(redirect('/'))
