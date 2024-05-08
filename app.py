@@ -31,6 +31,8 @@ def paginate(data,page, per_page):
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
+    permission=session.get('Permission')
+    print(permission)
     # 取得使用者的篩選條件
     state = request.args.get('state','*',type=str)
     onlinejudge = request.args.get('onlinejudge','*',type=str)
@@ -46,7 +48,7 @@ def index():
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
     #渲染網頁
-    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search,permission=permission)
 
 #題目
 @app.route('/problem',methods=['GET','POST'])
