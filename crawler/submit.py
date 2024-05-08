@@ -1,5 +1,4 @@
 # 引入所需的模組和套件
-from queue import Queue
 from flask import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -113,7 +112,7 @@ def ZeroJudge_Submit(file_name):
                     sleep(1)
                     try:
                         btn_login = WebDriverWait(login_area, wait_max).until(
-                            EC.presence_of_element_located((By.CLASS_NAME, 'btn.btn-primary')))
+                            EC.presence_of_element_located((By.type, 'btn.btn-primary')))
                         btn_login.click()
                         break
                     except:

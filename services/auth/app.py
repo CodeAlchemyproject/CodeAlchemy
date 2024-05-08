@@ -1,3 +1,4 @@
+import threading
 from flask import Flask,Blueprint,render_template,session,request,url_for,redirect,make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
@@ -10,6 +11,7 @@ from flask_mail import Mail, Message
 from config import MAIL_PASSWORD,MAIL_USERNAME
 # 匯入其他藍圖
 from utils import db
+from crawler import registration
 
 app=Flask(__name__)
 auth_bp = Blueprint('auth', __name__)
@@ -195,12 +197,18 @@ def verify_register():
     uuid = request.args.get('uuid',None,type=str)
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
+    number=data[1]+'-'+str(uuid.uuid4())[:6]
     if len(data)==1:
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
+        #註冊Zerojudge帳號
+        registration_thread = threading.Thread(target=registration, args=(number,))
+        registration_thread.start()
         sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         result='驗證成功'
+        db.edit_data(sql_command)
+        
         return render_template('verify_register.html',result=result)
     else:
         result='驗證失敗'
