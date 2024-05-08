@@ -10,6 +10,7 @@
         crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 <body>
     <!-- ------- -->
@@ -18,6 +19,22 @@
     {% include "nav_bar.html" %}
     {{data}}
 
-    <h1>送出失敗</h1>
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">送出失敗</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>送出失敗</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div class="modal-dialog modal-dialog-centered">
+        <h1>送出失敗</h1>
+    </div>
 </body>
 </html>

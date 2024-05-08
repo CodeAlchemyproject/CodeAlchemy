@@ -13,14 +13,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理者回覆</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 30px;
+        }
+        .feedback-container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .feedback-item {
+            border: 1px solid #999;
+            border-radius: 10px; /* 讓邊角變圓 */
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+
+        .feedback-item p {
+            margin: 7px 0;
+        }
+
+        .reply-button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reply-button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
 </head>
 <body>
-    <div>
+    <div class="feedback-container">
         {% for feedback in data %}
-            <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
+            <div class="feedback-item">
                 <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
                 <p><strong>內容:</strong> {{ feedback[3] }}</p>
-                <p><a href="feedback/reply_feedback?feedback_id={{ feedback[0] }}">回覆</a></p>
+                <button class="reply-button" onclick="location.href='feedback/reply_feedback?feedback_id={{ feedback[0] }}'">回覆</button>
             </div>
         {% endfor %}
     </div>
