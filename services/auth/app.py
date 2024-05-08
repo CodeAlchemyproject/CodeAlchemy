@@ -320,7 +320,6 @@ def change_password():
 @auth_bp.route('/logout')
 def logout():
     session.clear()
-    logout_user() 
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
