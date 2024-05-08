@@ -113,7 +113,7 @@ def problem_submit():
         # 構建文件路徑
         file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
         file_path = os.path.join('./source', file_name)
-
+        
         # 確保目錄存在
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
