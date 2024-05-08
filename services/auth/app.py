@@ -65,6 +65,7 @@ def authorize():
     print(user_info)
     Goole_ID=user_info['id']
     Email = user_info['email']
+    imgs = user_info['picture']
     sql_user_command=f"SELECT * FROM user where email='{Email}'"
     user_data=db.get_data(sql_user_command)
     # 如果有用email註冊過
@@ -74,6 +75,7 @@ def authorize():
         session['logged_in']=True
         session['User_name']=user_data[0][1]
         session['google_id']=Goole_ID
+        session['imgs']=imgs
         if user_data[0][3]==Goole_ID:
             return redirect('/')
         else:
@@ -85,6 +87,7 @@ def authorize():
 def connect_google():
     google_id=session.get('google_id')
     Email = session.get('Email')
+    imgs = session.get('imgs')
     if request.method=="POST":
         Password=request.form['Password']
         sql_common=f"SELECT * FROM user where email='{Email}'"
@@ -94,7 +97,7 @@ def connect_google():
             session['logged_in']=True
             session['User_name']=user_data[0][1]
             session['User_id']=user_data[0][0]
-            sql_user_command=f"UPDATE user SET google_id ='{google_id}' where email='{Email}'"
+            sql_user_command=f"UPDATE user SET google_id ='{google_id}',image='{imgs}' where email='{Email}'"
             db.edit_data(sql_user_command)
             return redirect('/')
         else:
@@ -239,6 +242,32 @@ def verify_forget_password():
     else:
         result='錯誤'
         return render_template('verify_forget_password_result.html',result=result)
+#更改密碼
+@auth_bp.route('/change_password',methods=['GET','POST'])
+def change_password():
+    if request.method == "POST":
+        Email=session.get('Email')
+        sql_common=f"SELECT * FROM user where email='{Email}'"
+        oldPassword=request.form['oldPassword']
+        newPassword=request.form['newPassword']
+        renewPassword=request.form['renewPassword']
+        # 檢查密碼一致性
+        if newPassword==renewPassword:
+            # 新密碼加密
+            newPassword=generate_password_hash(newPassword)
+            # 檢查舊密碼
+            if check_password_hash(db.get_data(sql_common)[0][2],oldPassword):
+                sql_common= f"UPDATE user SET password = '{newPassword}' WHERE email='{Email}'"
+                db.edit_data(sql_common)
+                return render_template('change_password_success.html')
+            else:
+                result='密碼錯誤'
+                return render_template('change_password.html',result=result)
+        else:
+            result='密碼不一致'
+            return render_template('change_password.html',result=result)
+    else:
+        return render_template('change_password.html')
 #登出 
 @auth_bp.route('/logout')
 def logout():
@@ -246,4 +275,5 @@ def logout():
     resp = make_response(redirect('/'))
     resp.set_cookie('logged_in','',expires=0)
     resp.set_cookie('user_name','',expires=0)
+    resp.set_cookie('user_id','',expires=0)
     return resp
