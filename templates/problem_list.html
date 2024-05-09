@@ -132,7 +132,7 @@
                         <td>{{ item[11].strftime('%Y-%m-%d') }}</td>
                         {% if permission=='Manager' %}
                         <!-- 修改 -->
-                        <td><a class="btn btn-success" href="/auth/login" role="button"><svg
+                        <td><a class="btn btn-success" href="/manager/problem?problem_id={{item[0]}}" role="button"><svg
                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-pencil" viewBox="0 0 16 16">
                                     <path
