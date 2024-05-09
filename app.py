@@ -16,6 +16,7 @@ from services.problem.app import problem_bp
 from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from services.user.app import user_bp
+from services.manager.app import manager_bp
 from utils import db, common
 
 # 產生主程式, 加入主畫面
@@ -281,7 +282,8 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(problem_bp, url_prefix='/problem') 
 app.register_blueprint(contest_bp, url_prefix='/contest') 
 app.register_blueprint(feedback_bp, url_prefix='/feedback') 
-app.register_blueprint(user_bp, url_prefix='/user') 
+app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(manager_bp, url_prefix='/manager') 
 #-------------------------
 # 啟動主程式
 #------------------------
