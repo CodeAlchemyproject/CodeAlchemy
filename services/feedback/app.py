@@ -71,12 +71,12 @@ def admin_dashboard():
     cursor = connection.cursor()    
     # 查詢所有反饋
     cursor.execute('SELECT * FROM feedback')
-    data = cursor.fetchall()
+    feedback = cursor.fetchall()
 
     #關閉連線   
     connection.close()  
 
-    return render_template('admin_dashboard.html', data=data)
+    return render_template('admin_dashboard.html', feedback=feedback)
 
 #回覆反饋
 @feedback_bp.route('/reply_feedback', methods=['GET', 'POST'])

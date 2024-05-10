@@ -8,6 +8,8 @@
 <body>
     <h1>回覆反饋</h1>
     <form action="feedback/reply_feedback" method="post">
+        <p><strong>User ID:</strong> {{ feedback[1] }}</p>
+        <p><strong>Content:</strong> {{ feedback[3] }}</p>
         <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
         <label for="reply_content">回覆:</label><br>
         <textarea name="reply_content" rows="5" cols="50"></textarea><br>
