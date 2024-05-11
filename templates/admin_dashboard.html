@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
@@ -16,12 +15,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            padding: 30px;
+            background-color: #f2f2f2; 
         }
         .feedback-container {
             width: 80%;
             margin: 0 auto;
+            padding: 30px;
         }
 
         .feedback-item {
@@ -52,12 +51,19 @@
     </style>
 </head>
 <body>
+    <!-- ------- -->
+    <!-- 導覽列 -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    <!-- 包含導覽列 -->
+    {{data}}
+
     <div class="feedback-container">
-        {% for feedback in data %}
+        {% for feedback in feedback %}
             <div class="feedback-item">
                 <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
-                <p><strong>內容:</strong> {{ feedback[3] }}</p>
-                <button class="reply-button" onclick="location.href='feedback/reply_feedback?feedback_id={{ feedback[0] }}'">回覆</button>
+                <p><strong>內容:</strong> {{ feedback[2] }}</p>
+                <button class="reply-button" onclick="location.href='/feedback/reply_feedback?feedback_id={{ feedback[0] }}'">回覆</button>
             </div>
         {% endfor %}
     </div>

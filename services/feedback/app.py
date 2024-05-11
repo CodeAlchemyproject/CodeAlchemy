@@ -28,8 +28,8 @@ def submit_feedback():
 
         # 將反饋資料存入資料庫
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO feedback (user_name, type, content, created_at) VALUES (%s, %s, %s, %s)",
-                        (user_name, 'user', feedback_content, created_at))
+        cursor.execute("INSERT INTO feedback (user_name, content, created_at) VALUES (%s, %s, %s, %s)",
+                        (user_name, feedback_content, created_at))
         
         #關閉資料庫連線 
         connection.commit()
@@ -71,12 +71,12 @@ def admin_dashboard():
     cursor = connection.cursor()    
     # 查詢所有反饋
     cursor.execute('SELECT * FROM feedback')
-    data = cursor.fetchall()
+    feedback = cursor.fetchall()
 
     #關閉連線   
     connection.close()  
 
-    return render_template('admin_dashboard.html', data=data)
+    return render_template('admin_dashboard.html', feedback=feedback)
 
 #回覆反饋
 @feedback_bp.route('/reply_feedback', methods=['GET', 'POST'])
@@ -92,8 +92,8 @@ def reply_feedback():
         if feedback_id:
             # 根據 feedback_id 查詢反饋
             cursor.execute('SELECT * FROM feedback WHERE feedback_id=%s', (feedback_id,))
-            data = cursor.fetchone()
-            return render_template('reply_feedback.html', data=data)
+            feedback = cursor.fetchone()
+            return render_template('reply_feedback.html', feedback=feedback)
         else:
             return 'Feedback ID is required.'
     elif request.method == 'POST':
