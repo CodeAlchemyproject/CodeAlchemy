@@ -20,7 +20,6 @@ def problem():
         problem_id = request.args.get('problem_id',type=str)
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
         problem_data=db.get_data(sql_problem_command)
-        print(problem_data)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
