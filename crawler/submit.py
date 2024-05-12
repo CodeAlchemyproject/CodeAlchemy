@@ -15,7 +15,7 @@ import traceback
 
 
 
-def ZeroJudge_Submit(file_name):
+def ZeroJudge_Submit(file_name,number):
     # crawler setting
     main_url = 'https://zerojudge.tw/Login'
     # 禁用瀏覽器彈窗避免預設路徑載入失敗
@@ -78,13 +78,9 @@ def ZeroJudge_Submit(file_name):
         with open('./crawler/account.json', 'r') as file:
             accounts = json.load(file)['account']
         for acc in accounts:
-            username = acc[0]
-            password = acc[1]
-            # 構建資料夾的路徑
-            folder_path = os.path.join('./source')
-            # 檢查該資料夾是否存在並且是否為空
-            if not os.path.exists(folder_path) and os.listdir(folder_path):
-                continue
+            if number==acc[0].split('-')[0]:
+                username = acc[0]
+                password = acc[1]
 
             # 登錄網站
             driver.get(main_url)

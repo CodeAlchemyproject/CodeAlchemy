@@ -15,6 +15,9 @@
     <script src="../static/lib/codemirror/mode/clike/clike.js"></script>
     <script src="../static/lib/codemirror/addon/hint/show-hint.js"></script>
 
+    <title>{{data[0][0]}}{{data[0][1]}}</title>
+    <script src="buttonControl.js"></script>
+    
 </head>
 
 <body>
@@ -30,7 +33,6 @@
                     <div class="col-6">
                         <div id="problem_id" style="display: none;">{{data[0][0]}}</div>
                         <h1 class="display-6 mt-4">{{data[0][0]}}{{data[0][1]}}</h1>
-                        <h1>{{ status }}{{ run_time }}</h1>
 
                     </div>
                     <!-- 收藏按鈕 -->
