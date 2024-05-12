@@ -57,10 +57,11 @@
                                             data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                     </div>
                                 </div>
+                                
                                 <!-- 跳出視窗內容 -->
 
                                 <div class="modal fade" id="loginModal">
-                                    <div class="modal-dialog modal-lg">
+                                    <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
                                             <!-- Header -->
                                             <div class="modal-header">
@@ -68,6 +69,68 @@
                                                 <button type="button" class="btn-close"
                                                     data-bs-dismiss="modal"></button>
                                             </div>
+                                            <!---->
+                                            <div class="row mt-4">
+                                                <div class="col-3">
+                                                    <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
+                                                        <option selected>狀態</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                                                            public</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                                                            private</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-3">
+                                                    <select class="form-select" id="onlinejudge"
+                                                        onchange="location.href=this.options[this.selectedIndex].value">
+                                                        <option selected>online judges</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                                                            All</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}&search={{search}}">
+                                                            ZeroJudge</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
+                                                            Leetcode</option>                                                        
+                                                    </select>
+                                                </div>
+                                                <div class="col-3">
+                                                    <select class="form-select" id="difficulty"
+                                                        onchange="location.href=this.options[this.selectedIndex].value">
+                                                        <option selected>難度</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
+                                                            All</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
+                                                            Hard</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
+                                                            Middle</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
+                                                            Easy</option>
+                                                        <option
+                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
+                                                            N/A</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-3">
+                                                    <form class="d-flex"
+                                                        action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
+                                                        <input type="hidden" name="page" value="{{page}}">
+                                                        <input type="hidden" name="state" value="{{state}}">
+                                                        <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
+                                                        <input type="hidden" name="difficulty" value="{{difficulty}}">
+                                                        <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <!---->
+
                                             <!-- Body -->
                                             <div class="modal-body">
                                                 <form>
@@ -85,9 +148,16 @@
                                                             <!-- 表格內容將在這裡使用javascript動態添加 -->
                                                         </tbody>
                                                     </table>
+                                                    <!-- 分頁導航 -->
+                                                    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                                                        <ul class="pagination" id="pagination">
+                                                        <!-- 分頁按鈕將動態插入到這裡 -->
+                                                        </ul>
+                                                    </nav>
                                                 </form>
                                             </div>
                                             <!-- Footer -->
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -142,52 +212,75 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#loginModal').on('show.bs.modal', function (e) {
-                $.ajax({
-                    url: '/contest/get_problems',
-                    type: 'GET',
-                    success: function (data) {
-                        var contestTableBody = $("#contestTableBody");
-                        contestTableBody.empty(); // 清空表格内容
+        function simplifyContent(content, maxLength) {
+            if (content.length > maxLength) {
+                return content.substring(0, maxLength) +
+                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
+            }
+            return content;
+        }
 
-                        // 函数用来简化内容并创建一个可点击的更多链接
-                        function simplifyContent(content, maxLength) {
-                            if (content.length > maxLength) {
-                                return content.substring(0, maxLength) +
-                                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
-                            }
-                            return content;
-                        }
+        // 加载并显示问题列表和分页控件
+        function loadTable(page) {
+            $.ajax({
+                url: '/contest/get_problems',
+                type: 'GET',
+                data: {
+                    page: page,
+                    per_page: 10 // 每页显示10条数据
+                },
+                success: function (response) {
+                    var contestTableBody = $("#contestTableBody");
+                    contestTableBody.empty(); // 清空表格内容
 
-                        // 循环遍历返回的数据
-                        data.forEach(function (problem) {
-                            var title = problem[0]; // 标题
-                            var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
-                            var difficulty = problem[2]; // 难度
-                            var row = `<tr>
-                                    <td>${title}</td>
-                                    <td>${content}</td>
-                                    <td>${difficulty}</td>
-                                    <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
-                                </tr>`;
-                            contestTableBody.append(row);
-                        });
+                    // 添加表格内容
+                    response.data.forEach(function (problem) {
+                        var title = problem[0]; // 标题
+                        var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
+                        var difficulty = problem[2]; // 难度
+                        var row = `<tr>
+                                <td>${title}</td>
+                                <td>${content}</td>
+                                <td>${difficulty}</td>
+                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                            </tr>`;
+                        contestTableBody.append(row);
+                    });
 
-                        // 添加点击事件来显示全部内容
-                        contestTableBody.on('click', '.more-link', function (e) {
-                            e.preventDefault();
-                            var fullContent = decodeURIComponent($(this).data('content'));
-                            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
-                        });
-
-                    },
-                    error: function () {
-                        alert('數據載入失敗。');
+                    // 添加分页控件
+                    var pagination = $('#pagination');
+                    pagination.empty(); // 清空现有的分页按钮
+                    
+                    var total_pages = response.total_pages;
+                    for(let i=1; i <= total_pages; i++){
+                        var activeClass = response.page === i ? 'active' : '';
+                        var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
+                        pagination.append(pageItem);
                     }
-                });
+
+                    // 绑定分页按钮的点击事件
+                    $('.page-item').click(function(e){
+                        e.preventDefault();
+                        var selectedPage = $(this).data('page');
+                        loadTable(selectedPage); // 使用选中的页码重新加载表格
+                    });
+                },
+                error: function () {
+                    alert('数据载入失败。');
+                }
             });
+        }
+
+        // 添加点击事件来显示全部内容
+        $('#contestTableBody').on('click', '.more-link', function (e) {
+            e.preventDefault();
+            var fullContent = decodeURIComponent($(this).data('content'));
+            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
         });
 
+        // 初始化加载第一页数据
+        loadTable(1);
+        });
     </script>
 
 </body>

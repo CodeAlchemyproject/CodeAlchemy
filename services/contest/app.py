@@ -2,6 +2,7 @@
 from flask import request, render_template, jsonify, json
 import sqlite3
 from flask import Blueprint
+from flask_paginate import Pagination, get_page_args
 
 from utils import db
 
@@ -80,6 +81,7 @@ def contest_join():
 #    {'title': 'Max Points', 'description': 'Given an array of points on the plane, find...', 'difficulty': 'Hard'}
 #]
 
+'''
 @contest_bp.route('/get_problems')
 #def get_problems():
 #    return jsonify(mock_db)
@@ -99,5 +101,38 @@ def get_problems():
     # 返回查询结果给前端
     return jsonify(problems_data)
     
+'''
 
+@contest_bp.route('/get_problems')
+def get_problems():
+    # 获取URL参数中的page和per_page变量，如果没有则分别默认为1和10
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 10))
 
+    # 建立到数据库的连接
+    conn = db.connection()
+    cur = conn.cursor()
+    
+    # 计算应该跳过的记录数
+    offset = (page - 1) * per_page
+    # 执行分页查询
+    cur.execute("SELECT title, content, difficulty FROM problem LIMIT %s OFFSET %s;", (per_page, offset))
+    problems_data = cur.fetchall()
+    
+    # 获取数据库中题目的总数以计算页数
+    cur.execute("SELECT COUNT(*) FROM problem;")
+    total_problems = cur.fetchone()[0]
+    total_pages = (total_problems + per_page - 1) // per_page  # 计算总分页数
+    
+    # 关闭连接
+    cur.close()
+    conn.close()
+  
+    # 返回查询结果给前端，附加分页信息
+    return jsonify({
+        'data': problems_data,
+        'total': total_problems,
+        'page': page,
+        'total_pages': total_pages,
+        'per_page': per_page
+    })
