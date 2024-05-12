@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>送出失敗</title>
 
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
@@ -19,22 +22,26 @@
     {% include "nav_bar.html" %}
     {{data}}
 
-    <div class="modal" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">送出失敗</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>送出失敗</p>
-            </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">送出失敗</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>送出失敗</p>
           </div>
         </div>
       </div>
-
-    <div class="modal-dialog modal-dialog-centered">
-        <h1>送出失敗</h1>
     </div>
+
+    <h1>送出失敗</h1>
 </body>
 </html>

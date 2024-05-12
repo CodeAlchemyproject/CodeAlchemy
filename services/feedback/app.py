@@ -1,5 +1,5 @@
 # 匯入模組
-from flask import request, render_template,redirect,session
+from flask import request, render_template,redirect,session, flash, redirect, url_for
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
@@ -28,19 +28,30 @@ def submit_feedback():
 
         # 將反饋資料存入資料庫
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO feedback (user_name, content, created_at) VALUES (%s, %s, %s, %s)",
+        cursor.execute("INSERT INTO feedback (user_name, content, created_at) VALUES (%s, %s, %s)",
                         (user_name, feedback_content, created_at))
         
         #關閉資料庫連線 
         connection.commit()
         connection.close()
-
+        
         # 渲染成功畫面
         return render_template('create_success.html')
     else:
         # 渲染失敗畫面
         return render_template('create_fail.html')
     
+"""
+        # 使用 Flask 的 flash 功能來顯示成功訊息
+        flash("送出成功!", "success")
+        return redirect(url_for('home'))  # 重定向到指定的頁面
+    else:
+        # 使用 Flask 的 flash 功能來顯示失敗訊息
+        flash("送出失敗!", "error")
+        return redirect(url_for('home'))  # 重定向到指定的頁面
+
+"""     
+        
 #反饋紀錄
 @feedback_bp.route('/feedback_history')
 def feedback_history(): 
