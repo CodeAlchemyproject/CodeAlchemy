@@ -108,7 +108,7 @@ def ZeroJudge_Submit(file_name):
 
                 sleep(3)
 
-                for i in range(60):
+                for i in range(300):
                     sleep(1)
                     try:
                         btn_login = WebDriverWait(login_area, wait_max).until(
@@ -181,4 +181,5 @@ def ZeroJudge_Submit(file_name):
     finally:
         if driver:
             driver.quit()
-            return results[4][:2]
+            print(results)
+            return results

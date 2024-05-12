@@ -1,10 +1,14 @@
 # 引入模組
+import csv
 import os
 from random import randint
-from flask import Flask, render_template, session, request
+import random
+import time
+from flask import Flask, render_template, session, request,jsonify
 import math
 import uuid
 import re
+from crawler.get_problem import ZJ_get_problem
 from crawler.submit import ZeroJudge_Submit
 from threading import Thread
 #-----------------------
@@ -23,7 +27,16 @@ from utils import db, common
 app = Flask(__name__)
 # google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
-
+#取得ZeroJudge全部題目
+def getZJAllProblem():
+    # 讀取 CSV 文件中的問題編號
+    csv_file_path = './ZJ_problem_list.csv'
+    with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        for row in csv_reader:
+            problem_id = row[0]
+            ZJ_get_problem(problem_id)
+            time.sleep(random.randint(10,20))
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
@@ -78,27 +91,22 @@ def problem():
                 "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
             }
             user_code = code
-            print(user_code)
             result, message, run_time, memory = common.evaluate(user_code, problem)
-            print("測試結果：", result)
-            print("訊息：", message)
-            print("執行時間：", round(run_time*1000), "毫秒")
-            print("記憶體使用量：", memory, "MB")
             if result:
                 status = 'passed'
                 # 只有在通過測試時才使用 run_time 和 memory 變量
                 run_time = round(run_time * 1000, 4)
-                return render_template('./problem.html', status='passed', data=problem_data, example_inputs=example_inputs,
-                                    example_outputs=example_outputs,run_time=run_time, memory=memory,
-                                    error_reason=error_reason)
+                memory =round(memory, 4)
+            
             else:
                 print(message)
                 status = 'failed'
                 error_reason = message
                 print(error_reason)
-                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
-                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
-                                    error_reason=error_reason)
+            return jsonify({'result':result,
+                            'message':message,
+                            'run_time':run_time,
+                            "memory":memory})
         elif type == 'upload':
             print("GAWA")
             # 定義語言對應的文件擴展名字典
@@ -120,10 +128,9 @@ def problem():
             # 寫入內容到文件中
             with open(file_path, 'w') as file:
                 file.write(code)
-                print(f"程式碼已成功寫入至 {file_path}")
             if "ZJ" in file_name:
                 # 調用 ZeroJudge_Submit 函數進行題目提交
-                score = ZeroJudge_Submit(file_name)
+                score = ZeroJudge_Submit(file_name,session['User_id'])
                 # 根據 score 的前兩個字來決定顯示不同的內容
                 if score.startswith("AC"):
                     status = "通過"
@@ -165,7 +172,11 @@ def problem():
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+@app.route('/add_problem', methods=['POST'])
+def add_problem():
 
+    ZJ_get_problem()
+    return 0
 # @app.route('/problem_submit', methods=['POST'])
 # def problem_submit():
 #     data = request.form
