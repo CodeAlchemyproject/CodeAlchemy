@@ -35,22 +35,23 @@ def submit_feedback():
         connection.commit()
         connection.close()
         
-        # 渲染成功畫面
-        return render_template('create_success.html')
+        # 使用 JavaScript 彈跳視窗顯示成功消息
+        success_message = "送出成功!"
+        return f'''
+            <script>
+                alert("{success_message}");
+                window.location.replace("/feedback/create/form");
+            </script>
+        '''
     else:
-        # 渲染失敗畫面
-        return render_template('create_fail.html')
-    
-"""
-        # 使用 Flask 的 flash 功能來顯示成功訊息
-        flash("送出成功!", "success")
-        return redirect(url_for('home'))  # 重定向到指定的頁面
-    else:
-        # 使用 Flask 的 flash 功能來顯示失敗訊息
-        flash("送出失敗!", "error")
-        return redirect(url_for('home'))  # 重定向到指定的頁面
-
-"""     
+        # 使用 JavaScript 彈跳視窗顯示失敗消息
+        error_message = "送出失敗!"
+        return f'''
+            <script>
+                alert("{error_message}");
+                window.location.replace("/feedback/create/form");
+            </script>
+        '''
         
 #反饋紀錄
 @feedback_bp.route('/feedback_history')

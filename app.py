@@ -5,6 +5,7 @@ from random import randint
 import random
 import time
 from flask import Flask, render_template, session, request,jsonify
+from flask_paginate import Pagination
 import math
 import uuid
 import re
