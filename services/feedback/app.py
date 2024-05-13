@@ -130,7 +130,7 @@ def reply_feedback():
         return f'''
             <script>
                 alert("{success_message}");
-                window.location.replace("/feedback/reply_feedback");
+                window.location.replace("/feedback/admin_dashboard");
             </script>
         '''
     else:
@@ -139,12 +139,6 @@ def reply_feedback():
         return f'''
             <script>
                 alert("{error_message}");
-                window.location.replace("/feedback/reply_feedback");
+                window.location.replace("/feedback/admin_dashboard");
             </script>
         '''
-        
-"""
-            return render_template('admin_dashboard.html')
-        else:
-            return '請提供回饋ID並回覆。'
-"""

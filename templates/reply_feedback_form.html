@@ -71,7 +71,7 @@
     {{data}}
 
     <div class="reply-form">
-        <form action="feedback/reply_feedback" method="post">
+        <form action="/feedback/reply_feedback" method="post">
             <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
             <p><strong>回饋內容:</strong> {{ feedback[2] }}</p>
             <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
