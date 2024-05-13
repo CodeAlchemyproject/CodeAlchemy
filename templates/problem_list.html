@@ -98,7 +98,7 @@
                         <td>標籤</td>
                         <td>通過率</td>
                         <td>上傳日期</td>
-                        {% if permission=='Manager' %}
+                        {% if (session['Permission']=='Manager') %}
                         <td>修改</td>
                         <td>刪除</td>
                         {% else %}
@@ -130,7 +130,7 @@
                             {% endif %}
                         </td>
                         <td>{{ item[11].strftime('%Y-%m-%d') }}</td>
-                        {% if permission=='Manager' %}
+                        {% if (session['Permission']=='Manager') %}
                         <!-- 修改 -->
                         <td><a class="btn btn-success" href="/manager/problem?problem_id={{item[0]}}" role="button"><svg
                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
