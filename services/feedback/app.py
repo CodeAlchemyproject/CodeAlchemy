@@ -1,5 +1,5 @@
 # 匯入模組
-from flask import request, render_template,redirect,session, flash, redirect, url_for
+from flask import request, render_template,redirect,session
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
@@ -107,7 +107,7 @@ def reply_feedback():
             feedback = cursor.fetchone()
             return render_template('reply_feedback.html', feedback=feedback)
         else:
-            return 'Feedback ID is required.'
+            return '需要反饋 ID。'
     elif request.method == 'POST':
         feedback_id = request.form['feedback_id']
         reply_content = request.form['reply_content']
@@ -121,4 +121,4 @@ def reply_feedback():
 
             return render_template('admin_dashboard.html')
         else:
-            return 'Please provide feedback ID and reply.'
+            return '請提供回饋ID並回覆。'

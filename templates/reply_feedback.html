@@ -16,71 +16,49 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        h1 {
-            color: #333;
-        }
-        
-        /* 按鈕樣式 */
-        button {
-            background-color: #4CAF50; /* 綠色 */
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        
-        button:hover {
-            background-color: #45a049; /* 深綠色 */
-        }
-        
-        /* 文本框樣式 */
-        textarea {
-            width: 70%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        
-        /* 反饋框樣式 */
-        .feedback-box {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        /* 表格樣式 */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        
-        th {
             background-color: #f2f2f2;
         }
-        
-        /* 回覆框樣式 */
+
         .reply-form {
-            margin-top: 20px;
+            width: 70%;
+            margin: 0 auto;
+            margin-top: 30px;
+            font-size: 18px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .reply-form p {
+            margin-bottom: 10px;
+        }
+
+        .reply-form label {
+            font-weight: bold;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .reply-form input[type="submit"] {
+            padding: 5px 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reply-form input[type="submit"]:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -92,13 +70,15 @@
     <!-- 包含導覽列 -->
     {{data}}
 
-    <form action="feedback/reply_feedback" method="post">
-        <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
-        <p><strong>內容:</strong> {{ feedback[2] }}</p>
-        <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
-        <label for="reply_content">回覆:</label><br>
-        <textarea name="reply_content" rows="5" cols="50"></textarea><br>
-        <input type="submit" value="回覆">
-    </form>
+    <div class="reply-form">
+        <form action="feedback/reply_feedback" method="post">
+            <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
+            <p><strong>回饋內容:</strong> {{ feedback[2] }}</p>
+            <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
+            <label for="reply_content">回覆:</label><br>
+            <textarea name="reply_content" rows="5" cols="50"></textarea><br>
+            <input type="submit" value="回覆">
+        </form>
+    </div>
 </body>
 </html>
