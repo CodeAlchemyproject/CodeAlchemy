@@ -90,8 +90,24 @@ def admin_dashboard():
 
     return render_template('admin_dashboard.html', feedback=feedback)
 
+#回覆反饋表單
+@feedback_bp.route('/reply_feedback/form', methods=['GET'])
+def reply_feedback_form():
+    #取得資料庫連線 
+    connection = db.connection() 
+    
+    #產生執行sql命令的物件, 再執行sql   
+    cursor = connection.cursor()
+    
+    feedback_id = request.args.get('feedback_id')
+    cursor.execute('SELECT * FROM feedback WHERE feedback_id=%s', (feedback_id,))
+    feedback = cursor.fetchone()
+    
+    #渲染網頁
+    return render_template('reply_feedback_form.html', feedback=feedback) 
+
 #回覆反饋
-@feedback_bp.route('/reply_feedback', methods=['GET', 'POST'])
+@feedback_bp.route('/reply_feedback', methods=['POST'])
 def reply_feedback():
     #取得資料庫連線 
     connection = db.connection() 
@@ -99,26 +115,36 @@ def reply_feedback():
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor() 
 
-    if request.method == 'GET':
-        feedback_id = request.args.get('feedback_id')
-        if feedback_id:
-            # 根據 feedback_id 查詢反饋
-            cursor.execute('SELECT * FROM feedback WHERE feedback_id=%s', (feedback_id,))
-            feedback = cursor.fetchone()
-            return render_template('reply_feedback.html', feedback=feedback)
-        else:
-            return '需要反饋 ID。'
-    elif request.method == 'POST':
-        feedback_id = request.form['feedback_id']
-        reply_content = request.form['reply_content']
-        if feedback_id and reply_content:
-            # 更新資料庫中的回覆欄位
-            cursor.execute('UPDATE feedback SET reply=%s WHERE feedback_id=%s', (reply_content, feedback_id))
-            connection.commit()
+    feedback_id = request.form['feedback_id']
+    reply_content = request.form['reply_content']
+    if feedback_id and reply_content:
+        # 更新資料庫中的回覆欄位
+        cursor.execute('UPDATE feedback SET reply=%s WHERE feedback_id=%s', (reply_content, feedback_id))
+        connection.commit()
 
-            #關閉連線   
-            connection.close() 
+        #關閉連線   
+        connection.close() 
 
+        # 使用 JavaScript 彈跳視窗顯示成功消息
+        success_message = "送出成功!"
+        return f'''
+            <script>
+                alert("{success_message}");
+                window.location.replace("/feedback/reply_feedback");
+            </script>
+        '''
+    else:
+        # 使用 JavaScript 彈跳視窗顯示失敗消息
+        error_message = "送出失敗!"
+        return f'''
+            <script>
+                alert("{error_message}");
+                window.location.replace("/feedback/reply_feedback");
+            </script>
+        '''
+        
+"""
             return render_template('admin_dashboard.html')
         else:
             return '請提供回饋ID並回覆。'
+"""
