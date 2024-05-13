@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from utils import db
+from lxml import html
 
 def ZJ_get_problem(problem_id):
     # 構建完整的 URL
@@ -218,9 +219,19 @@ def TIOJ_get_problem(problem_id):
                 # [7][8] 輸入輸出範例
 
                 examples = soup.find_all('div', class_='panel-body code-input copy-group-code')
+                # 遍歷每個找到的元素，提取文本內容並輸出
+                for e in examples:
+                    content_text = e.text.strip()
+                    print(content_text)
+                # 使用 lxml 解析 HTML
+                tree = html.fromstring(response.content)
+                
+                # 使用 XPath 找到符合條件的元素
+                panel_body = tree.xpath('//*[@id="page-content"]/div[6]/div[1]/div/div[2]')[0]
 
-                print(examples)
-                print("\n")
+                # 提取文本內容並輸出
+                content_text = panel_body.text_content().strip()
+                print(content_text)
 
                 # # 連接到 My SQL 資料庫
                 # conn=db.connection()
