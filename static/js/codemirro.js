@@ -106,13 +106,13 @@ document.getElementById("upload_btn").addEventListener("click", function () {
               // 根據測試結果更新頁面內容
               if (result) {
                   // 測試通過，顯示 passed 狀態的信息
-                  document.getElementById("passed_status").innerText = "上傳通過";
+                  document.getElementById("passed_status").innerText = "測試通過";
                   document.getElementById("passed_run_time").innerText = "執行時間：" + runTime + "毫秒";
                   document.getElementById("passed_memory").innerText = "記憶體使用量：" + memory + "MB";
                   document.getElementById("passed").style.display = "block"; // 顯示 passed 的信息
               } else {
                   // 測試失敗，顯示 failed 狀態的信息
-                  document.getElementById("failed_status").innerText = "上傳失敗";
+                  document.getElementById("failed_status").innerText = "測試失敗";
                   document.getElementById("failed_error_reason").innerText = "錯誤原因：" + message;
                   document.getElementById("failed").style.display = "block"; // 顯示 failed 的信息
               }

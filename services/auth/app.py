@@ -84,6 +84,7 @@ def authorize():
     # 如果郵箱已註冊
     if len(user_data) == 1:
         # 將用戶資訊存入 session
+        session['User_id']=user_data[0][0]
         session['Email'] = Email
         session['logged_in'] = True
         session['User_name'] = user_data[0][1]
@@ -157,6 +158,7 @@ def login_password():
             # 將用戶標記為已登入
             session['logged_in']=True
             # 將用戶名稱存入 session
+            session['User_id']=user_data[0][0]
             session['User_name']=user_data[0][1]
             # 將用戶 ID 存入 session
             session['User_id']=user_data[0][0]
