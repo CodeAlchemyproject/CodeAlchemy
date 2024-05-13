@@ -28,9 +28,9 @@ def allowed_file(filename):
 @user_bp.route('/user_data', methods=['GET', 'POST'])
 def user_data():
     # 從 session 中獲取用戶的 Email
-    Email = session.get('Email')
+    User_id = session.get('User_id')
     # 根據 Email 查詢用戶數據
-    sql_command = f"SELECT * FROM user where email='{Email}'"
+    sql_command = f"SELECT * FROM user where user_id='{User_id}'"
     data = db.get_data(sql_command)
     # 提取用戶數據中的相關信息
     User_id = data[0][0]
@@ -42,24 +42,23 @@ def user_data():
 
     # 如果是 POST 請求，處理用戶上傳的文件
     if request.method == "POST":
+        User_name=request.form['User_name']
+        Email=request.form['Email']
+        filename=img
         if 'file' not in request.files:
             # 如果沒有選擇文件，則不執行文件上傳操作
             return redirect(request.url)
         file = request.files['file']
-        if file.filename == '':
-            # 如果沒有選擇文件，則不執行文件上傳操作
-            return redirect(request.url)
         if file and allowed_file(file.filename):
             # 文件名安全化處理並加上唯一值
             filename = str(uuid.uuid4()) + '_'+secure_filename(file.filename)
             # 將文件保存到指定目錄
             file.save(os.path.join(UPLOAD_FOLDER, filename))
-            # 更新用戶資料中的圖片字段（這裡可以根據需要取消註解並處理）
-            # sql_command = f"UPDATE user SET img='{filename}' WHERE email='{Email}'"
-            # db.update_data(sql_command)
-            # 重定向到用戶資料頁面
-            return redirect(url_for('user.user_data'))
-
+            # 更新用戶資料
+        sql_command = f"UPDATE user SET user_name='{User_name}',email='{Email}',image='../static/user_icon/{filename}' WHERE user_id='{User_id}'"
+        db.edit_data(sql_command)
+        # 重定向到用戶資料頁面
+        return redirect(url_for('user.user_data'))
     else:
         # 如果是 GET 請求，將用戶數據傳遞給模板並返回相應的頁面
         return render_template('./user_data.html', User_id=User_id, User_name=User_name, Google_id=Google_id, Email=Email, img=img, register_time=register_time)
