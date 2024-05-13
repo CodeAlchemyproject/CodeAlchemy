@@ -1,3 +1,4 @@
+import csv
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -104,8 +105,7 @@ def ZJ_get_problem(problem_id):
                 # 使用整數值插入
                 values = ('ZJ-' + problem_id, problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
                           examples_combined_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
-                print(problem_id,problem_title, problem_content, problem_theinput, problem_theoutput, examples_combined_input,
-                          examples_combined_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
+
                 # 執行 SQL 插入
                 cursor.execute(sql_insert, values)
 
@@ -121,3 +121,92 @@ def ZJ_get_problem(problem_id):
         print(f'網頁請求失敗，狀態碼: {response.status_code}')
     response.close()
 
+def ZJ_get_problem_list():
+    # 存放所有問題編號的列表
+    problem_ids = []
+    problem_type={'BASIC':32,'CONTEST':23,'TOI':29,'UVA':29,'ORIGINAL':47}
+    for problem_category, end_page in problem_type.items():
+        for page in range(1,end_page+1):
+            url=f'https://zerojudge.tw/Problems?&tabid={problem_category}&page={page}'
+            # 發送 GET 請求
+            response = requests.get(url)
+
+            # 檢查是否成功獲取網頁
+            if response.status_code == 200:
+                # 使用 BeautifulSoup 解析 HTML
+                soup = BeautifulSoup(response.text, 'html.parser')
+
+                # 找到所有符合條件的 a 元素
+                a_elements = soup.find_all('a', href=lambda href: href and 'ShowProblem?problemid=' in href)
+
+                # 檢查是否找到
+                if a_elements:
+                    # 提取每個<a>元素的href值，並只保留問題編號部分，加入到問題編號列表中
+                    problem_ids.extend([a_element['href'].split('=')[-1] for a_element in a_elements])
+                else:
+                    print(f'第 {page} 頁未找到指定的<a>元素')
+            else:
+                print(f'網頁請求失敗，狀態碼: {response.status_code}')
+
+    # 寫入 CSV 文件
+    with open('ZJ_problem_list.csv', 'a', newline='', encoding='utf-8') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        for problem_id in problem_ids:
+            csv_writer.writerow([problem_id])
+
+    print('已將問題編號寫入 ZJ_problem_list.csv 文件')
+    
+    
+def TIOJ_get_problem_list():
+    # 存放所有問題編號的列表
+    problem_ids = []
+    # 爬取指定範圍的頁面
+    end_page=17
+    url_pattern='https://tioj.ck.tp.edu.tw/problems?page='
+    for page in range(1, end_page + 1):
+        # 構建完整的 URL
+        url = f'{url_pattern}{page}'
+        # 發送GET請求
+        response = requests.get(url)
+
+        # 檢查回應狀態碼，200表示成功
+        if response.status_code == 200:
+            # 解析HTML內容
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # 找到目標表格
+            table = soup.find('table', class_='table table-hover table-striped')
+            
+            if table:
+                # 找到tbody
+                tbody = table.find('tbody')
+                
+                if tbody:
+                    # 找到所有的tr
+                    trs = tbody.find_all('tr')
+                    
+                    # 迴圈處理每一個tr，取得第二個td的文字
+                    for tr in trs:
+                        # 找到第二個td
+                        second_td = tr.find_all('td')[1]  # 因為Python從0開始計數，所以第二個td的索引是1
+                        
+                        if second_td:
+                            # 取得文字內容
+                            text = second_td.get_text(strip=True)
+                            problem_ids.append(text)
+                        else:
+                            print("找不到第二個td")
+                else:
+                    print("找不到tbody")
+            else:
+                print("找不到目標表格")
+        else:
+            print("無法取得網頁內容，狀態碼:", response.status_code)
+        
+        # 寫入 CSV 文件
+    with open('TIOJ_problem_list.csv', 'a', newline='', encoding='utf-8') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        for problem_id in problem_ids:
+            csv_writer.writerow([problem_id])
+
+    print('已將問題編號寫入 TIOJ_problem_list.csv 文件')

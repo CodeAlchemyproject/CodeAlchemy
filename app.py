@@ -1,9 +1,6 @@
 # 引入模組
-import csv
 import os
 from random import randint
-import random
-import time
 from flask import Flask, render_template, session, request,jsonify
 import math
 import uuid
