@@ -12,6 +12,7 @@ pip install psutil
 pip install bs4
 pip install flask_paginate
 pip install psutil
+pip install requests
 echo 安裝成功
 pause
 exit

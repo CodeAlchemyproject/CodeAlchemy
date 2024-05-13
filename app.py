@@ -12,7 +12,6 @@ from crawler.get_problem import ZJ_get_problem
 from crawler.submit import ZeroJudge_Submit
 from threading import Thread
 #-----------------------
-from webdriver_manager.chrome import ChromeDriverManager
 
 # 匯入各個服務藍圖
 from services.auth.app import auth_bp
@@ -21,26 +20,14 @@ from services.contest.app import contest_bp
 from services.feedback.app import feedback_bp
 from services.user.app import user_bp
 from services.manager.app import manager_bp
-from utils import db, common
+from utils import db
+from utils.common import paginate,evaluate
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
 # google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
-#取得ZeroJudge全部題目
-def getZJAllProblem():
-    # 讀取 CSV 文件中的問題編號
-    csv_file_path = './ZJ_problem_list.csv'
-    with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
-        csv_reader = csv.reader(csvfile)
-        for row in csv_reader:
-            problem_id = row[0]
-            ZJ_get_problem(problem_id)
-            time.sleep(random.randint(10,20))
-#分頁功能
-def paginate(data,page, per_page):
-    offset = (page - 1) * per_page
-    return data[offset: offset + per_page],len(data)
+
 
 #主畫面
 @app.route('/', methods=['GET'])
@@ -91,7 +78,7 @@ def problem():
                 "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
             }
             user_code = code
-            result, message, run_time, memory = common.evaluate(user_code, problem)
+            result, message, run_time, memory = evaluate(user_code, problem)
             if result:
                 status = 'passed'
                 # 只有在通過測試時才使用 run_time 和 memory 變量
