@@ -1,3 +1,2 @@
-#code = '''print(f'hello, {input()}')'''
-from utils import common
-common.get_ZJ_All_Problem()
+from crawler import get_problem 
+get_problem.TIOJ_get_problem(1050)

@@ -2,13 +2,11 @@
 import os
 from random import randint
 from flask import Flask, render_template, session, request,jsonify
-from flask_paginate import Pagination
 import math
 import uuid
 import re
 from crawler.get_problem import ZJ_get_problem
 from crawler.submit import ZeroJudge_Submit
-from threading import Thread
 #-----------------------
 
 # 匯入各個服務藍圖

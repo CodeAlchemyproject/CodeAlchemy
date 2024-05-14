@@ -1,0 +1,69 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>TIOJ INFOR Online Judge</title>
+<link rel="stylesheet" href="/assets/application-8cf9825c8b7f479b1d09418720be94fada167f8fa4a15953f924a171b90d98d5.css" media="all" />
+<script src="/assets/application-89c81292c2dcaa6a588ab789f2c0a68f6c97d9de3106573c9ea9ee803ef29f84.js"></script>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="rV8dQtYdnyuLSyBs3vPjNZJYcL-lRDO6Hw6yH0I3_rlT8BfXvn3vLUJriROq2uRGxj3MNtcgqV7wOu08d1IPBA" />
+<script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]}};</script>
+<script src="/mathjax/tex-svg-full.js" type="text/javascript"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<div style="background-color:#003365">
+  <nav class="navbar navbar-inverse navbar-embossed" role="navigation" style="background-color:#003365">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="nav-brand" href="/"><img alt="TIOJ" style="padding-left: 15px; padding-right: 20px;" src="/images/banner.png" /></a>
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-collapse-01">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="/articles">Bulletin</a></li>
+          <li><a href="/problems">Problems</a></li>
+          <li><a href="/submissions">Submissions</a></li>
+          <li><a href="/contests">Contests</a></li>
+          <li><a href="/posts">Discuss</a></li>
+          <li><a href="https://tioj.ck.tp.edu.tw/about">About</a></li>
+          <li><a href="/users">Rank</a></li>
+            <li><a href="/users/sign_in">Sign in</a> </li>
+              <li><a href="/users/sign_up">Sign up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+<div class="container-fluid" id="page-content">
+<div class="alert alert-info alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert">
+  <span aria-hidden="true">&times;</span>
+  <span class="sr-only">Close</span>
+</button>
+        <strong>TIOJ April Fools Day Contest 2024 題解上線啦！</strong> 題解點<a href="/articles/32">這裡</a>、題目在<a href="/problems/tag/2024-AprFools">這裡</a>～
+</div>
+
+  <div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert">
+  <span aria-hidden="true">&times;</span>
+  <span class="sr-only">Close</span>
+</button>
+  <strong>Oh No! </strong> This page does not exist.
+</div>
+</div>
+
+</body>
+</html>
