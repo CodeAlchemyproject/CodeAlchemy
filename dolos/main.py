@@ -1,7 +1,17 @@
-import os
+import requests # pip install requests
 
-# 更改当前工作目录到 dolos 文件夹下
-os.chdir('dolos')
+def submit_to_dolos(name, zipfile_path):
+   """
+   Submit a ZIP-file to the Dolos API for plagiarism detection
+   and return the URL where the resulting HTML report can be found.
+   """
+   response = requests.post(
+      'https://dolos.ugent.be/api/reports',
+      files = { 'dataset[zipfile]': open(zipfile_path, 'rb') },
+      data = { 'dataset[name]': name }
+   )
+   json = response.json()
+   print(json)
+   return json["html_url"]
 
-# 运行命令
-os.system("wsl dolos run -f web student_P.zip --host '0.0.0.0'")
+print(submit_to_dolos('student_P.zip','dolos\\student_P.zip'))
