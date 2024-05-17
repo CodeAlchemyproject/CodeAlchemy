@@ -14,8 +14,7 @@ import glob
 import traceback
 
 def TIOJ_submit(file_name,number):
-    # crawler setting
-    main_url = 'https://zerojudge.tw/Login'
+    main_url = 'https://tioj.ck.tp.edu.tw/users/sign_in'
     # 禁用瀏覽器彈窗避免預設路徑載入失敗
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     driver = None  # 初始化 driver 變數
@@ -47,9 +46,10 @@ def TIOJ_submit(file_name,number):
         all_windows = driver.window_handles
         driver.switch_to.window(all_windows[0])
 
-        # 讀取所有檔案
+        # 讀取檔案
         submit_program_dict = dict()
         files = glob.glob(f'./source/{file_name}')
+
         for file_name in files:
             # 取得檔案的副檔名
             _, extension = os.path.splitext(file_name)
@@ -64,106 +64,94 @@ def TIOJ_submit(file_name,number):
                 language = 'c'
             elif extension == '.cpp':
                 language = 'cpp'
+
             with open(file_name, 'r', encoding='utf-8') as file:
                 content = file.read()
                 # 提取檔案名稱中除去前六位的部分作為 key
-                file_key = os.path.basename(file_name)[7:].replace("ZJ-", "").split('.')[0]
-                print(file_key)
+                file_key = os.path.basename(file_name)[7:].replace("TIOJ-", "").split('.')[0]
                 submit_program_dict = {file_key: content}
         # 讀取帳戶資訊
         with open('./crawler/account.json', 'r') as file:
             accounts = json.load(file)['account']
         for acc in accounts:
-            if number==acc[0].split('-')[0]:
+            if number==acc[0]:
+            #if number==acc[0].split('-')[0]:
                 username = acc[0]
                 password = acc[1]
 
-            # 登錄網站
-            driver.get(main_url)
-            try:
-                login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located(
-                    (By.CLASS_NAME, 'col-md-4.text-center')))
-                login_area = WebDriverWait(login_area, wait_max).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
+                # 登錄網站
+                driver.get(main_url)
+                try:
+                    input_username = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'user[username]')))
+                    input_username.send_keys(username)
 
-                sleep(2)
+                    sleep(2)
 
-                input_username = WebDriverWait(login_area, wait_max).until(
-                    EC.presence_of_element_located((By.ID, 'account')))
-                input_username.send_keys(username)
+                    input_password = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'user[password]')))
+                    input_password.send_keys(password)
 
-                sleep(2)
+                    sleep(2)
+                    sign_in = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'commit')))
+                    sign_in.click()
 
-                input_password = WebDriverWait(login_area, wait_max).until(
-                    EC.presence_of_element_located((By.ID, 'passwd')))
-                input_password.send_keys(password)
+                    if driver.current_url != 'https://tioj.ck.tp.edu.tw/':
+                        raise BaseException
+                    
+                except BaseException as e:
+                    print(e)
+                    continue  # 如果登錄失敗，跳過當前帳號，繼續下一個帳號的處理
+            else:
+                print("沒有註冊TIOJ帳號")
+                ㄖ      
 
-                sleep(3)
+                # 提交程式
+                # results = []
+                # language_upper = language.upper()
+                # for prob_id in list(submit_program_dict.keys()):
+                #     results = []
+                #     driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
 
-                for i in range(300):
-                    sleep(1)
-                    try:
-                        btn_login = WebDriverWait(login_area, wait_max).until(
-                            EC.presence_of_element_located((By.type, 'btn.btn-primary')))
-                        btn_login.click()
-                        break
-                    except:
-                        pass
-                else:
-                    raise BaseException
+                #     btn_code = WebDriverWait(driver, wait_max).until(
+                #         EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
+                #     btn_code.click()
 
-                sleep(5)
+                #     btn_py = WebDriverWait(driver, wait_max).until(
+                #         EC.element_to_be_clickable((By.CSS_SELECTOR, f"input[name='language'][value='{language_upper}']")))
 
-                if driver.current_url != 'https://zerojudge.tw/':
-                    raise BaseException
-            except BaseException as e:
-                print(e)
-                continue  # 如果登錄失敗，跳過當前帳號，繼續下一個帳號的處理
+                #     btn_py.click()
 
-            # 提交程式
-            results = []
-            language_upper = language.upper()
-            for prob_id in list(submit_program_dict.keys()):
-                results = []
-                driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
+                #     input_code = WebDriverWait(driver, wait_max).until(
+                #         EC.presence_of_element_located((By.ID, "code")))
+                #     input_code.send_keys(submit_program_dict[prob_id])
 
-                btn_code = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
-                btn_code.click()
+                #     btn_submit = WebDriverWait(driver, wait_max).until(
+                #         EC.presence_of_element_located((By.ID, "submitCode")))
+                #     btn_submit.click()
 
-                btn_py = WebDriverWait(driver, wait_max).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, f"input[name='language'][value='{language_upper}']")))
+                #     sleep(1)
+                #     table_result = WebDriverWait(driver, wait_max).until(
+                #         EC.presence_of_element_located((By.CLASS_NAME, "table.table-hover")))
+                #     current_row = WebDriverWait(table_result, wait_max).until(
+                #         EC.presence_of_all_elements_located((By.TAG_NAME, "tr")))[1]
+                #     sleep(6)
+                #     results.append([])
+                #     for col in WebDriverWait(current_row, wait_max).until(
+                #             EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
+                #         results[-1].append(col.text.strip())
 
-                btn_py.click()
-
-                input_code = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "code")))
-                input_code.send_keys(submit_program_dict[prob_id])
-
-                btn_submit = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "submitCode")))
-                btn_submit.click()
-
-                sleep(1)
-                table_result = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, "table.table-hover")))
-                current_row = WebDriverWait(table_result, wait_max).until(
-                    EC.presence_of_all_elements_located((By.TAG_NAME, "tr")))[1]
-                sleep(6)
-                results.append([])
-                for col in WebDriverWait(current_row, wait_max).until(
-                        EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
-                    results[-1].append(col.text.strip())
-
-            # 將結果存儲到 CSV 文件中
-            if results:
-                df = pd.DataFrame(results)  # 不包含列名
-                # 轉換 DataFrame 為字串
-                csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
-                # 寫入 CSV 文件
-                with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
-                    f.write(csv_data)  # 直接寫入CSV數據
-                    f.write('\n')  # 添加換行符
+                # 將結果存儲到 CSV 文件中
+                results=1
+                if results:
+                    df = pd.DataFrame(results)  # 不包含列名
+                    # 轉換 DataFrame 為字串
+                    csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
+                    # 寫入 CSV 文件
+                    with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+                        f.write(csv_data)  # 直接寫入CSV數據
+                        f.write('\n')  # 添加換行符
         # 刪除傳入的檔案
         if file_name:
             os.remove(file_name)

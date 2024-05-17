@@ -123,6 +123,8 @@ def ZeroJudge_registration(number):
     finally:
         if driver:
             driver.quit()
+
+
     
 
 
