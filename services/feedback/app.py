@@ -1,5 +1,5 @@
 # 匯入模組
-from flask import request, render_template,redirect,session
+from flask import request, render_template,redirect, session
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
@@ -76,19 +76,37 @@ def feedback_history():
 #管理者反饋紀錄
 @feedback_bp.route('/admin_dashboard')
 def admin_dashboard():
+    # 取得當前頁碼，默認為 1
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
     #取得資料庫連線 
     connection = db.connection() 
     
     #產生執行sql命令的物件, 再執行sql   
-    cursor = connection.cursor()    
-    # 查詢所有反饋
-    cursor.execute('SELECT * FROM feedback')
+    cursor = connection.cursor() 
+
+    # 查詢所有反饋的總數量
+    cursor.execute('SELECT COUNT(*) FROM feedback')
+    total_feedback = cursor.fetchone()[0]
+
+    # 計算總頁數
+    total_pages = (total_feedback + per_page - 1) // per_page
+
+    # 計算分頁所需的偏移量
+    offset = (page - 1) * per_page
+
+    # 查詢特定頁面的反饋資料，按提交時間降序排列
+    cursor.execute('SELECT * FROM feedback ORDER BY created_at DESC LIMIT %s OFFSET %s', (per_page, offset))
     feedback = cursor.fetchall()
 
     #關閉連線   
     connection.close()  
 
-    return render_template('admin_dashboard.html', feedback=feedback)
+    print(f'Page: {page}, Total Pages: {total_pages},{total_feedback}')
+
+
+    return render_template('admin_dashboard.html', feedback=feedback, page=page, total_pages=total_pages)
 
 #回覆反饋表單
 @feedback_bp.route('/reply_feedback/form', methods=['GET'])

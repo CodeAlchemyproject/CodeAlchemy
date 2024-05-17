@@ -15,20 +15,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container{
+            width: 70%;
+            margin: 0 auto;
+            margin-top: 30px;
+            font-size: 18px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            margin-top: 10px;
         }
 
         th, td {
             padding: 8px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #f2f2f2;
         }
 
         tr:hover {
@@ -38,6 +49,7 @@
         p {
             text-align: center;
             font-size: 48px;
+            font-weight: bold;
             margin: 20%;
         }
 
@@ -50,23 +62,25 @@
     {% include "nav_bar.html" %}
     {{data}}
 
-    {% if feedback_history %}
-        <table>
-            <tr>
-                <th>回饋內容</th>
-                <th>提交時間</th>
-                <th>回覆</th>
-            </tr>
-            {% for feedback in feedback_history %}
+    <div class="container">
+        {% if feedback_history %}
+            <table>
                 <tr>
-                    <td>{{ feedback[2] }}</td>
-                    <td>{{ feedback[3] }}</td>
-                    <td>{{ feedback[4] }}</td>
+                    <th>回饋內容</th>
+                    <th>提交時間</th>
+                    <th>回覆</th>
                 </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>沒有回饋紀錄</p>
-    {% endif %}
+                {% for feedback in feedback_history %}
+                    <tr>
+                        <td>{{ feedback[2] }}</td>
+                        <td>{{ feedback[3] }}</td>
+                        <td>{{ feedback[4] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>沒有回饋紀錄</p>
+        {% endif %}
+    </div>
 </body>
 </html>
