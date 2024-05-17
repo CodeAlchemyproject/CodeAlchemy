@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from utils import db
-from lxml import html
+
 
 #取得ZeroJudge全部題目
 def get_ZJ_All_Problem():
@@ -388,7 +388,7 @@ def TIOJ_get_problem_list():
         else:
             print("無法取得網頁內容，狀態碼:", response.status_code)
         
-        # 寫入 CSV 文件
+    # 寫入 CSV 文件
     with open('TIOJ_problem_list.csv', 'a', newline='', encoding='utf-8') as csvfile:
         csv_writer = csv.writer(csvfile)
         for problem_id in problem_ids:

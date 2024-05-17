@@ -1,2 +1,4 @@
-from crawler import get_problem 
-get_problem.TIOJ_get_problem(1050)
+from crawler.registration import ZeroJudge_registration
+from crawler.submit import ZeroJudge_Submit
+ZeroJudge_registration('17')
+ZeroJudge_Submit('a001.py')
