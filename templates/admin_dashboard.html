@@ -11,7 +11,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理者回覆</title>
+    <title>管理者回饋紀錄</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -48,6 +48,29 @@
             background-color: #0056b3;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .pagination a, .pagination p {
+            margin: 0 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #007bff; 
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .pagination a:hover {
+            background-color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -68,6 +91,22 @@
                 <button class="reply-button" onclick="location.href='/feedback/reply_feedback/form?feedback_id={{ feedback[0] }}'">回覆</button>
             </div>
         {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('feedback_bp.admin_dashboard', page=page-1) }}">上一頁</a>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+                <p>{{ p }}</p>
+            {% else %}
+                <a href="{{ url_for('feedback_bp.admin_dashboard', page=p) }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page < total_pages %}
+            <a href="{{ url_for('feedback_bp.admin_dashboard', page=page+1) }}">下一頁</a>
+        {% endif %}
     </div>
 </body>
 </html>
