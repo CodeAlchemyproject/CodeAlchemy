@@ -96,6 +96,10 @@ def problem():
             }
             # 生成 6 位數的亂碼
             random_code = str(uuid.uuid4())[:6]
+            # 生成隨機字串，第一個字母為英文字母
+            # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
+            while not random_code[0].isalpha():
+                random_code = str(uuid.uuid4())[:6]
             # 構建文件路徑
             file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
             file_path = os.path.join('./source', file_name)
