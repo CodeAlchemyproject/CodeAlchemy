@@ -25,8 +25,8 @@ def TIOJ_submit(file_name,number):
         # 將擴充套件放入至Webdriver的開啟網頁內容
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        chrome_options.add_extension('./crawler/reCAPTCHA_extension.crx')
-        chrome_options.add_extension('./crawler/vpn_extension.crx')
+        chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
+        chrome_options.add_extension('./crawler/extension/vpn_extension.crx')
         # 隱藏『Chrome正在受到自動軟體的控制』這項資訊
         chrome_options.add_argument("disable-infobars")
 
