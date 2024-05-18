@@ -13,6 +13,8 @@ pip install bs4
 pip install flask_paginate
 pip install psutil
 pip install requests
+pip install lxml
+pip install html5lib
 echo 安裝成功
 pause
 exit

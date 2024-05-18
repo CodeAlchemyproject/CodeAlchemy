@@ -1,11 +1,11 @@
 # 引入所需的模組和套件
+import uuid
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import pandas as pd
 from time import sleep
 import traceback
 import json
@@ -14,10 +14,8 @@ def add_account(username, password, json_file):
     # 讀取JSON檔案
     with open(json_file, 'r') as f:
         data = json.load(f)
-    
     # 新增帳戶
     data['account'].append([username, password])
-    
     # 寫入更新後的資料到JSON檔案中
     with open(json_file, 'w') as f:
         json.dump(data, f, indent=4)
@@ -30,6 +28,7 @@ def ZeroJudge_registration(number):
         s = Service(ChromeDriverManager().install())
         chrome_options = webdriver.ChromeOptions()
         # 將擴充套件放入至Webdriver的開啟網頁內容
+        
         prefs = {'profile.default_content_setting_values': {'notifications': 2}}
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
         chrome_options.add_experimental_option('prefs', prefs)
@@ -58,7 +57,13 @@ def ZeroJudge_registration(number):
         driver.switch_to.window(all_windows[0])
         #註冊ZeroJudge帳號
         driver.get(main_url)
+        # 生成隨機字串，第一個字母為英文字母
+        random_code = str(uuid.uuid4())[:6]  # 取uuid的前5位作為隨機字串
+        # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
+        while not random_code[0].isalpha():
+            random_code = str(uuid.uuid4())[:6]
         #帳號
+        number = random_code + '-' +number
         input_code = WebDriverWait(driver, wait_max).until(
         EC.presence_of_element_located((By.NAME, "account")))
         input_code.send_keys(number)
@@ -118,6 +123,8 @@ def ZeroJudge_registration(number):
     finally:
         if driver:
             driver.quit()
+
+
     
 
 

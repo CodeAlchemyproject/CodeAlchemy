@@ -248,7 +248,7 @@ def verify_register():
     # 查詢是否存在該 uuid
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
-    number=data[0]+'-'+str(uuid.uuid4())[:6]
+    number=data[0]
     if len(data)==1:
         # 更新註冊時間
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"

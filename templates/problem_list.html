@@ -117,7 +117,13 @@
                             </svg>
                             {% endif %}
                         </td>
-                        <td>Zero<br>Judge</td>
+                        <td>
+                            {% if item[0].split('-')[0] == 'ZJ' %}
+                            Zero<br>Judge
+                            {% elif item[0].split('-')[0] == 'TIOJ' %}
+                            TIOJ
+                            {% endif %}
+                        </td>
                         <td>{{ item[0] }}</td> <!--編號-->
                         <td>{{ item[1] }}</td> <!--名稱-->
                         <td>{{ item[7] }}</td> <!--難度-->

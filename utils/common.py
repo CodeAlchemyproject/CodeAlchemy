@@ -33,16 +33,6 @@ def evaluate(user_code, problem):
     
     return result, stderr.decode(), execution_time, memory_usage
 
-#取得ZeroJudge全部題目
-def get_ZJ_All_Problem():
-    # 讀取 CSV 文件中的問題編號
-    csv_file_path = './ZJ_problem_list.csv'
-    with open(csv_file_path, 'r', newline='', encoding='utf-8') as csvfile:
-        csv_reader = csv.reader(csvfile)
-        for row in csv_reader:
-            problem_id = row[0]
-            ZJ_get_problem(problem_id)
-            time.sleep(random.randint(10,20))
 #分頁功能
 def paginate(data,page, per_page):
     offset = (page - 1) * per_page
