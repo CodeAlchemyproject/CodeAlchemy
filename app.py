@@ -147,14 +147,15 @@ def problem():
 
                 return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
                                     example_outputs=example_outputs, run_time=run_time, memory=memory,
-                                    error_reason=error_reason)
+                                    error_reason=error_reason,like=like)
     else:
         problem_id = request.args.get('problem_id',type=str)
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
         problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
-        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+        like = problem_data[0][-1]
+        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
 @app.route('/add_problem', methods=['POST'])
 def add_problem():
 
