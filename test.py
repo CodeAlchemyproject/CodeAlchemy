@@ -3,4 +3,4 @@
 # ZeroJudge_registration('17')
 # ZeroJudge_Submit('a001.py')
 from crawler.submit import TIOJ_submit
-TIOJ_submit('a001.py','TestCase2024')
+TIOJ_submit('aaaaaa-TIOJ-1001.py','TestCase2024')
