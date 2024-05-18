@@ -1,7 +1,7 @@
 # 引入模組
 import os
 from random import randint
-from flask import Flask, render_template, session, request,jsonify
+from flask import Flask, render_template, session, request,jsonify,redirect
 import math
 import uuid
 import re
@@ -165,8 +165,8 @@ def add_problem():
 
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
-    dolos()
-    return 0
+    url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
+    return (redirect(url))
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
