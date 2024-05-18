@@ -34,7 +34,21 @@ def index():
     onlinejudge = request.args.get('onlinejudge','*',type=str)
     difficulty = request.args.get('difficulty','*',type=str)
     search = request.args.get('search','*',type=str)
-    sql_problem_command='SELECT * FROM problem'
+    condition = ' where ' #where前後的空格勿動
+    sql_problem_command=f'SELECT * FROM problem'
+    if (search != '*') and (search != ''):
+        condition += f'title like "%{search}%" and '
+    if onlinejudge != '*':
+        condition += f'substring_index(problem_id,"-",1)="{onlinejudge}" and '
+    if difficulty != '*':
+        condition += f'difficulty = "{difficulty}" and '
+    if condition == ' where ':
+        condition = ''
+    else:
+        condition = condition[:condition.rfind(' and ')]
+        print(condition)
+    sql_problem_command= sql_problem_command + condition
+    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
