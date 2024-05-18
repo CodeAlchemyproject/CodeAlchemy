@@ -18,6 +18,7 @@ from services.user.app import user_bp
 from services.manager.app import manager_bp
 from utils import db
 from utils.common import paginate,evaluate
+from utils import dolos
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
@@ -161,7 +162,10 @@ def add_problem():
             ZJ_get_problem(problem_id)
     return 0
 
-
+@app.route('/dolos', methods=['GET'])
+def problem_dolos():
+    dolos()
+    return 0
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
