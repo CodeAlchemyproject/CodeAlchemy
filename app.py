@@ -1,7 +1,7 @@
 # 引入模組
 import os
 from random import randint
-from flask import Flask, render_template, session, request,jsonify
+from flask import Flask, render_template, session, request,jsonify,redirect
 import math
 import uuid
 import re
@@ -18,6 +18,7 @@ from services.user.app import user_bp
 from services.manager.app import manager_bp
 from utils import db
 from utils.common import paginate,evaluate
+from utils import dolos
 
 # 產生主程式, 加入主畫面
 app = Flask(__name__)
@@ -33,7 +34,21 @@ def index():
     onlinejudge = request.args.get('onlinejudge','*',type=str)
     difficulty = request.args.get('difficulty','*',type=str)
     search = request.args.get('search','*',type=str)
-    sql_problem_command='SELECT * FROM problem'
+    condition = ' where ' #where前後的空格勿動
+    sql_problem_command=f'SELECT * FROM problem'
+    if (search != '*') and (search != ''):
+        condition += f'title like "%{search}%" and '
+    if onlinejudge != '*':
+        condition += f'substring_index(problem_id,"-",1)="{onlinejudge}" and '
+    if difficulty != '*':
+        condition += f'difficulty = "{difficulty}" and '
+    if condition == ' where ':
+        condition = ''
+    else:
+        condition = condition[:condition.rfind(' and ')]
+        print(condition)
+    sql_problem_command= sql_problem_command + condition
+    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
@@ -169,7 +184,8 @@ def problem():
         problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
-        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+        like = problem_data[0][-1]
+        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
 @app.route('/add_problem', methods=['POST'])
 def add_problem():
     if request.method == 'POST':
@@ -180,7 +196,10 @@ def add_problem():
             ZJ_get_problem(problem_id)
     return 0
 
-
+@app.route('/dolos', methods=['GET'])
+def problem_dolos():
+    url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
+    return (redirect(url))
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
