@@ -71,15 +71,8 @@ def contest_join():
     conn.close()
 
     # 渲染 join_contest.html 
-    return render_template('join_contest.html', contests=contests)
+    return render_template('join_contest_form.html', contests=contests)
 
-
-# Mock database
-#mock_db = [
-#    {'title': 'Two Sum', 'description': 'Given an array of integers, return indices...', 'difficulty': 'Easy'},
-#    {'title': 'Add Binary', 'description': 'Given two binary strings, return their sum...', 'difficulty': 'Medium'},
-#    {'title': 'Max Points', 'description': 'Given an array of points on the plane, find...', 'difficulty': 'Hard'}
-#]
 
 '''
 @contest_bp.route('/get_problems')
@@ -136,3 +129,5 @@ def get_problems():
         'total_pages': total_pages,
         'per_page': per_page
     })
+
+
