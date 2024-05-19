@@ -254,7 +254,7 @@ def verify_register():
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         # 註冊 Zerojudge 帳號
-        registration_thread = threading.Thread(target=registration, args=(number,))
+        registration_thread = threading.Thread(target=registration.ZeroJudge_registration, args=(number,))
         registration_thread.start()
         # 將 uuid 設置為 Null
         sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"

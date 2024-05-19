@@ -148,15 +148,15 @@ def TIOJ_submit(file_name,number):
                         EC.presence_of_element_located((By.ID, "td-vss-0")))
                     results.append(memory.text)
                     sleep(1)
-                # 將結果存儲到 CSV 文件中
-                if results:
-                    df = pd.DataFrame(results)  # 不包含列名
-                    # 轉換 DataFrame 為字串
-                    csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
-                    # 寫入 CSV 文件
-                    with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
-                        f.write(csv_data)  # 直接寫入CSV數據
-                        f.write('\n')  # 添加換行符
+        # 將結果存儲到 CSV 文件中
+        if results:
+            df = pd.DataFrame(results)  # 不包含列名
+            # 轉換 DataFrame 為字串
+            csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
+            # 寫入 CSV 文件
+            with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+                f.write(csv_data)  # 直接寫入CSV數據
+                f.write('\n')  # 添加換行符
         # 刪除傳入的檔案
         if file_name:
             os.remove(file_name)
