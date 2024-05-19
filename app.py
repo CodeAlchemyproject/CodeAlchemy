@@ -33,10 +33,10 @@ def index():
     state = request.args.get('state','*',type=str)
     onlinejudge = request.args.get('onlinejudge','*',type=str)
     difficulty = request.args.get('difficulty','*',type=str)
-    search = request.args.get('search','*',type=str)
+    search = request.args.get('search','',type=str)
     condition = ' where ' #where前後的空格勿動
     sql_problem_command=f'SELECT * FROM problem'
-    if (search != '*') and (search != ''):
+    if search != '':
         condition += f'title like "%{search}%" and '
     if onlinejudge != '*':
         condition += f'substring_index(problem_id,"-",1)="{onlinejudge}" and '
@@ -48,7 +48,6 @@ def index():
         condition = condition[:condition.rfind(' and ')]
         print(condition)
     sql_problem_command= sql_problem_command + condition
-    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
@@ -165,7 +164,7 @@ def problem():
         problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
-        like = problem_data[0][-1]
+        like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
 @app.route('/add_problem', methods=['POST'])
 def add_problem():
@@ -181,6 +180,23 @@ def add_problem():
 def problem_dolos():
     url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
     return (redirect(url))
+# 收藏
+@app.route('/add_to_collection', methods=['POST'])
+def add_to_collection():
+    data = request.get_json()
+    problem_id = data.get('problem_id')
+    try:
+        user_id = session['User_id']
+        if db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}' and user_id='{user_id}'")[0][0]==0:
+            sql_command=f"INSERT INTO collection(user_id,problem_id) VALUES ('{user_id}','{problem_id}')"
+            print("GAWA")
+        else:
+            sql_command=f"DELETE FROM collection WHERE problem_id = '{problem_id}' and user_id='{user_id}'"
+        db.edit_data(sql_command)
+        return jsonify({'message': 'Item added to collection'}), 201
+    except KeyError:
+        return jsonify({'error': 'Missing item_id or user_id'}), 400
+
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
