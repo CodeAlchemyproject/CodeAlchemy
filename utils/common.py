@@ -1,6 +1,10 @@
+import csv
+import random
 import subprocess
 import time
 import psutil
+
+from crawler.get_problem import ZJ_get_problem
 
 def evaluate(user_code, problem):
     # 啟動子進程執行用戶代碼
@@ -28,5 +32,10 @@ def evaluate(user_code, problem):
     result = stdout.decode().strip() == problem['example_output']
     
     return result, stderr.decode(), execution_time, memory_usage
+
+#分頁功能
+def paginate(data,page, per_page):
+    offset = (page - 1) * per_page
+    return data[offset: offset + per_page],len(data)
 
 

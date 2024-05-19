@@ -84,6 +84,7 @@ def authorize():
     # 如果郵箱已註冊
     if len(user_data) == 1:
         # 將用戶資訊存入 session
+        session['User_id']=user_data[0][0]
         session['Email'] = Email
         session['logged_in'] = True
         session['User_name'] = user_data[0][1]
@@ -157,6 +158,7 @@ def login_password():
             # 將用戶標記為已登入
             session['logged_in']=True
             # 將用戶名稱存入 session
+            session['User_id']=user_data[0][0]
             session['User_name']=user_data[0][1]
             # 將用戶 ID 存入 session
             session['User_id']=user_data[0][0]
@@ -246,13 +248,13 @@ def verify_register():
     # 查詢是否存在該 uuid
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
-    number=data[0]+'-'+str(uuid.uuid4())[:6]
+    number=data[0]
     if len(data)==1:
         # 更新註冊時間
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"
         db.edit_data(sql_command)
         # 註冊 Zerojudge 帳號
-        registration_thread = threading.Thread(target=registration, args=(number,))
+        registration_thread = threading.Thread(target=registration.ZeroJudge_registration, args=(number,))
         registration_thread.start()
         # 將 uuid 設置為 Null
         sql_command = f"UPDATE user SET uuid = Null WHERE uuid='{uuid}'"

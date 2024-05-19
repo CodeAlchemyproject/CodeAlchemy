@@ -2,9 +2,10 @@
 from flask import request, render_template, jsonify, json
 import sqlite3
 from flask import Blueprint
-from flask_paginate import Pagination, get_page_args
+
 
 from utils import db
+from utils.common import paginate
 
 # 產生contest服務藍圖
 contest_bp = Blueprint('contest_bp', __name__)

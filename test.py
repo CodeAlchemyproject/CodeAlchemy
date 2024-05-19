@@ -1,18 +1,11 @@
-#code = '''print(f'hello, {input()}')'''
-import requests
-
-# 定義代理伺服器的IP地址和端口號
-proxy_ip = '60.199.29.42'
-proxy_port = '8111'
-
-# 定義代理字典
-proxy = {
-    'http': f'http://{proxy_ip}:{proxy_port}',
-    'https': f'https://{proxy_ip}:{proxy_port}'
-}
-
-# 發送帶有代理的GET請求
-response = requests.get('https://www.google.com.tw/', proxies=proxy)
-
-# 輸出回應內容
-print(response.text)
+# from crawler.registration import ZeroJudge_registration
+# from crawler.submit import ZeroJudge_Submit
+# ZeroJudge_registration('17')
+# ZeroJudge_Submit('a001.py')
+# from crawler.submit import TIOJ_submit
+# TIOJ_submit('aaaaaa-TIOJ-1001.py','TestCase2024')
+# from crawler.get_problem import get_TIOJ_All_Problem
+# get_TIOJ_All_Problem()
+from crawler.registration import TIOJ_registration,ZeroJudge_registration
+TIOJ_registration('1')
+ZeroJudge_registration('1')
