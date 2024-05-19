@@ -23,17 +23,21 @@
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>狀態</option>
                     <option
-                        value="?page={{ page }}&state=*&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">
-                        All</option>
+                        value="?page={{ page }}&state=*&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        All
+                    </option>
                     <option
-                        value="?page={{ page }}&state=accept&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">
-                        通過</option>
+                        value="?page={{ page }}&state=accept&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        通過
+                    </option>
                     <option
-                        value="?page={{ page }}&state=error&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">
-                        錯誤</option>
+                        value="?page={{ page }}&state=error&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        錯誤
+                    </option>
                     <option
-                        value="?page={{ page }}&state=none&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}&search={{search}}">
-                        未做</option>
+                        value="?page={{ page }}&state=none&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        未做
+                    </option>
                 </select>
             </div>
             <div class="col-3">
@@ -41,14 +45,21 @@
                     onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>OnlineJudge</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        All</option>
+                        value="?page=1&state={{ state }}&onlinejudge=*&difficulty={{ difficulty }}&search={{ search }}">
+                        All
+                    </option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}&search={{search}}">
-                        ZeroJudge</option>
+                        value="?page=1&state={{ state }}&onlinejudge=ZJ&difficulty={{ difficulty }}&search={{ search }}">
+                        ZeroJudge
+                    </option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
-                        LeetCode</option>
+                        value="?page=1&state={{ state }}&onlinejudge=TIOJ&difficulty={{ difficulty }}&search={{ search }}">
+                        TIOJ
+                    </option>
+                    <option
+                        value="?page=1&state={{ state }}&onlinejudge=LeetCode&difficulty={{ difficulty }}&search={{ search }}">
+                        LeetCode
+                    </option>
                 </select>
             </div>
             <div class="col-3">
@@ -56,30 +67,30 @@
                     onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>難度</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
-                        All</option>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=*&search={{ search }}">
+                        All
+                    </option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
-                        Hard</option>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Hard&search={{ search }}">
+                        Hard
+                    </option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
-                        Middle</option>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&search={{ search }}">
+                        Middle
+                    </option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
-                        Easy</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
-                        N/A</option>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&search={{ search }}">
+                        Easy
+                    </option>
                 </select>
             </div>
             <div class="col-3">
-                <form class="d-flex"
-                    action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
-                    <input type="hidden" name="page" value="{{page}}">
-                    <input type="hidden" name="state" value="{{state}}">
-                    <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
-                    <input type="hidden" name="difficulty" value="{{difficulty}}">
-                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
+                <form class="d-flex" action="" method="get">
+                    <input type="hidden" name="page" value="1">
+                    <input type="hidden" name="state" value="{{ state }}">
+                    <input type="hidden" name="onlinejudge" value="{{ onlinejudge }}">
+                    <input type="hidden" name="difficulty" value="{{ difficulty }}">
+                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search" value="{{ search }}">
                 </form>
             </div>
         </div>

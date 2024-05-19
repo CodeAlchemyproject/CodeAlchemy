@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pandas as pd
@@ -49,7 +50,7 @@ def TIOJ_submit(file_name,number):
         # 讀取檔案
         submit_program_dict = dict()
         files = glob.glob(f'./source/{file_name}')
-
+        
         for file_name in files:
             # 取得檔案的副檔名
             _, extension = os.path.splitext(file_name)
@@ -74,8 +75,7 @@ def TIOJ_submit(file_name,number):
         with open('./crawler/account.json', 'r') as file:
             accounts = json.load(file)['account']
         for acc in accounts:
-            if number==acc[0]:
-            #if number==acc[0].split('-')[0]:
+            if number==acc[0].split('-')[0]:
                 username = acc[0]
                 password = acc[1]
 
@@ -103,55 +103,60 @@ def TIOJ_submit(file_name,number):
                 except BaseException as e:
                     print(e)
                     continue  # 如果登錄失敗，跳過當前帳號，繼續下一個帳號的處理
-            else:
-                print("沒有註冊TIOJ帳號")
-                ㄖ      
+                
+                
 
                 # 提交程式
-                # results = []
-                # language_upper = language.upper()
-                # for prob_id in list(submit_program_dict.keys()):
-                #     results = []
-                #     driver.get(f'https://zerojudge.tw/ShowProblem?problemid={prob_id}')
+                results = []
+                language_dict = {
+                    "python": "9",
+                    "cpp": "12"
+                }
+                value = language_dict.get(language)
+                for prob_id in list(submit_program_dict.keys()):
+                    results = []
+                    
+                    driver.get(f'https://tioj.ck.tp.edu.tw/problems/{prob_id}/submissions/new')
+                    # 選擇語言
+                    compiler = Select(WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "submission_compiler_id"))))
+                    compiler.select_by_value(value)
+                    sleep(2) 
 
-                #     btn_code = WebDriverWait(driver, wait_max).until(
-                #         EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
-                #     btn_code.click()
+                    # 程式輸入
+                    input_code = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "submission_code_content_attributes_code")))
+                    input_code.send_keys(submit_program_dict[prob_id])
+                    sleep(1)
 
-                #     btn_py = WebDriverWait(driver, wait_max).until(
-                #         EC.element_to_be_clickable((By.CSS_SELECTOR, f"input[name='language'][value='{language_upper}']")))
+                    # 提交按鈕
+                    btn_submit = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "form-submit-button")))
+                    btn_submit.click()
+                    sleep(1)
 
-                #     btn_py.click()
+                    # 擷取測試結果
+                    result = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "verdict")))
+                    results.append(result.text)
 
-                #     input_code = WebDriverWait(driver, wait_max).until(
-                #         EC.presence_of_element_located((By.ID, "code")))
-                #     input_code.send_keys(submit_program_dict[prob_id])
+                    run_time = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "td-time-0")))
+                    results.append(run_time.text)
 
-                #     btn_submit = WebDriverWait(driver, wait_max).until(
-                #         EC.presence_of_element_located((By.ID, "submitCode")))
-                #     btn_submit.click()
-
-                #     sleep(1)
-                #     table_result = WebDriverWait(driver, wait_max).until(
-                #         EC.presence_of_element_located((By.CLASS_NAME, "table.table-hover")))
-                #     current_row = WebDriverWait(table_result, wait_max).until(
-                #         EC.presence_of_all_elements_located((By.TAG_NAME, "tr")))[1]
-                #     sleep(6)
-                #     results.append([])
-                #     for col in WebDriverWait(current_row, wait_max).until(
-                #             EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
-                #         results[-1].append(col.text.strip())
-
-                # 將結果存儲到 CSV 文件中
-                results=1
-                if results:
-                    df = pd.DataFrame(results)  # 不包含列名
-                    # 轉換 DataFrame 為字串
-                    csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
-                    # 寫入 CSV 文件
-                    with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
-                        f.write(csv_data)  # 直接寫入CSV數據
-                        f.write('\n')  # 添加換行符
+                    memory = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "td-vss-0")))
+                    results.append(memory.text)
+                    sleep(1)
+        # 將結果存儲到 CSV 文件中
+        if results:
+            df = pd.DataFrame(results)  # 不包含列名
+            # 轉換 DataFrame 為字串
+            csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
+            # 寫入 CSV 文件
+            with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
+                f.write(csv_data)  # 直接寫入CSV數據
+                f.write('\n')  # 添加換行符
         # 刪除傳入的檔案
         if file_name:
             os.remove(file_name)
@@ -177,8 +182,8 @@ def ZeroJudge_Submit(file_name,number):
         # 將擴充套件放入至Webdriver的開啟網頁內容
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        chrome_options.add_extension('./crawler/reCAPTCHA_extension.crx')
-        chrome_options.add_extension('./crawler/vpn_extension.crx')
+        chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
+        chrome_options.add_extension('./crawler/extension/vpn_extension.crx')
         # 隱藏『Chrome正在受到自動軟體的控制』這項資訊
         chrome_options.add_argument("disable-infobars")
 
