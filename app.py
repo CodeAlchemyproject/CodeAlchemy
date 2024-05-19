@@ -6,7 +6,7 @@ import math
 import uuid
 import re
 from crawler.get_problem import ZJ_get_problem
-from crawler.submit import ZeroJudge_Submit
+from crawler.submit import ZeroJudge_Submit,TIOJ_submit
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -155,9 +155,28 @@ def problem():
                         message = "系統錯誤"
                     else:
                         message = "未知錯誤"
-                return render_template('./problem.html', status=status, data=problem_data, example_inputs=example_inputs,
-                                    example_outputs=example_outputs, run_time=run_time, memory=memory,
-                                    error_reason=error_reason,like=like)
+                        
+                return jsonify({'result':result,
+                                'message':message,
+                                'run_time':run_time,
+                                "memory":memory})
+            
+            elif "TIOJ" in file_name:
+                score=TIOJ_submit(file_name,session['User_id'])
+                if score[0]=='Accepted':
+                    result=True
+                    message="測試成功"
+                    run_time=score[1]
+                    memory=score[2]
+                else :
+                    result=False
+                    message="測試失敗"
+                    run_time=score[1]
+                    memory=score[2]
+                return jsonify({'result':result,
+                                'message':message,
+                                'run_time':run_time,
+                                "memory":memory})
     else:
         problem_id = request.args.get('problem_id',type=str)
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
