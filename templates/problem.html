@@ -15,14 +15,25 @@
     <script src="../static/lib/codemirror/mode/clike/clike.js"></script>
     <script src="../static/lib/codemirror/addon/hint/show-hint.js"></script>
     <!-- LATAX -->
-    <head>
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-      </head>
-
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <title>{{data[0][0]}} - {{data[0][1]}}</title>
     <script src="buttonControl.js"></script>
-
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
 </head>
 
 <body>
@@ -58,9 +69,9 @@
                     </div>
 
                     <div class="col-12">
-                        <h3 class="mt-4 overflow-auto">{{data.0.2|safe}}</h3>
-                        <h3 class="mt-4 overflow-auto">{{data.0.3|safe}}</h3>
-                        <h3 class="mt-4 overflow-auto">{{data.0.4|safe}}</h3>
+                        <p class="mt-4 overflow-auto">{{data.0.2|safe}}</p>
+                        <p class="mt-4 overflow-auto">{{data.0.3|safe}}</p>
+                        <p class="mt-4 overflow-auto">{{data.0.4|safe}}</p>
                     </div>
                     <div class="col-12">
                         {% for n in range(example_inputs|length) %}

@@ -57,13 +57,6 @@ def ZeroJudge_registration(number):
         driver.switch_to.window(all_windows[0])
         #註冊ZeroJudge帳號
         driver.get(main_url)
-        # 生成隨機字串，第一個字母為英文字母
-        random_code = str(uuid.uuid4())[:6]  # 取uuid的前5位作為隨機字串
-        # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
-        while not random_code[0].isalpha():
-            random_code = str(uuid.uuid4())[:6]
-        #帳號
-        number = random_code + '-' +number
         input_code = WebDriverWait(driver, wait_max).until(
         EC.presence_of_element_located((By.NAME, "account")))
         input_code.send_keys(number)
@@ -95,7 +88,7 @@ def ZeroJudge_registration(number):
         input_code = WebDriverWait(driver, wait_max).until(
         EC.presence_of_element_located((By.NAME, "email")))
         input_code.clear()
-        input_code.send_keys(f'{user_name}@gmail.com')
+        input_code.send_keys(f'{number}@gmail.com')
         sleep(2)
 
         #提交
@@ -112,10 +105,9 @@ def ZeroJudge_registration(number):
         btn_Okay = WebDriverWait(driver, wait_max).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/div[6]/div/div/div[3]/div/div/button')))
         btn_Okay.click()
-        driver.implicitly_wait(5)
         driver.quit()
         # 呼叫新增帳戶函式
-        add_account(user_name, password, './crawler/account.json')
+        add_account(number, number, './crawler/account.json')
     
     except Exception as e:
         print("An error occurred:", e)
@@ -161,14 +153,7 @@ def TIOJ_registration(number):
         driver.switch_to.window(all_windows[0])
         #註冊TIOJ帳號
         driver.get(main_url)
-        # 生成隨機字串，第一個字母為英文字母
-        random_code = str(uuid.uuid4())[:6]  # 取uuid的前5位作為隨機字串
-        # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
-        while not random_code[0].isalpha():
-            random_code = str(uuid.uuid4())[:6]
         #帳號
-        mail=number
-        number = random_code + '-' +number
         input_code = WebDriverWait(driver, wait_max).until(
         EC.presence_of_element_located((By.ID, "user_username")))
         input_code.send_keys(number)
@@ -198,7 +183,7 @@ def TIOJ_registration(number):
         input_code = WebDriverWait(driver, wait_max).until(
         EC.presence_of_element_located((By.ID, "user_email")))
         input_code.clear()
-        input_code.send_keys(f'{mail}@gmail.com')
+        input_code.send_keys(f'{number}@gmail.com')
         sleep(2)
         #學校
         input_code = WebDriverWait(driver, wait_max).until(

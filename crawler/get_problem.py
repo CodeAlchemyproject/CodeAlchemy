@@ -3,10 +3,12 @@ import os
 import random
 import re
 import time
-import requests
 from bs4 import BeautifulSoup
+import requests
+
 from datetime import datetime
 from utils import db
+
 
 
 #取得ZeroJudge全部題目
@@ -203,10 +205,8 @@ def TIOJ_get_problem(problem_id):
                 
                 # title 標題
                 problem_title=''
-                t = soup.find('h4', class_='page-header').get_text().split('.')
-                if len(t)>=3:
-                    for i in range(1,len(t)):
-                        problem_title+=t[i]
+                t = soup.find('h4', class_='page-header').get_text().strip()
+                problem_title = t[7:]
                 # [2]難度等級percentage
                 AC_Ratio = panel_bodies[2].text.strip()
                 percentage = AC_Ratio.split()[0][:2]
@@ -277,7 +277,6 @@ def TIOJ_get_problem(problem_id):
                 # [5][6] 輸出輸入說明
                 problem_theinput = str(panel_bodies[5]).replace('<div class="panel-body">', '').replace('</div>', '').strip()
                 problem_theoutput = str(panel_bodies[6]).replace('<div class="panel-body">', '').replace('</div>', '').strip()
-                
                 # [7][8] 輸入輸出範例
                 examples = soup.find_all('div', class_='panel-body code-input copy-group-code')
                 examples_input = []
@@ -326,7 +325,7 @@ def TIOJ_get_problem(problem_id):
                 # 使用整數值插入
                 values = (problem_id, problem_title, problem_content, problem_theinput, problem_theoutput, examples_input,
                             examples_output, default_difficulty, default_tag, default_solved, default_submission, default_update_time,default_collection)
-
+                print(values)
                 # 執行 SQL 插入
                 cursor.execute(sql_insert, values)
 

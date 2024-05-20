@@ -1,10 +1,8 @@
-import csv
-import random
 import subprocess
 import time
 import psutil
-
-from crawler.get_problem import ZJ_get_problem
+import random
+import string
 
 def evaluate(user_code, problem):
     # 啟動子進程執行用戶代碼
@@ -38,4 +36,31 @@ def paginate(data,page, per_page):
     offset = (page - 1) * per_page
     return data[offset: offset + per_page],len(data)
 
+#修改帶LaTex字串
+def LaTex_double_dollars(input_string):
+    output_string = ''
+    for char in input_string:
+        if char == '$':
+            output_string += '$$'
+        else:
+            output_string += char
+    return output_string
+
+
+def random_string():
+    # 定義字母和數字集合
+    letters = string.ascii_letters  # 包括大寫和小寫字母
+    digits = string.digits  # 包括數字 0-9
+    all_chars = letters + digits  # 所有可能的字符
+
+    # 確保以字母開頭
+    first_char = random.choice(letters)
+
+    # 隨機生成其餘五個字符
+    remaining_chars = ''.join(random.choices(all_chars, k=5))
+
+    # 拼接成完整的六位字符
+    random_string = first_char + remaining_chars
+
+    return random_string
 
