@@ -1,4 +1,5 @@
 # 引入模組
+from datetime import datetime
 import os
 from random import randint
 from flask import Flask, render_template, session, request,jsonify,redirect
@@ -58,7 +59,6 @@ def index():
     paginated_data = paginate(data,page, per_page)[0]
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
-
 #題目
 @app.route('/problem',methods=['GET','POST'])
 def problem():
@@ -69,114 +69,111 @@ def problem():
         problem_id = data.get('problem_id')
         language = data.get('language')
         code = data.get('code')
-        # 重新取得題目
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        problem_data=db.get_data(sql_problem_command)
-        example_inputs = problem_data[0][5].split('|||')
-        example_outputs = problem_data[0][6].split('|||')
-        r = randint(1, len(example_inputs))
-        if type == 'test':
-            status = None
-            run_time = None
-            memory = None
-            error_reason = None
-            problem = {
-                "id": problem_id,
-                "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
-                "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
-            }
-            user_code = code
-            result, message, run_time, memory = evaluate(user_code, problem)
-            if result:
-                # 只有在通過測試時才使用 run_time 和 memory 變量
-                run_time = round(run_time * 1000, 4)
-                memory =round(memory, 4)
-            
-            else:
-                if message=="":
-                    message="不明錯誤"
-
-            return jsonify({'result':result,
-                            'message':message,
-                            'run_time':run_time,
-                            "memory":memory})
-        elif type == 'upload':
-            # 定義語言對應的文件擴展名字典
-            file_extensions = {
-                'python': '.py',
-                'text/x-java': '.java',
-                'text/x-csrc': '.c',
-                'text/x-c++src': '.cpp'
-            }
-            # 生成 6 位數的亂碼
+        # 定義語言對應的文件擴展名字典
+        file_extensions = {
+            'python': '.py',
+            'text/x-java': '.java',
+            'text/x-csrc': '.c',
+            'text/x-c++src': '.cpp'
+        }
+        # 生成 6 位數的亂碼
+        random_code = str(uuid.uuid4())[:6]
+        # 生成隨機字串，第一個字母為英文字母
+        # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
+        while not random_code[0].isalpha():
             random_code = str(uuid.uuid4())[:6]
-            # 生成隨機字串，第一個字母為英文字母
-            # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
-            while not random_code[0].isalpha():
-                random_code = str(uuid.uuid4())[:6]
-            # 構建文件路徑
-            file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
-            file_path = os.path.join('./source', file_name)
+        # 構建文件路徑
+        file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+        file_path = os.path.join('./source', file_name)
 
-            # 確保目錄存在
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        # 確保目錄存在
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-            # 寫入內容到文件中
-            with open(file_path, 'w') as file:
-                file.write(code)
-            if "ZJ" in file_name:
-                # 調用 ZeroJudge_Submit 函數進行題目提交
-                score = ZeroJudge_Submit(file_name,session['User_id'])
-                # 根據 score 的前兩個字來決定顯示不同的內容
-                if score.startswith("AC"):
-                    # 使用正規表達式從 score 中提取 run_time 和 memory
-                    match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
-                    if match:
-                        run_time = match.group(1)
-                        memory = match.group(2) 
+        # 寫入內容到文件中
+        with open(file_path, 'w') as file:
+            file.write(code)
+        if "ZJ" in file_name:
+            # 調用 ZeroJudge_Submit 函數進行題目提交
+            score = ZeroJudge_Submit(file_name,session['User_id'])
+            # 根據 score 的前兩個字來決定顯示不同的內容
+            if score.startswith("AC"):
+                # 使用正規表達式從 score 中提取 run_time 和 memory
+                match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
+                if match:
+                    run_time = match.group(1)
+                    memory = match.group(2) 
+            else:
+                if score.startswith("NA"):
+                    message = "未通過所有測資點"
+                    ensue='Not Accept'
+                elif score.startswith("WA"):
+                    message = '答案錯誤'
+                    ensue='Wrong Answer'
+                elif score.startswith("TLE"):
+                    message = '執行超過時間限制'
+                    ensue='Time Limit Exceed'
+                elif score.startswith("MLE"):
+                    message = "程序執行超過記憶體限制"
+                    ensue='Memory Limit Exceed'
+                elif score.startswith("OLE"):
+                    message = "程序輸出檔超過限制"
+                    ensue='Output Limit Exceed'
+                elif score.startswith("RE"):
+                    message = "執行時錯誤"
+                    ensue='Runtime Error'
+                elif score.startswith("RF"):
+                    message = "使用了被禁止使用的函式"
+                    ensue='Restricted Function'
+                elif score.startswith("CE"):
+                    message = "編譯錯誤"
+                    ensue='Compile Error'
+                elif score.startswith("SE"):
+                    message = "系統錯誤"
+                    ensue='System Error'
                 else:
-                    if score.startswith("NA"):
-                        message = "未通過所有測資點"
-                    elif score.startswith("WA"):
-                        message = '答案錯誤'
-                    elif score.startswith("TLE"):
-                        message = '執行超過時間限制'
-                    elif score.startswith("MLE"):
-                        message = "程序執行超過記憶體限制"
-                    elif score.startswith("OLE"):
-                        message = "程序輸出檔超過限制"
-                    elif score.startswith("RE"):
-                        message = "執行時錯誤"
-                    elif score.startswith("RF"):
-                        message = "使用了被禁止使用的函式"
-                    elif score.startswith("CE"):
-                        message = "編譯錯誤"
-                    elif score.startswith("SE"):
-                        message = "系統錯誤"
-                    else:
-                        message = "未知錯誤"
-                        
-                return jsonify({'result':result,
-                                'message':message,
-                                'run_time':run_time,
-                                "memory":memory})
-            
-            elif "TIOJ" in file_name:
-                score=TIOJ_submit(file_name,session['User_id'])
-                if score[0]=='Accepted':
-                    result=True
-                    message="測試成功"
-                    run_time=score[1]
-                    memory=score[2]
-                else :
-                    result=False
-                    message="測試失敗"
-                    run_time=score[1]
-                    memory=score[2]
-                return jsonify({'result':result,
-                                'message':message,
-                                'run_time':run_time,
-                                "memory":memory})
+                    message = "未知錯誤"
+                    ensue="Unknown Error"
+                
+        elif "TIOJ" in file_name:
+            score=TIOJ_submit(file_name,session['User_id'])
+            print(score)
+            if score and score[0]=='Accepted':
+                result=True
+                message="測試成功"
+                run_time=score[1]
+                memory=score[2]
+                
+            else :
+                result=False
+                message="測試失敗"
+                run_time=score[1]
+                memory=score[2]
+            ensue=score[0]
+
+        if type == 'upload':
+            # 執行 SQL 插入語句
+            sql_insert = """
+                INSERT INTO `answer record` (user_id, problem_id, result, language, update_time)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            # 提供預設值
+            user_id=session['User_id']
+            default_update_time = datetime.now()  # 如果不提供值，則預設為 NULL
+            # 使用整數值插入
+            values = (user_id, problem_id,ensue,language,default_update_time)
+            # 連接到 My SQL 資料庫
+            conn=db.connection()
+            # 創建一個游標對象
+            cursor = conn.cursor()
+            # 執行 SQL 插入
+            cursor.execute(sql_insert, values)
+            # 提交事務
+            conn.commit()
+
+        return jsonify({'result':result,
+            'message':message,
+            'run_time':run_time,
+            "memory":memory})
     else:
         problem_id = request.args.get('problem_id',type=str)
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
