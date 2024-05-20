@@ -43,20 +43,18 @@
             </li>
             {% if (session['Permission']=='Manager') %}
             <li>
-              <h6 class="dropdown-header">管理者</h6>
-            </li>
-            <li>
               <a class="dropdown-item" href="/feedback/admin_dashboard">意見回饋</a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
             {% else %}
-            {% endif %}
             <li><a class="dropdown-item" href="/feedback/create/form">意見反饋</a></li>
             <li>
               <hr class="dropdown-divider">
             </li>
+            {% endif %}
+            
 
             <li><a class="dropdown-item" href="/auth/logout">登出</a></li>
           </ul>
