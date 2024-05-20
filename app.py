@@ -184,6 +184,7 @@ def problem():
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
+        print(like)
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
 @app.route('/add_problem', methods=['POST'])
 def add_problem():
