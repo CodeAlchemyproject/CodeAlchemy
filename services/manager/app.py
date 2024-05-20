@@ -22,5 +22,6 @@ def problem():
         problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
-        return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs)
+        like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
+        return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
     

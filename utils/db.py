@@ -51,3 +51,4 @@ def edit_data(sql_command):
             conn.close()
     else:
         print("Failed to establish database connection.")
+      

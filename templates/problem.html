@@ -17,23 +17,26 @@
     <!-- LATAX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <title>{{data[0][0]}} - {{data[0][1]}}</title>
-    <script src="buttonControl.js"></script>
     <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        processEscapes: true,
-        processEnvironments: true
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-        ignoreHtmlClass: 'tex2jax_ignore',
-        processHtmlClass: 'tex2jax_process'
-      }
-    };
-  </script>
+        window.MathJax = {
+            tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+            },
+            options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            ignoreHtmlClass: 'tex2jax_ignore',
+            processHtmlClass: 'tex2jax_process'
+            }
+        };
+        </script>
+
+    <title>{{data[0][0]}} - {{data[0][1]}}</title>
+   
+    
+    <script src="static/js/like_button.js" defer></script>
 </head>
 
 <body>
@@ -48,7 +51,7 @@
                 <div class="row">
                     <div class="col-6">
                         <div id="problem_id" style="display: none;">{{data[0][0]}}</div>
-                        <h1 class="display-6 mt-4"><em>{{data[0][0]}}</em> {{data[0][1]}}</h1>
+                        <h1 class="display-6 mt-4">{{data[0][0]}}<br>{{data[0][1]}}</h1>
 
                     </div>
                     <!-- 收藏按鈕 -->
@@ -150,8 +153,7 @@
                             </svg>上傳</button>
 
                     </div>
-                    <a href="/dolos" class="btn btn-primary w-70" role="button"
-                        aria-disabled="true">程式碼分析</a>
+                    <a href="/dolos" class="btn btn-primary w-70" role="button" aria-disabled="true">程式碼分析</a>
                 </div>
                 <!-- 程式輸入框 -->
                 <div class="row border border-3 round rounded-2 mt-5">
