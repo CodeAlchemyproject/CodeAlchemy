@@ -106,8 +106,7 @@ def ZeroJudge_registration(number):
             EC.presence_of_element_located((By.XPATH, '/html/body/div[6]/div/div/div[3]/div/div/button')))
         btn_Okay.click()
         driver.quit()
-        # 呼叫新增帳戶函式
-        add_account(number, number, './crawler/account.json')
+    
     
     except Exception as e:
         print("An error occurred:", e)
@@ -205,8 +204,6 @@ def TIOJ_registration(number):
 
         sleep(5)
         driver.quit()
-        # 呼叫新增帳戶函式
-        add_account(number, number, './crawler/account.json')
 
     except Exception as e:
         print("An error occurred:", e)

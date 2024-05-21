@@ -26,9 +26,6 @@ app = Flask(__name__)
 # google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
 
-@app.route('/gawa')
-def gawa():
-    return render_template('test.html')
 #主畫面
 @app.route('/', methods=['GET'])
 def index():
@@ -186,137 +183,8 @@ def problem():
         print(like)
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
             
-# #題目
-# @app.route('/problem',methods=['GET','POST'])
-# def problem():
-#     if request.method=="POST":
-#         # 從傳入封包取得資料
-#         data = request.form
-#         type = data.get('type')
-#         problem_id = data.get('problem_id')
-#         language = data.get('language')
-#         code = data.get('code')
-#         # 重新取得題目
-#         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-#         problem_data=db.get_data(sql_problem_command)
-#         example_inputs = problem_data[0][5].split('|||')
-#         example_outputs = problem_data[0][6].split('|||')
-#         r = randint(1, len(example_inputs))
-#         if type == 'test':
-#             run_time = None
-#             memory = None
-#             problem = {
-#                 "id": problem_id,
-#                 "example_input": re.sub(r'<[^>]*>', '', example_inputs[r - 1]),
-#                 "example_output": re.sub(r'<[^>]*>', '', example_outputs[r - 1])
-#             }
-#             user_code = code
-#             result, message, run_time, memory = evaluate(user_code, problem)
-#             if result:
-#                 # 只有在通過測試時才使用 run_time 和 memory 變量
-#                 run_time = round(run_time * 1000, 4)
-#                 memory =round(memory, 4)
-            
-#             else:
-#                 if message=="":
-#                     message="不明錯誤"
 
-#             return jsonify({'result':result,
-#                             'message':message,
-#                             'run_time':run_time,
-#                             "memory":memory})
-#         elif type == 'upload':
-#             # 定義語言對應的文件擴展名字典
-#             file_extensions = {
-#                 'python': '.py',
-#                 'text/x-java': '.java',
-#                 'text/x-csrc': '.c',
-#                 'text/x-c++src': '.cpp'
-#             }
-#             # 生成 6 位數的亂碼
-#             random_code = str(uuid.uuid4())[:6]
-#             # 生成隨機字串，第一個字母為英文字母
-#             # 如果第一個字元不是英文字母，則重新生成，直到第一個字元為英文字母
-#             while not random_code[0].isalpha():
-#                 random_code = str(uuid.uuid4())[:6]
-#             # 構建文件路徑
-#             file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
-#             file_path = os.path.join('./source', file_name)
-#             # 確保目錄存在
-#             os.makedirs(os.path.dirname(file_path), exist_ok=True)
-#             # 寫入內容到文件中
-#             with open(file_path, 'w') as file:
-#                 file.write(code)
-#             if "ZJ" in file_name:
-#                 # 調用 ZeroJudge_Submit 函數進行題目提交
-#                 score = ZeroJudge_Submit(file_name,session['User_id'])
-#                 # 根據 score 的前兩個字來決定顯示不同的內容
-#                 if score.startswith("AC"):
-#                     # 使用正規表達式從 score 中提取 run_time 和 memory
-#                     match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
-#                     if match:
-#                         run_time = match.group(1)
-#                         memory = match.group(2) 
-#                 else:
-#                     if score.startswith("NA"):
-#                         message = "未通過所有測資點"
-#                     elif score.startswith("WA"):
-#                         message = '答案錯誤'
-#                     elif score.startswith("TLE"):
-#                         message = '執行超過時間限制'
-#                     elif score.startswith("MLE"):
-#                         message = "程序執行超過記憶體限制"
-#                     elif score.startswith("OLE"):
-#                         message = "程序輸出檔超過限制"
-#                     elif score.startswith("RE"):
-#                         message = "執行時錯誤"
-#                     elif score.startswith("RF"):
-#                         message = "使用了被禁止使用的函式"
-#                     elif score.startswith("CE"):
-#                         message = "編譯錯誤"
-#                     elif score.startswith("SE"):
-#                         message = "系統錯誤"
-#                     else:
-#                         message = "未知錯誤"
-                        
-#                 return jsonify({'result':result,
-#                                 'message':message,
-#                                 'run_time':run_time,
-#                                 "memory":memory})
-            
-#             elif "TIOJ" in file_name:
-#                 score=TIOJ_submit(file_name,session['User_id'])
-#                 if score[0]=='Accepted':
-#                     result=True
-#                     message="測試成功"
-#                     run_time=score[1]
-#                     memory=score[2]
-#                 else :
-#                     result=False
-#                     message="測試失敗"
-#                     run_time=score[1]
-#                     memory=score[2]
-#                 return jsonify({'result':result,
-#                                 'message':message,
-#                                 'run_time':run_time,
-#                                 "memory":memory})
-#     else:
-#         problem_id = request.args.get('problem_id',type=str)
-#         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-#         problem_data=db.get_data(sql_problem_command)
-#         example_inputs = problem_data[0][5].split('|||')
-#         example_outputs = problem_data[0][6].split('|||')
-#         like = problem_data[0][-1]
-#         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
-@app.route('/add_problem', methods=['POST'])
-def add_problem():
-    if request.method == 'POST':
-        data=request.form
-        problem_id=data.get('problem_id')
-        OJ=data.get('onlineJudge')
-        if OJ=="ZeroJudge":
-            ZJ_get_problem(problem_id)
-    return 0
+
 
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
@@ -331,7 +199,6 @@ def add_to_collection():
         user_id = session['User_id']
         if db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}' and user_id='{user_id}'")[0][0]==0:
             sql_command=f"INSERT INTO collection(user_id,problem_id) VALUES ('{user_id}','{problem_id}')"
-            print("GAWA")
         else:
             sql_command=f"DELETE FROM collection WHERE problem_id = '{problem_id}' and user_id='{user_id}'"
         db.edit_data(sql_command)

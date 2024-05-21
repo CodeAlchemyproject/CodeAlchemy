@@ -1,13 +1,14 @@
 前端:
-新增題目的UI(用哪個OnlineJudge,題號)
+題目爬行榜UI(answer_record.html)
 
 後端:
-新增題目
+problem_list 左邊狀態欄  作答後的打勾，蒐藏的愛心
 
 資料庫:
 
+
 爬蟲:
-將TIOJ帳號註冊加入
-區分test 與upload
+
 
 其他鳥事:
+

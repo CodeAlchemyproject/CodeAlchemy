@@ -1,4 +1,5 @@
 # 引入所需的模組和套件
+from datetime import datetime
 from flask import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -47,6 +48,7 @@ def TIOJ_submit(file_name, number):
         for file_name in files:
             _, extension = os.path.splitext(file_name)
             extension = extension.lower()
+           
             if extension == '.py':
                 language = 'python'
             elif extension == '.java':
@@ -64,73 +66,78 @@ def TIOJ_submit(file_name, number):
         with open('./crawler/account.json', 'r') as file:
             accounts = json.load(file)['account']
         for acc in accounts:
-            username = acc[0]
-            password = acc[1]
+            if acc[0][0-len(number):]==number:
+                username = acc[0]
+                password = acc[1]
+                driver.get(main_url)
+                try:
+                    input_username = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'user[username]')))
+                    input_username.send_keys(username)
+                    sleep(1)
 
-            driver.get(main_url)
-            try:
-                input_username = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.NAME, 'user[username]')))
-                input_username.send_keys(username)
+                    input_password = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'user[password]')))
+                    input_password.send_keys(password)
+                    sleep(1)
 
-                sleep(2)
+                    sign_in = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.NAME, 'commit')))
+                    sign_in.click()
+                    sleep(1)
 
-                input_password = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.NAME, 'user[password]')))
-                input_password.send_keys(password)
+                    if driver.current_url != 'https://tioj.ck.tp.edu.tw/':
+                        raise BaseException
+                
+                except BaseException as e:
+                    print(e)
+                    continue
+                
+                language_dict = {
+                    "python": "9",
+                    "cpp": "12"
+                }
+                value = language_dict.get(language)
+                for prob_id in list(submit_program_dict.keys()):
+                    driver.get(f'https://tioj.ck.tp.edu.tw/problems/{prob_id}/submissions/new')
+                    compiler = Select(WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "submission_compiler_id"))))
+                    compiler.select_by_value(value)
+                    sleep(1)
 
-                sleep(2)
-                sign_in = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.NAME, 'commit')))
-                sign_in.click()
+                    input_code = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "submission_code_content_attributes_code")))
+                    input_code.send_keys(submit_program_dict[prob_id])
+                    sleep(1)
 
-                if driver.current_url != 'https://tioj.ck.tp.edu.tw/':
-                    raise BaseException
-            
-            except BaseException as e:
-                print(e)
-                continue
-            
-            language_dict = {
-                "python": "9",
-                "cpp": "12"
-            }
-            value = language_dict.get(language)
-            for prob_id in list(submit_program_dict.keys()):
-                driver.get(f'https://tioj.ck.tp.edu.tw/problems/{prob_id}/submissions/new')
-                compiler = Select(WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "submission_compiler_id"))))
-                compiler.select_by_value(value)
-                sleep(2)
+                    btn_submit = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "form-submit-button")))
+                    btn_submit.click()
+                    sleep(1)
 
-                input_code = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "submission_code_content_attributes_code")))
-                input_code.send_keys(submit_program_dict[prob_id])
-                sleep(1)
+                    result = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "verdict")))
+                    results.append(result.text)
 
-                btn_submit = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "form-submit-button")))
-                btn_submit.click()
-                sleep(1)
+                    run_time = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "td-time-0")))
+                    results.append(run_time.text)
 
-                result = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "verdict")))
-                results.append(result.text)
-
-                run_time = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "td-time-0")))
-                results.append(run_time.text)
-
-                memory = WebDriverWait(driver, wait_max).until(
-                    EC.presence_of_element_located((By.ID, "td-vss-0")))
-                results.append(memory.text)
-                sleep(1)
+                    memory = WebDriverWait(driver, wait_max).until(
+                        EC.presence_of_element_located((By.ID, "td-vss-0")))
+                
+                    results.append(round(int(memory.text)/1024,2))
+                    sleep(1)
 
         if results:
-            df = pd.DataFrame(results)
+            df = pd.DataFrame([results])
             csv_data = df.to_csv(index=False, header=False, encoding='utf-8')
             with open('./crawler/result.csv', 'a', encoding='utf-8') as f:
-                f.write(csv_data)
+                f.write(number + ",")
+                f.write(file_key + ",")
+                f.write(csv_data.strip() + ",")
+                f.write(language)
+                f.write(str(datetime.now()))  # 轉換為字符串
                 f.write('\n')
 
     except Exception as e:
@@ -283,10 +290,20 @@ def ZeroJudge_Submit(file_name,number):
                 for col in WebDriverWait(current_row, wait_max).until(
                         EC.presence_of_all_elements_located((By.TAG_NAME, "td"))):
                     results[-1].append(col.text.strip())
+            newResult=[]
+            for i in range(len(results)):
+                if i==1:
+                    newResult.append(str(results[i].split('(')[0]))
+                if i==2:
+                    newResult.append(results[i][:4])
+                if i==3 or i==5:
+                    newResult.append(results[i])
+                if i==4:
+                    newResult.append(results[i].lower())
 
             # 將結果存儲到 CSV 文件中
-            if results:
-                df = pd.DataFrame(results)  # 不包含列名
+            if newResult:
+                df = pd.DataFrame([newResult])  # 不包含列名
                 # 轉換 DataFrame 為字串
                 csv_data = df.to_csv(index=False, header=False, encoding='utf-8')  # 使用UTF-8編碼
                 # 寫入 CSV 文件
