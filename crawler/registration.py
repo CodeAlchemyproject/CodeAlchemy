@@ -35,7 +35,7 @@ def ZeroJudge_registration(number):
         chrome_options.add_argument(f'user-agent={user_agent}')
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
-        chrome_options.add_extension('./crawler/extension/vpn_extension.crx')
+        chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
         # 隱藏『Chrome正在受到自動軟體的控制』這項資訊
         chrome_options.add_argument("disable-infobars")
 
@@ -130,7 +130,7 @@ def TIOJ_registration(number):
         chrome_options.add_argument(f'user-agent={user_agent}')
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
-        chrome_options.add_extension('./crawler/extension/vpn_extension.crx')
+        chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
         # 隱藏『Chrome正在受到自動軟體的控制』這項資訊
         chrome_options.add_argument("disable-infobars")
 

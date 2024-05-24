@@ -1,13 +1,11 @@
 # 引入模組
 from datetime import datetime
 import os
-from random import randint
 from flask import Flask, render_template, session, request,jsonify,redirect
 import math
 import uuid
 import re
-from crawler.get_problem import ZJ_get_problem
-from crawler.submit import ZeroJudge_Submit,TIOJ_submit
+from crawler.submit import ZeroJudge_submit,TIOJ_submit
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -18,7 +16,7 @@ from services.feedback.app import feedback_bp
 from services.user.app import user_bp
 from services.manager.app import manager_bp
 from utils import db
-from utils.common import paginate,evaluate
+from utils.common import paginate
 from utils import dolos
 
 # 產生主程式, 加入主畫面
@@ -92,8 +90,8 @@ def problem():
         with open(file_path, 'w') as file:
             file.write(code)
         if "ZJ" in file_name:
-            # 調用 ZeroJudge_Submit 函數進行題目提交
-            score = ZeroJudge_Submit(file_name,session['User_id'])
+            # 調用 ZeroJudge_submit 函數進行題目提交
+            score = ZeroJudge_submit(file_name,session['User_id'])
             # 根據 score 的前兩個字來決定顯示不同的內容
             if score.startswith("AC"):
                 # 使用正規表達式從 score 中提取 run_time 和 memory

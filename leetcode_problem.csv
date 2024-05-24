@@ -7,7 +7,6 @@ Return the matrix answer.
  
 Example 1:
 
-
 Input: matrix = [[1,2,-1],[4,-1,6],[7,8,9]]
 Output: [[1,2,9],[4,8,6],[7,8,9]]
 Explanation: The diagram above shows the elements that are changed (in blue).
@@ -15,7 +14,6 @@ Explanation: The diagram above shows the elements that are changed (in blue).
 - We replace the value in the cell [0][2] with the maximum value in the column 2, that is 9.
 
 Example 2:
-
 
 Input: matrix = [[3,-1],[5,2]]
 Output: [[3,2],[5,2]]
