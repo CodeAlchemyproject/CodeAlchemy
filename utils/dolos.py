@@ -1,4 +1,19 @@
 import requests # pip install requests
+import zipfile
+import os
+import uuid
+def create_zip(proble_id):
+    # 指定要壓縮的檔案
+   file_to_compress = 'source\\a2e64f_TIOJ-1001.py'
+   # 指定輸出 Zip 檔案的路徑
+   output_zip_path = f'dolos/{uuid.uuid4()}_{proble_id}.zip'
+   # 確保輸出的目錄存在
+   os.makedirs(os.path.dirname(output_zip_path), exist_ok=True)
+   # 創建一個新的 Zip 檔案
+   with zipfile.ZipFile(output_zip_path, 'w') as zipf:
+      # 將指定檔案添加到 Zip 檔案中
+      zipf.write(file_to_compress, os.path.basename(file_to_compress))
+   return(output_zip_path.split('/')[1],output_zip_path)
 
 def submit_to_dolos(name, zipfile_path):
    """
@@ -12,5 +27,3 @@ def submit_to_dolos(name, zipfile_path):
    )
    json = response.json()
    return json["html_url"]
-
-print(submit_to_dolos('student_P.zip','dolos\\student_P.zip'))

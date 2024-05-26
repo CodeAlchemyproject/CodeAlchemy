@@ -119,8 +119,6 @@ def problem():
                 VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
             ''')
             
-
-
         return jsonify({'result':result,
             'message':message,
             'run_time':run_time,
@@ -144,7 +142,9 @@ def answer_record():
     return render_template('./answer_record.html',data=data)    
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
-    url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
+    problem_id=request.args.get('problem_id',type=str)
+    zip=dolos.create_zip(problem_id)
+    url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
 
 # 收藏
