@@ -2,11 +2,17 @@ import requests # pip install requests
 import zipfile
 import os
 import uuid
-def create_zip(proble_id):
+import glob
+def search_file(problem_id):
+   file_to_compress = '../source'
+   pattern = pattern = f'*_{problem_id}*'
+   files = glob.glob(os.path.join(file_to_compress, pattern))
+   return files
+def create_zip(problem_id):
     # 指定要壓縮的檔案
    file_to_compress = 'source\\a2e64f_TIOJ-1001.py'
    # 指定輸出 Zip 檔案的路徑
-   output_zip_path = f'dolos/{uuid.uuid4()}_{proble_id}.zip'
+   output_zip_path = f'dolos/{uuid.uuid4()}_{problem_id}.zip'
    # 確保輸出的目錄存在
    os.makedirs(os.path.dirname(output_zip_path), exist_ok=True)
    # 創建一個新的 Zip 檔案
