@@ -1,9 +1,44 @@
+import re
 import subprocess
 import time
 import psutil
 import random
 import string
-
+def ZJ_translated_return_abbreviation(score):
+    if score.startswith("AC"):
+       message='通過'
+       ensue='Accepted'
+    elif score.startswith("NA"):
+        message = "未通過所有測資點"
+        ensue='Not Accept'
+    elif score.startswith("WA"):
+        message = '答案錯誤'
+        ensue='Wrong Answer'
+    elif score.startswith("TLE"):
+        message = '執行超過時間限制'
+        ensue='Time Limit Exceed'
+    elif score.startswith("MLE"):
+        message = "程序執行超過記憶體限制"
+        ensue='Memory Limit Exceed'
+    elif score.startswith("OLE"):
+        message = "程序輸出檔超過限制"
+        ensue='Output Limit Exceed'
+    elif score.startswith("RE"):
+        message = "執行時錯誤"
+        ensue='Runtime Error'
+    elif score.startswith("RF"):
+        message = "使用了被禁止使用的函式"
+        ensue='Restricted Function'
+    elif score.startswith("CE"):
+        message = "編譯錯誤"
+        ensue='Compile Error'
+    elif score.startswith("SE"):
+        message = "系統錯誤"
+        ensue='System Error'
+    else:
+        message = "未知錯誤"
+        ensue="Unknown Error"
+    return message,ensue
 def evaluate(user_code, problem):
     # 啟動子進程執行用戶代碼
     start_time = time.time()  # 開始計時

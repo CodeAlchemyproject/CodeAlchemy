@@ -16,7 +16,7 @@ from services.feedback.app import feedback_bp
 from services.user.app import user_bp
 from services.manager.app import manager_bp
 from utils import db
-from utils.common import paginate
+from utils.common import ZJ_translated_return_abbreviation, paginate
 from utils import dolos
 
 # 產生主程式, 加入主畫面
@@ -92,49 +92,13 @@ def problem():
         if "ZJ" in file_name:
             # 調用 ZeroJudge_submit 函數進行題目提交
             score = ZeroJudge_submit(file_name,session['User_id'])
-            # 根據 score 的前兩個字來決定顯示不同的內容
-            if score.startswith("AC"):
-                # 使用正規表達式從 score 中提取 run_time 和 memory
-                match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', score)
-                if match:
-                    run_time = match.group(1)
-                    memory = match.group(2) 
-            else:
-                if score.startswith("NA"):
-                    message = "未通過所有測資點"
-                    ensue='Not Accept'
-                elif score.startswith("WA"):
-                    message = '答案錯誤'
-                    ensue='Wrong Answer'
-                elif score.startswith("TLE"):
-                    message = '執行超過時間限制'
-                    ensue='Time Limit Exceed'
-                elif score.startswith("MLE"):
-                    message = "程序執行超過記憶體限制"
-                    ensue='Memory Limit Exceed'
-                elif score.startswith("OLE"):
-                    message = "程序輸出檔超過限制"
-                    ensue='Output Limit Exceed'
-                elif score.startswith("RE"):
-                    message = "執行時錯誤"
-                    ensue='Runtime Error'
-                elif score.startswith("RF"):
-                    message = "使用了被禁止使用的函式"
-                    ensue='Restricted Function'
-                elif score.startswith("CE"):
-                    message = "編譯錯誤"
-                    ensue='Compile Error'
-                elif score.startswith("SE"):
-                    message = "系統錯誤"
-                    ensue='System Error'
-                else:
-                    message = "未知錯誤"
-                    ensue="Unknown Error"
-                
+            if score and score[2]=='Accepted':
+                print()
+
+
         elif "TIOJ" in file_name:
-            score=TIOJ_submit(file_name,session['User_id'])
-            print(score)
-            if score and score[0]=='Accepted':
+            score=TIOJ_submit(file_name,str(session['User_id']))
+            if score and score[2]=='Accepted':
                 result=True
                 message="測試成功"
                 run_time=score[1]
@@ -145,27 +109,15 @@ def problem():
                 message="測試失敗"
                 run_time=score[1]
                 memory=score[2]
-            ensue=score[0]
+            ensue=score[3]
 
         if type == 'upload':
             # 執行 SQL 插入語句
-            sql_insert = """
+            db.edit_data(f'''
                 INSERT INTO `answer record` (user_id, problem_id, result, language, update_time)
-                VALUES (%s, %s, %s, %s, %s)
-            """
-            # 提供預設值
-            user_id=session['User_id']
-            default_update_time = datetime.now()  # 如果不提供值，則預設為 NULL
-            # 使用整數值插入
-            values = (user_id, problem_id,ensue,language,default_update_time)
-            # 連接到 My SQL 資料庫
-            conn=db.connection()
-            # 創建一個游標對象
-            cursor = conn.cursor()
-            # 執行 SQL 插入
-            cursor.execute(sql_insert, values)
-            # 提交事務
-            conn.commit()
+                VALUES ({session['User_id']},{problem_id}, {ensue}, {language}, {datetime.now()})
+            ''')
+
 
         return jsonify({'result':result,
             'message':message,
@@ -178,16 +130,13 @@ def problem():
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
-        print(like)
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
             
-
-
-
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
     url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
     return (redirect(url))
+
 # 收藏
 @app.route('/add_to_collection', methods=['POST'])
 def add_to_collection():
@@ -203,7 +152,6 @@ def add_to_collection():
         return jsonify({'message': 'Item added to collection'}), 201
     except KeyError:
         return jsonify({'error': 'Missing item_id or user_id'}), 400
-print("GAWA")
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------

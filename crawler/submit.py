@@ -1,5 +1,6 @@
 # 引入所需的模組和套件
 from datetime import datetime
+import re
 from flask import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -8,12 +9,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import pandas as pd
 from time import sleep
 import os
 import glob
 import traceback
+
+from utils.common import ZJ_translated_return_abbreviation
 
 def TIOJ_submit(file_name, number):
     main_url = 'https://tioj.ck.tp.edu.tw/users/sign_in'
@@ -133,11 +135,23 @@ def TIOJ_submit(file_name, number):
             df = pd.DataFrame([results])
             csv_data = df.to_csv(index=False, header=False, encoding='utf-8')
             with open('./crawler/result.csv', 'a', encoding='utf-8') as f:
-                f.write('TIOJ-'+number + ",")
-                f.write(file_key + ",")
+                newResult=[]
+                f.write(number + ",")
+                newResult.append(number)
+
+                f.write('TIOJ-'+file_key + ",")
+                newResult.append(f'TIOJ-{file_key}')
+
                 f.write(csv_data.strip() + ",")
+                for i in csv_data.strip().split(','):
+                    newResult.append(i)
+
                 f.write(language+ ",")
-                f.write(str(datetime.now()))  # 轉換為字符串
+                newResult.append(language)
+                now_time=str(datetime.now())[:5]# 轉換為字符串
+
+                f.write(now_time) 
+                newResult.append(now_time)
                 f.write('\n')
 
     except Exception as e:
@@ -146,54 +160,43 @@ def TIOJ_submit(file_name, number):
     finally:
         if driver:
             driver.quit()
-        print(results)
-        return results
+
+        return newResult
 
 def ZeroJudge_submit(file_name, number):
     # crawler setting
     main_url = 'https://zerojudge.tw/Login'
-    # 禁用瀏覽器彈窗避免預設路徑載入失敗
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     driver = None  # 初始化 driver 變數
     results = []  # 初始化 results 變數
+    newResult = []  # 初始化 newResult 變數
 
     try:
         s = Service(ChromeDriverManager().install())
         chrome_options = webdriver.ChromeOptions()
-        # 將擴充套件放入至Webdriver的開啟網頁內容
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
         chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
-        # 隱藏『Chrome正在受到自動軟體的控制』這項資訊
         chrome_options.add_argument("disable-infobars")
 
-        # 初始化WebDriver
         driver = webdriver.Chrome(service=s, options=chrome_options)
         driver.maximize_window()
         wait_max = 10
 
-        # 啟動擴充套件連上VPN
-        # 連結套件的html位置
         driver.get("chrome-extension://bihmplhobchoageeokmgbdihknkjbknd/panel/index.html")
         sleep(2)
-        # 找到點擊的位置並且點擊
         btn_connect = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "ConnectionButton")))
         btn_connect.click()
         sleep(2)
-        # 選擇要切換的視窗根據索引號或視窗標題來選擇
         all_windows = driver.window_handles
         driver.switch_to.window(all_windows[0])
 
-        # 讀取所有檔案
         submit_program_dict = dict()
         files = glob.glob(f'./source/{file_name}')
         for file_name in files:
-            # 取得檔案的副檔名
             _, extension = os.path.splitext(file_name)
-            # 將副檔名轉換為小寫
             extension = extension.lower()
-            # 根據副檔名判斷程式語言
             if extension == '.py':
                 language = 'python'
             elif extension == '.java':
@@ -203,20 +206,16 @@ def ZeroJudge_submit(file_name, number):
             elif extension == '.cpp':
                 language = 'cpp'
             else:
-                continue  # 跳過未知的文件類型
+                continue
 
             with open(file_name, 'r', encoding='utf-8') as file:
                 content = file.read()
-                # 提取檔案名稱中除去前六位的部分作為 key
                 file_key = os.path.basename(file_name)[7:].replace("ZJ-", "").split('.')[0]
-                print(file_key)
                 submit_program_dict[file_key] = content
 
-        # 讀取帳戶資訊
         with open('./crawler/account.json', 'r') as file:
             accounts = json.load(file)['account']
 
-        # 初始化 username 和 password
         username = None
         password = None
 
@@ -224,32 +223,28 @@ def ZeroJudge_submit(file_name, number):
             if acc[0][0-len(str(number)):] == number:
                 username = acc[0]
                 password = acc[1]
-                break  # 找到匹配的賬號後退出循環
+                break
 
         if not username or not password:
-            username="TestCase2024"
-            password="TestCase2024"
+            username = "TestCase2024"
+            password = "TestCase2024"
 
-        # 登錄網站
         driver.get(main_url)
         try:
             login_area = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located(
                 (By.CLASS_NAME, 'col-md-4.text-center')))
             login_area = WebDriverWait(login_area, wait_max).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'form-horizontal')))
-
             sleep(2)
 
             input_username = WebDriverWait(login_area, wait_max).until(
                 EC.presence_of_element_located((By.ID, 'account')))
             input_username.send_keys(username)
-
             sleep(2)
 
             input_password = WebDriverWait(login_area, wait_max).until(
                 EC.presence_of_element_located((By.ID, 'passwd')))
             input_password.send_keys(password)
-
             sleep(3)
 
             for i in range(300):
@@ -272,7 +267,6 @@ def ZeroJudge_submit(file_name, number):
             print(e)
             return []  # 返回空列表，表示登錄失敗
 
-        # 提交程式
         results = []
         language_upper = language.upper()
         for prob_id in list(submit_program_dict.keys()):
@@ -284,7 +278,6 @@ def ZeroJudge_submit(file_name, number):
 
             btn_py = WebDriverWait(driver, wait_max).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, f"input[name='language'][value='{language_upper}']")))
-
             btn_py.click()
 
             input_code = WebDriverWait(driver, wait_max).until(
@@ -310,23 +303,34 @@ def ZeroJudge_submit(file_name, number):
         newResult = []
         for i in range(len(results[0])):  # 遍歷結果的每一列
             if i == 1:
-                newResult.append(str(results[0][i].split('(')[0]))
+                newResult.append(int(number))
             elif i == 2:
-                newResult.append(results[0][i][:4])
-            elif i in (3, 5):
+                newResult.append('ZJ-' + results[0][i][:4])
+            elif i == 3:
+                if results[0][i].startswith('AC'):
+                    message, ensue = ZJ_translated_return_abbreviation(results[0][i])
+                    newResult.append(ensue)
+                    if ensue == 'Accepted':
+                        match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', results[0][i])
+                        if match:
+                            run_time = match.group(1)
+                            memory = match.group(2)
+                            newResult.append(run_time)
+                            newResult.append(memory)
+                    else:
+                        newResult.append('0')
+                        newResult.append('0')
+            elif i == 5:
                 newResult.append(results[0][i])
             elif i == 4:
                 newResult.append(results[0][i].lower())
 
-        # 將結果存儲到 CSV 文件中
         if newResult:
-            df = pd.DataFrame([newResult])  # 不包含列名
-            # 轉換 DataFrame 為字串
-            csv_data = df.to_csv(index=False, header=False, encoding='utf-8').strip()  # 使用UTF-8編碼
-            # 寫入 CSV 文件
-            with open('./crawler/result.csv', 'a', encoding='utf-8') as f:  # 使用UTF-8編碼
-                f.write(csv_data)  # 直接寫入CSV數據
-                f.write('\n')  # 添加換行符
+            df = pd.DataFrame([newResult])
+            csv_data = df.to_csv(index=False, header=False, encoding='utf-8').strip()
+            with open('./crawler/result.csv', 'a', encoding='utf-8') as f:
+                f.write(csv_data)
+                f.write('\n')
 
     except Exception as e:
         print("An error occurred:", e)
@@ -334,7 +338,6 @@ def ZeroJudge_submit(file_name, number):
     finally:
         if driver:
             driver.quit()
-        print(results)
-        return results
+        return newResult
 
 
