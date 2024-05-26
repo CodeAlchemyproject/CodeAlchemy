@@ -148,7 +148,7 @@ def TIOJ_submit(file_name, number):
 
                 f.write(language+ ",")
                 newResult.append(language)
-                now_time=str(datetime.now())[:5]# 轉換為字符串
+                now_time=str(datetime.now())# 轉換為字符串
 
                 f.write(now_time) 
                 newResult.append(now_time)

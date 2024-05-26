@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    {% include "_site_header.html" %}
+    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    <div class="container">
+        
+        <!-- ------- -->
+        <!-- 作答紀錄列表 -->
+        <!-- ------- -->
+        <div class="table-responsive">
+            <table id="problem_list" class="table table-hover justify-content-center mt-4">
+                <thead>
+                    <tr>
+                        <td>作答編號</td>
+                        <td>用戶編號</td>
+                        <td>用戶姓名</td>
+                        <td>作答結果</td>
+                        <td>程式語言</td>
+                        <td>執行時間</td>
+                        <td>記憶體</td>
+                        <td>上傳日期</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item[0] }}</td> 
+                        <td>{{ item[1] }}</td> 
+                        <td>{{ item[2] }}</td> 
+                        <td>{{ item[3] }}</td> 
+                        <td>{{ item[4] }}</td> 
+                        <td>{{ item[5] }}</td> 
+                        <td>{{ item[6] }}</td> 
+                        <td>{{ item[7] }}</td> 
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -8,10 +8,10 @@
 import re
 from crawler.submit import TIOJ_submit,ZeroJudge_submit
 from utils.common import ZJ_translated_return_abbreviation
-#print(TIOJ_submit('bfc834_TIOJ-1001.py',str(17)))
+print(TIOJ_submit('bfc834_TIOJ-1001.py',str(17)))
 
 
-print(ZeroJudge_submit('Gawa20_ZJ-a001.py',str(17)))
+#print(ZeroJudge_submit('Gawa20_ZJ-a001.py',str(17)))
 # number='17'
 # results=[['13955725', 'PGlEzN17 (PGlEzN17)', 'a001. 哈囉 -- Brian Kernighan', 'AC (17ms, 3.3MB)', 'PYTHON', '2024-05-25 15:09']]
 # newResult = []

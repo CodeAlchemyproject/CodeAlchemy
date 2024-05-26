@@ -97,26 +97,28 @@ def problem():
 
 
         elif "TIOJ" in file_name:
+            run_time=0
+            memory=0
             score=TIOJ_submit(file_name,str(session['User_id']))
             if score and score[2]=='Accepted':
                 result=True
                 message="測試成功"
-                run_time=score[1]
-                memory=score[2]
+
                 
             else :
                 result=False
                 message="測試失敗"
-                run_time=score[1]
-                memory=score[2]
-            ensue=score[3]
+            run_time=score[3]
+            memory=score[4]
+            ensue=score[2]
 
         if type == 'upload':
             # 執行 SQL 插入語句
             db.edit_data(f'''
-                INSERT INTO `answer record` (user_id, problem_id, result, language, update_time)
-                VALUES ({session['User_id']},{problem_id}, {ensue}, {language}, {datetime.now()})
+                INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
+                VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
             ''')
+            
 
 
         return jsonify({'result':result,
@@ -131,7 +133,15 @@ def problem():
         example_outputs = problem_data[0][6].split('|||')
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
-            
+@app.route('/answer_record',methods=['GET'])
+def answer_record():
+    problem_id = request.args.get('problem_id',type=str)
+    sql_problem_command=f"""SELECT record_id,u.user_id,user_name,result,language,run_time,memory,ar.update_time FROM `113-CodeAlchemy`.`answer record` as ar
+                        left join `user` as u
+                        on ar.user_id=u.user_id
+                        where problem_id='{problem_id}';"""
+    data=db.get_data(sql_problem_command)
+    return render_template('./answer_record.html',data=data)    
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
     url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
