@@ -148,7 +148,7 @@ def problem_dolos():
     print(zip)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
-
+#GAWA
 # 收藏
 @app.route('/add_to_collection', methods=['POST'])
 def add_to_collection():
