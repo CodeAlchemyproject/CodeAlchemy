@@ -143,7 +143,10 @@ def answer_record():
   
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
-    url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
+    problem_id=request.args.get('problem_id',type=str)
+    zip=dolos.create_zip(problem_id)
+    print(zip)
+    url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
 
 # 收藏
