@@ -1,6 +1,6 @@
 *.pyc
 common.cpython-312.pyc
-
+#source/
 config.py
 **dolos/dolos-report/
-static/user_icon/*
+#static/user_icon/*

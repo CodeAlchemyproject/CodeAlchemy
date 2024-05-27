@@ -2,7 +2,15 @@
 <html lang="en">
 
 <head>
-
+    <style>
+        .circle-img {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 1px solid black; /* 添加黑色外框 */
+            object-fit: cover;  /* 確保圖片不變形 */
+        }
+    </style>
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
@@ -41,12 +49,17 @@
                     <tr>
                         <td>{{ item[0] }}</td> 
                         <td>{{ item[1] }}</td> 
-                        <td>{{ item[2] }}</td> 
-                        <td>{{ item[3] }}</td> 
+                        <td>{% if item[2] is none %}
+                            <img src="./static/user_icon/default.png" class="circle-img">
+                        {% else %}
+                            <img src="{{ item[2] }}" class="circle-img">
+                        {% endif %}
+                        {{ item[3] }}</td>
                         <td>{{ item[4] }}</td> 
                         <td>{{ item[5] }}</td> 
-                        <td>{{ item[6] }}</td> 
-                        <td>{{ item[7] }}</td> 
+                        <td>{{ item[6] }}MS</td> 
+                        <td>{{ item[7] }}MB</td> 
+                        <td>{{ item[8] }}</td> 
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -119,8 +119,6 @@ def problem():
                 VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
             ''')
             
-
-
         return jsonify({'result':result,
             'message':message,
             'run_time':run_time,
@@ -136,12 +134,13 @@ def problem():
 @app.route('/answer_record',methods=['GET'])
 def answer_record():
     problem_id = request.args.get('problem_id',type=str)
-    sql_problem_command=f"""SELECT record_id,u.user_id,user_name,result,language,run_time,memory,ar.update_time FROM `113-CodeAlchemy`.`answer record` as ar
+    sql_problem_command=f"""SELECT record_id,u.user_id,image,user_name,result,language,run_time,memory,ar.update_time FROM `113-CodeAlchemy`.`answer record` as ar
                         left join `user` as u
                         on ar.user_id=u.user_id
                         where problem_id='{problem_id}';"""
     data=db.get_data(sql_problem_command)
-    return render_template('./answer_record.html',data=data)    
+    return render_template('./answer_record.html',data=data)
+  
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
     url=dolos.submit_to_dolos('student_P.zip','dolos\\student_P.zip')
