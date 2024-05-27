@@ -164,6 +164,10 @@ def add_to_collection():
         return jsonify({'message': 'Item added to collection'}), 201
     except KeyError:
         return jsonify({'error': 'Missing item_id or user_id'}), 400
+@app.route("/rank")
+def rank():
+    
+    return 'gawa'
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
