@@ -3,7 +3,6 @@
 
 <head>
     {% include "_site_header.html" %}
-
     <!-- Google Code Prettify -->
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <!-- Codemirror -->
@@ -128,13 +127,24 @@
                                         <h5 class="modal-title" id="staticBackdropLabel">測試中</h5>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                                role="progressbar" aria-valuenow="0" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 0%">
-                                                <span id="current-progress"></span>
+                                        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
+                                            <div class="wheel"></div>
+                                            <div class="hamster">
+                                              <div class="hamster__body">
+                                                <div class="hamster__head">
+                                                  <div class="hamster__ear"></div>
+                                                  <div class="hamster__eye"></div>
+                                                  <div class="hamster__nose"></div>
+                                                </div>
+                                                <div class="hamster__limb hamster__limb--fr"></div>
+                                                <div class="hamster__limb hamster__limb--fl"></div>
+                                                <div class="hamster__limb hamster__limb--br"></div>
+                                                <div class="hamster__limb hamster__limb--bl"></div>
+                                                <div class="hamster__tail"></div>
+                                              </div>
                                             </div>
-                                        </div>
+                                            <div class="spoke"></div>
+                                          </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -153,9 +163,10 @@
                             </svg>上傳</button>
 
                     </div>
+                    <p></p>
                     <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button" aria-disabled="true">程式碼分析</a>
                     <p></p>
-                    <a href='./answer_record?problem_id={{data[0][0]}}'  class="btn btn-primary w-70" role="button" aria-disabled="true">作答情況</a>
+                    <a href='./answer_record?problem_id={{data[0][0]}}'  class="btn btn-primary w-70" role="button" aria-disabled="true" >作答情況</a>
 
                 <!-- 程式輸入框 -->
                 <div class="row border border-3 round rounded-2 mt-5">

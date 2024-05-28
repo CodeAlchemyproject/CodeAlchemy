@@ -148,7 +148,7 @@ def problem_dolos():
     print(zip)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
-#GAWA
+
 # 收藏
 @app.route('/add_to_collection', methods=['POST'])
 def add_to_collection():
@@ -166,8 +166,16 @@ def add_to_collection():
         return jsonify({'error': 'Missing item_id or user_id'}), 400
 @app.route("/rank")
 def rank():
-    
-    return 'gawa'
+    data=db.get_data(
+    '''
+    SELECT u.user_id, u.user_name , u.image,count(*) as 答題數
+    FROM `113-CodeAlchemy`.`answer record` as ar
+    RIGHT JOIN `user` as u ON u.user_id = ar.user_id
+    WHERE result = 'Accepted'
+    GROUP BY u.user_id, u.user_name;
+    ''')
+
+    return render_template('./rank.html',data=data)
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
