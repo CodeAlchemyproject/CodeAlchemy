@@ -43,7 +43,7 @@ document.getElementById("upload_btn").addEventListener("click", function () {
   // 測試新的 interval，並保存其 ID
   var current_progress = 0;
   intervalId = setInterval(function () {
-    current_progress += 5;
+    current_progress += 1;
     progressBar.style.width = current_progress + "%";
     progressBar.textContent = current_progress + "%";
 
