@@ -72,9 +72,9 @@
                     </div>
 
                     <div class="col-12">
-                        <p class="mt-4 overflow-auto">{{data.0.2|safe}}</p>
-                        <p class="mt-4 overflow-auto">{{data.0.3|safe}}</p>
-                        <p class="mt-4 overflow-auto">{{data.0.4|safe}}</p>
+                        <h4 class="mt-4 overflow-auto">{{data.0.2|safe}}</h4>
+                        <h4 class="mt-4 overflow-auto">{{data.0.3|safe}}</h4>
+                        <h4 class="mt-4 overflow-auto">{{data.0.4|safe}}</h4>
                     </div>
                     <div class="col-12">
                         {% for n in range(example_inputs|length) %}
@@ -153,7 +153,7 @@
                             </svg>上傳</button>
 
                     </div>
-                    <a href="/dolos" class="btn btn-primary w-70" role="button" aria-disabled="true">程式碼分析</a>
+                    <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button" aria-disabled="true">程式碼分析</a>
                     <p></p>
                     <a href='./answer_record?problem_id={{data[0][0]}}'  class="btn btn-primary w-70" role="button" aria-disabled="true">作答情況</a>
 

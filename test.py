@@ -1,38 +1,20 @@
-# from utils.common import random_string
-# from crawler.registration import TIOJ_registration,ZeroJudge_registration, add_account
-# number=random_string()+"17"
-# TIOJ_registration(number)
-# ZeroJudge_registration('PGlEzN17')
-# # 呼叫新增帳戶函式
-# add_account(number, number, './crawler/account.json')
-import re
-from crawler.submit import TIOJ_submit,ZeroJudge_submit
-from utils.common import ZJ_translated_return_abbreviation
-print(TIOJ_submit('bfc834_TIOJ-1001.py',str(17)))
+from bs4 import BeautifulSoup
+import requests
+def test():
+    # 構建完整的 URL
+    problem_id=str(problem_id)
+    url = f'http://192.168.2.100/problem?problem_id=ZJ-a001'
+    # 發送 GET 請求
+    response = requests.get(url)
 
+    # 檢查是否成功獲取網頁
+    if response.status_code == 200:
+        try:
+            # 使用 BeautifulSoup 解析 HTML
+            soup = BeautifulSoup(response.text, 'html5lib')
+            GAWA = soup.find_all('p')
+            print(GAWA.get_text().strip())
 
-#print(ZeroJudge_submit('Gawa20_ZJ-a001.py',str(17)))
-# number='17'
-# results=[['13955725', 'PGlEzN17 (PGlEzN17)', 'a001. 哈囉 -- Brian Kernighan', 'AC (17ms, 3.3MB)', 'PYTHON', '2024-05-25 15:09']]
-# newResult = []
-# for i in range(len(results[0])):  # 遍歷結果的每一列
-#     if i == 1:
-#         newResult.append(number + ',')
-#     elif i == 2:
-#         newResult.append('ZJ-' + results[0][i][:4])
-#     elif i == 3:
-#         if results[0][i].startswith('AC'):
-#             message, ensue = ZJ_translated_return_abbreviation(results[0][i])
-#             newResult.append(ensue + ',')
-#             if ensue == 'Accepted':
-#                 match = re.search(r'\((\d+ms),\s([\d.]+MB)\)', results[0][i])
-#                 if match:
-#                     run_time = match.group(1)
-#                     memory = match.group(2)
-#                     newResult.append(run_time + ',')
-#                     newResult.append(memory + ',')
-#     elif i == 5:
-#         newResult.append(results[0][i])
-#     elif i == 4:
-#         newResult.append(results[0][i].lower())
-# print(newResult)
+        except Exception as e:
+            print(f'出錯: {str(e)}').
+            0.0
