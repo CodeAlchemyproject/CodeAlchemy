@@ -55,7 +55,9 @@ def user_data():
             # 將文件保存到指定目錄
             file.save(os.path.join(UPLOAD_FOLDER, filename))
             # 更新用戶資料
-        sql_command = f"UPDATE user SET user_name='{User_name}',email='{Email}',image='../static/user_icon/{filename}' WHERE user_id='{User_id}'"
+            sql_command = f"UPDATE user SET user_name='{User_name}',email='{Email}',image='../static/user_icon/{filename}' WHERE user_id='{User_id}'"
+        else:
+            sql_command = f"UPDATE user SET user_name='{User_name}',email='{Email}' WHERE user_id='{User_id}'"
         db.edit_data(sql_command)
         # 重定向到用戶資料頁面
         return redirect(url_for('user.user_data'))
