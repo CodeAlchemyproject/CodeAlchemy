@@ -17,6 +17,11 @@ function showLoading() {
 
 function hideLoading() {
     document.getElementById("staticBackdrop").style.display = "none";
+    // 手動移除 backdrop
+    var backdrops = document.getElementsByClassName('modal-backdrop');
+    while (backdrops.length > 0) {
+        backdrops[0].parentNode.removeChild(backdrops[0]);
+    }
 }
 // 取得下拉選單
 var selectLanguageButton = document.getElementById('select_language_button');
