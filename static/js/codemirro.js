@@ -10,6 +10,19 @@ var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
   mode: 'python'
 });
 
+// 顯示和隱藏 loading 視窗的函數
+function showLoading() {
+    document.getElementById("staticBackdrop").style.display = "block";
+}
+
+function hideLoading() {
+    document.getElementById("staticBackdrop").style.display = "none";
+    // 手動移除 backdrop
+    var backdrops = document.getElementsByClassName('modal-backdrop');
+    while (backdrops.length > 0) {
+        backdrops[0].parentNode.removeChild(backdrops[0]);
+    }
+}
 // 取得下拉選單
 var selectLanguageButton = document.getElementById('select_language_button');
 var mode='python';
@@ -41,11 +54,14 @@ document.getElementById("test_btn").addEventListener("click", function () {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/problem");
   xhr.send(formData);
+  // 顯示 loading 視窗
+  //showLoading();
 
   // 處理伺服器返回的數據
   xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
           if (xhr.status === 200) {
+              hideLoading();  // 隱藏 loading 視窗
               var responseData = JSON.parse(xhr.responseText);
               // 提取返回的數據
               var result = responseData.result;
@@ -91,11 +107,14 @@ document.getElementById("upload_btn").addEventListener("click", function () {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/problem");
   xhr.send(formData);
+  // 顯示 loading 視窗
+  showLoading();
 
   // 處理伺服器返回的數據
   xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
           if (xhr.status === 200) {
+              hideLoading();  // 隱藏 loading 視窗
               var responseData = JSON.parse(xhr.responseText);
               // 提取返回的數據
               var result = responseData.result;

@@ -28,25 +28,38 @@ app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
 @app.route('/', methods=['GET'])
 def index():
     # 取得使用者的篩選條件
-    state = request.args.get('state','*',type=str)
-    onlinejudge = request.args.get('onlinejudge','*',type=str)
-    difficulty = request.args.get('difficulty','*',type=str)
-    search = request.args.get('search','',type=str)
-    condition = ' where ' #where前後的空格勿動
-    sql_problem_command=f'SELECT * FROM problem'
+    state = request.args.get('state', '*', type=str)
+    onlinejudge = request.args.get('onlinejudge', '*', type=str)
+    difficulty = request.args.get('difficulty', '*', type=str)
+    search = request.args.get('search', '', type=str)
+    
+    condition = ' WHERE '  # where前後的空格勿動
+    sql_problem_command = 'SELECT p.*, acceptance_data.acceptance_rate FROM `113-CodeAlchemy`.problem AS p '
+    sql_problem_command += 'LEFT JOIN ('
+    sql_problem_command += """
+        SELECT 
+            ar.problem_id,
+            CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.result) * 100, 2), '%') AS acceptance_rate
+        FROM 
+            `113-CodeAlchemy`.`answer record` AS ar
+        GROUP BY 
+            ar.problem_id
+    ) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
+    
     if search != '':
-        condition += f'title like "%{search}%" and '
+        condition += f'p.title LIKE "%{search}%" AND '
     if onlinejudge != '*':
-        condition += f'substring_index(problem_id,"-",1)="{onlinejudge}" and '
+        condition += f'SUBSTRING_INDEX(p.problem_id, "-", 1) = "{onlinejudge}" AND '
     if difficulty != '*':
-        condition += f'difficulty = "{difficulty}" and '
-    if condition == ' where ':
+        condition += f'p.difficulty = "{difficulty}" AND '
+    if condition == ' WHERE ':
         condition = ''
     else:
-        condition = condition[:condition.rfind(' and ')]
-        print(condition)
-    sql_problem_command= sql_problem_command + condition
+        condition = condition[:condition.rfind(' AND ')]
+    
+    sql_problem_command = sql_problem_command + condition
     data=db.get_data(sql_problem_command)
+
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -54,6 +67,7 @@ def index():
     start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
+
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 #題目
@@ -148,7 +162,7 @@ def problem_dolos():
     print(zip)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
-#GAWA
+
 # 收藏
 @app.route('/add_to_collection', methods=['POST'])
 def add_to_collection():
@@ -166,8 +180,16 @@ def add_to_collection():
         return jsonify({'error': 'Missing item_id or user_id'}), 400
 @app.route("/rank")
 def rank():
-    
-    return 'gawa'
+    data=db.get_data(
+    '''
+    SELECT u.user_id, u.user_name , u.image,count(*) as 答題數
+    FROM `113-CodeAlchemy`.`answer record` as ar
+    RIGHT JOIN `user` as u ON u.user_id = ar.user_id
+    WHERE result = 'Accepted'
+    GROUP BY u.user_id, u.user_name;
+    ''')
+
+    return render_template('./rank.html',data=data)
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
