@@ -15,9 +15,9 @@ ensue=['Accepted',
        'Unknown Error']
 # 定義對應的權重
 weights = [
-    50,   # 'Accepted' 的權重
-    30,   # 'Not Accept' 的權重
-    30,   # 'Wrong Answer' 的權重
+    60,   # 'Accepted' 的權重
+    27,   # 'Not Accept' 的權重
+    27,   # 'Wrong Answer' 的權重
     1,    # 'Time Limit Exceed' 的權重
     1,    # 'Memory Limit Exceed' 的權重
     1,    # 'Output Limit Exceed' 的權重
