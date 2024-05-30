@@ -181,19 +181,21 @@ def add_to_collection():
 @app.route("/rank")
 def rank():
     data=db.get_data(f'''
-                SELECT 
-                u.user_id, 
-                u.user_name, 
-                u.image, 
-                COUNT(ar.answer_id) AS 答題數,
-                SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) AS 正確答題數,
-                CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.answer_id) * 100, 2), '%') AS 答題正確率
-            FROM 
-                `113-CodeAlchemy`.`answer record` AS ar
-            LEFT JOIN 
-                `user` AS u ON u.user_id = ar.user_id
-            GROUP BY 
-                u.user_id, u.user_name
+    SELECT 
+    u.user_id, 
+    u.user_name, 
+    u.image, 
+    SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) AS 正確答題數,
+    CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2), '%') AS 答題正確率,
+    round(avg(ar.run_time),2) as 平均執行時間,
+    round(avg(ar.memory),2) as 平均使用記憶體
+    FROM 
+    `113-CodeAlchemy`.`answer record` AS ar
+    LEFT JOIN 
+    `user` AS u ON u.user_id = ar.user_id
+    GROUP BY 
+    u.user_id, u.user_name
+    order by 正確答題數 desc;
                      ''')
     return render_template('./rank.html',data=data)
 #-------------------------
