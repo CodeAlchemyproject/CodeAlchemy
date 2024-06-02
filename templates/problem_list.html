@@ -17,6 +17,7 @@
     <!-- nav-bar -->
     <!-- ------- -->
     {% include "nav_bar.html" %}
+    <title>CodeAlchemy</title>
     <div class="container">
         <div class="row mt-4">
             <div class="col-3">
@@ -140,11 +141,7 @@
                         <td>{{ item[7] }}</td> <!--難度-->
                         <td>{{ item[8] }}</td> <!--標籤-->
                         <td>
-                            {% if item[10] != 0 %}
-                            {{ '%.2f' % (item[9] / item[10] * 100) }}%
-                            {% else %}
-                            0%
-                            {% endif %}
+                            {{ item[12] }}<!--通過率-->
                         </td>
                         <td>{{ item[11].strftime('%Y-%m-%d') }}</td>
                         {% if (session['Permission']=='Manager') %}
