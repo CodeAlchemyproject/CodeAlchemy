@@ -64,7 +64,7 @@ def feedback_history():
 
     #取得傳入參數, 執行sql命令並取回資料 
     user_id = session.get('User_id')
-    cursor.execute('SELECT * FROM feedback WHERE user_id=%s', (user_id,))
+    cursor.execute('SELECT * FROM feedback  WHERE user_id=%s ORDER BY created_at DESC', (user_id,))
     feedback_history = cursor.fetchall()
 
     #關閉連線   
@@ -96,10 +96,17 @@ def admin_dashboard():
     # 計算分頁所需的偏移量
     offset = (page - 1) * per_page
 
-    # 查詢特定頁面的反饋資料，按提交時間降序排列
-    cursor.execute('SELECT * FROM feedback ORDER BY created_at DESC LIMIT %s OFFSET %s', (per_page, offset))
+    # 查詢特定頁面的反饋資料，按提交時間降序排列，並進行表連接
+    query = '''
+    SELECT feedback.feedback_id, user.user_name, feedback.content, feedback.created_at, feedback.reply 
+    FROM feedback 
+    JOIN user ON feedback.user_id = user.user_id 
+    ORDER BY feedback.created_at DESC 
+    LIMIT %s OFFSET %s
+    '''
+    cursor.execute(query, (per_page, offset))
     feedback = cursor.fetchall()
-
+   
     #關閉連線   
     connection.close()  
 
@@ -118,7 +125,13 @@ def reply_feedback_form():
     cursor = connection.cursor()
     
     feedback_id = request.args.get('feedback_id')
-    cursor.execute('SELECT * FROM feedback WHERE feedback_id=%s', (feedback_id,))
+    query = '''
+    SELECT feedback.feedback_id, user.user_name, feedback.content 
+    FROM feedback 
+    JOIN user ON feedback.user_id = user.user_id 
+    WHERE feedback.feedback_id=%s
+    '''
+    cursor.execute(query, (feedback_id,))
     feedback = cursor.fetchone()
     
     #渲染網頁
