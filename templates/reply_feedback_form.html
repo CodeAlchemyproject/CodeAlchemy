@@ -73,7 +73,7 @@
     <div class="reply-form">
         <form action="/feedback/reply_feedback" method="post">
             <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
-            <p><strong>回饋內容:</strong> {{ feedback[2] }}</p>
+            <p><strong>反饋內容:</strong> {{ feedback[2] }}</p>
             <input type="hidden" name="feedback_id" value="{{ feedback[0] }}">
             <label for="reply_content">回覆:</label><br>
             <textarea name="reply_content" rows="5" cols="50"></textarea><br>
