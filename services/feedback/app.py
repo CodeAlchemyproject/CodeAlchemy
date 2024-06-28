@@ -18,7 +18,7 @@ def feedback_create_form():
 @feedback_bp.route('/create', methods=['POST'])
 def submit_feedback():
     feedback_content = request.form['feedback_content']
-    user_name = session['User_name']
+    user_id = session['User_id']
     if feedback_content:
         #取得資料庫連線 
         connection = db.connection() 
@@ -28,8 +28,8 @@ def submit_feedback():
 
         # 將反饋資料存入資料庫
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO feedback (user_name, content, created_at) VALUES (%s, %s, %s)",
-                        (user_name, feedback_content, created_at))
+        cursor.execute("INSERT INTO feedback (user_id, content, created_at) VALUES (%s, %s, %s)",
+                        (user_id, feedback_content, created_at))
         
         #關閉資料庫連線 
         connection.commit()
@@ -62,9 +62,9 @@ def feedback_history():
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor()     
 
-    #取得傳入參數, 執行sql命令並取回資料  
-    user_name = session.get('User_name')
-    cursor.execute('SELECT * FROM feedback WHERE user_name=%s', (user_name,))
+    #取得傳入參數, 執行sql命令並取回資料 
+    user_id = session.get('User_id')
+    cursor.execute('SELECT * FROM feedback  WHERE user_id=%s ORDER BY created_at DESC', (user_id,))
     feedback_history = cursor.fetchall()
 
     #關閉連線   
@@ -96,10 +96,17 @@ def admin_dashboard():
     # 計算分頁所需的偏移量
     offset = (page - 1) * per_page
 
-    # 查詢特定頁面的反饋資料，按提交時間降序排列
-    cursor.execute('SELECT * FROM feedback ORDER BY created_at DESC LIMIT %s OFFSET %s', (per_page, offset))
+    # 查詢特定頁面的反饋資料，按提交時間降序排列，並進行表連接
+    query = '''
+    SELECT feedback.feedback_id, user.user_name, feedback.content, feedback.created_at, feedback.reply 
+    FROM feedback 
+    JOIN user ON feedback.user_id = user.user_id 
+    ORDER BY feedback.created_at DESC 
+    LIMIT %s OFFSET %s
+    '''
+    cursor.execute(query, (per_page, offset))
     feedback = cursor.fetchall()
-
+   
     #關閉連線   
     connection.close()  
 
@@ -118,7 +125,13 @@ def reply_feedback_form():
     cursor = connection.cursor()
     
     feedback_id = request.args.get('feedback_id')
-    cursor.execute('SELECT * FROM feedback WHERE feedback_id=%s', (feedback_id,))
+    query = '''
+    SELECT feedback.feedback_id, user.user_name, feedback.content 
+    FROM feedback 
+    JOIN user ON feedback.user_id = user.user_id 
+    WHERE feedback.feedback_id=%s
+    '''
+    cursor.execute(query, (feedback_id,))
     feedback = cursor.fetchone()
     
     #渲染網頁
