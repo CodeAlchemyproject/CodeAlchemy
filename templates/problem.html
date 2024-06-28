@@ -19,22 +19,22 @@
     <script>
         window.MathJax = {
             tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true,
-            processEnvironments: true
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
             },
             options: {
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            ignoreHtmlClass: 'tex2jax_ignore',
-            processHtmlClass: 'tex2jax_process'
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
             }
         };
-        </script>
+    </script>
 
     <title>{{data[0][0]}} - {{data[0][1]}}</title>
-   
-    
+
+
     <script src="static/js/like_button.js" defer></script>
 </head>
 
@@ -69,24 +69,44 @@
                             </span>
                         </button>
                     </div>
-
-                    <div class="col-12">
-                        <h4 class="mt-4 overflow-auto">{{data.0.2|safe}}</h4>
-                        <h4 class="mt-4 overflow-auto">{{data.0.3|safe}}</h4>
-                        <h4 class="mt-4 overflow-auto">{{data.0.4|safe}}</h4>
+                    <!-- 分頁 -->
+                    <div class="nav nav-tabs nav-justified">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#menu1"
+                            aria-selected="true">題目</button>
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#menu2"
+                            aria-selected="false">解題影片</button>
                     </div>
-                    <div class="col-12">
-                        {% for n in range(example_inputs|length) %}
-                        <h5 class="mt-4 overflow-auto">範例{{n+1}}</h5>
-                        <div class="border-start border-4">
-                            <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_inputs[n]|safe }}</h6>
-                            <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_outputs[n]|safe }}</h6>
+                    <div class="tab-content">
+                        <!-- 題目 -->
+                        <div class="tab-pane fade show active" id="menu1">
+                            <div class="col-12">
+                                <h4 class="mt-4 overflow-auto">{{data.0.2|safe}}</h4>
+                                <h4 class="mt-4 overflow-auto">{{data.0.3|safe}}</h4>
+                                <h4 class="mt-4 overflow-auto">{{data.0.4|safe}}</h4>
+                            </div>
+                            {% for n in range(example_inputs|length) %}
+                            <h5 class="mt-4 overflow-auto">範例{{n+1}}</h5>
+                            <div class="border-start border-4">
+                                <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
+                                <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_inputs[n]|safe }}</h6>
+                                <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
+                                <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_outputs[n]|safe }}</h6>
+                            </div>
+                            {%endfor%}
                         </div>
-                        {%endfor%}
+                        <!-- 教學影片 -->
+                        <div class="tab-pane fade" id="menu2">
+                            <div class="col-12">
+                                <iframe width="560" height="315"
+                                    src="https://www.youtube.com/embed/nZqMjBUp3Fs?si=_5ERs1-g2_hBQgmT"
+                                    title="YouTube video player" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
             <div class="col mt-5">
                 <div class="row d-flex justify-content-center">
@@ -127,24 +147,25 @@
                                         <h5 class="modal-title" id="staticBackdropLabel">測試中</h5>
                                     </div>
                                     <div class="modal-body">
-                                        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
+                                        <div aria-label="Orange and tan hamster running in a metal wheel" role="img"
+                                            class="wheel-and-hamster">
                                             <div class="wheel"></div>
                                             <div class="hamster">
-                                              <div class="hamster__body">
-                                                <div class="hamster__head">
-                                                  <div class="hamster__ear"></div>
-                                                  <div class="hamster__eye"></div>
-                                                  <div class="hamster__nose"></div>
+                                                <div class="hamster__body">
+                                                    <div class="hamster__head">
+                                                        <div class="hamster__ear"></div>
+                                                        <div class="hamster__eye"></div>
+                                                        <div class="hamster__nose"></div>
+                                                    </div>
+                                                    <div class="hamster__limb hamster__limb--fr"></div>
+                                                    <div class="hamster__limb hamster__limb--fl"></div>
+                                                    <div class="hamster__limb hamster__limb--br"></div>
+                                                    <div class="hamster__limb hamster__limb--bl"></div>
+                                                    <div class="hamster__tail"></div>
                                                 </div>
-                                                <div class="hamster__limb hamster__limb--fr"></div>
-                                                <div class="hamster__limb hamster__limb--fl"></div>
-                                                <div class="hamster__limb hamster__limb--br"></div>
-                                                <div class="hamster__limb hamster__limb--bl"></div>
-                                                <div class="hamster__tail"></div>
-                                              </div>
                                             </div>
                                             <div class="spoke"></div>
-                                          </div>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -164,29 +185,31 @@
 
                     </div>
                     <p></p>
-                    <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button" aria-disabled="true">程式碼分析</a>
+                    <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
+                        aria-disabled="true">程式碼分析</a>
                     <p></p>
-                    <a href='./answer_record?problem_id={{data[0][0]}}'  class="btn btn-primary w-70" role="button" aria-disabled="true" >作答情況</a>
+                    <a href='./answer_record?problem_id={{data[0][0]}}' class="btn btn-primary w-70" role="button"
+                        aria-disabled="true">作答情況</a>
 
-                <!-- 程式輸入框 -->
-                <div class="row border border-3 round rounded-2 mt-5">
-                    <textarea id="editor" name="editor">
+                    <!-- 程式輸入框 -->
+                    <div class="row border border-3 round rounded-2 mt-5">
+                        <textarea id="editor" name="editor">
 </textarea>
-                </div>
-                <div id="result_container">
-                    <div id="passed" class="mt-5 bg-success p-3 text-white rounded" style="display: none;">
-                        <h4 id="passed_status"></h4>
-                        <p id="passed_run_time"></p>
-                        <p id="passed_memory"></p>
                     </div>
-                    <div id="failed" class="mt-5 bg-danger p-3 text-white rounded" style="display: none;">
-                        <h4 id="failed_status"></h4>
-                        <p id="failed_error_reason"></p>
+                    <div id="result_container">
+                        <div id="passed" class="mt-5 bg-success p-3 text-white rounded" style="display: none;">
+                            <h4 id="passed_status"></h4>
+                            <p id="passed_run_time"></p>
+                            <p id="passed_memory"></p>
+                        </div>
+                        <div id="failed" class="mt-5 bg-danger p-3 text-white rounded" style="display: none;">
+                            <h4 id="failed_status"></h4>
+                            <p id="failed_error_reason"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
 </body>
