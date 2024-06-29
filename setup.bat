@@ -1,5 +1,6 @@
 chcp 65001
 @echo off
+python.exe -m pip install --upgrade pip
 pip install flask
 pip install flask-mail==0.9.0
 pip install flask-login
