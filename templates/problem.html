@@ -80,8 +80,11 @@
                         <!-- 題目 -->
                         <div class="tab-pane fade show active" id="menu1">
                             <div class="col-12">
+                                <h3 class="mt-4">題目說明:<br></h3>
                                 <h4 class="mt-4 overflow-auto">{{data.0.2|safe}}</h4>
+                                <h3 class="mt-4">輸入說明:<br></h3>
                                 <h4 class="mt-4 overflow-auto">{{data.0.3|safe}}</h4>
+                                <h3 class="mt-4">輸出說明:<br></h3>
                                 <h4 class="mt-4 overflow-auto">{{data.0.4|safe}}</h4>
                             </div>
                             {% for n in range(example_inputs|length) %}
