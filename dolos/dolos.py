@@ -6,7 +6,7 @@ def submit_to_dolos(name, zipfile_path):
    and return the URL where the resulting HTML report can be found.
    """
    response = requests.post(
-      'http://127.0.0.1:8080/api',
+      'http://127.0.0.1:3000/',
       files = { 'dataset[zipfile]': open(zipfile_path, 'rb') },
       data = { 'dataset[name]': name }
    )
