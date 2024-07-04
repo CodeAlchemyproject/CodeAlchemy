@@ -6,7 +6,7 @@ def submit_to_dolos(name, zipfile_path):
    and return the URL where the resulting HTML report can be found.
    """
    response = requests.post(
-      'http://127.0.0.1:3000/',
+      'http://localhost:3000/reports',
       files = { 'dataset[zipfile]': open(zipfile_path, 'rb') },
       data = { 'dataset[name]': name }
    )
@@ -14,4 +14,4 @@ def submit_to_dolos(name, zipfile_path):
    json = response.json()
    return json["html_url"]
 
-print(submit_to_dolos("dolos","dolos/ee790b4f-ce3c-419e-9c1d-fbae93ae6212_TIOJ-1001.zip"))
+print(submit_to_dolos("dolos","dolos/student_P.zip"))
