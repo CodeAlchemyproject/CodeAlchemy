@@ -16,6 +16,64 @@ import glob
 import traceback
 
 from utils.common import ZJ_translated_return_abbreviation
+def test_submit(title):
+    try:
+        chrome_options = webdriver.ChromeOptions()
+        s = Service(ChromeDriverManager().install())
+        chrome_options = webdriver.ChromeOptions()
+        driver = webdriver.Chrome(service=s, options=chrome_options)
+        # 登入頁面的 URL
+        url = 'http://123.192.165.145:8081/Login'
+
+        # 打開網頁
+        driver.get(url)
+
+        # 等待登入表單元素載入完成
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'account')))
+
+        # 找到帳號和密碼輸入框
+        account_input = driver.find_element_by_id('account')
+        passwd_input = driver.find_element_by_id('passwd')
+
+        if account_input and passwd_input:
+            # 輸入帳號和密碼
+            account_input.send_keys('TestCase2024')
+            passwd_input.send_keys('TestCase2024')
+
+            # 找到登入按鈕並點擊
+            login_button = driver.find_element_by_css_selector('button.btn.btn-primary')
+            login_button.click()
+
+            # 等待登入完成，這裡可以根據需要加入等待條件，例如等待特定元素載入完成
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, 'searchword')))
+
+            # 輸入搜索關鍵字
+            searchword_input = driver.find_element_by_name('searchword')
+            searchword_input.send_keys(title)
+
+            # 找到搜索表單並提交
+            search_form = searchword_input.find_element_by_xpath('ancestor::form')
+            search_form.submit()
+
+            # 等待新頁面載入完成
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'table.table-hover')))
+
+            # 獲取表格中的第一個連結
+            table = driver.find_element_by_class_name('table.table-hover')
+            first_a_element = table.find_element_by_xpath('.//a[contains(@href, "ShowProblem?problemid=")]')
+
+            # 點擊第一個連結
+            first_a_element.click()
+
+            # 等待新頁面載入完成
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'pre')))
+
+            # 獲取新頁面的內容並輸出
+            print(driver.page_source)
+
+    finally:
+        # 關閉瀏覽器
+        driver.quit()
 
 def TIOJ_submit(file_name, number):
     main_url = 'https://tioj.ck.tp.edu.tw/users/sign_in'
@@ -339,5 +397,22 @@ def ZeroJudge_submit(file_name, number):
         if driver:
             driver.quit()
         return newResult
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+       
 
 

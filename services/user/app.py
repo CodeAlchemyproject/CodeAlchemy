@@ -28,7 +28,7 @@ def allowed_file(filename):
 @user_bp.route('/user_data', methods=['GET', 'POST'])
 def user_data():
     # 從 session 中獲取用戶的 Email
-    User_id = session.get('User_id')
+    User_id = session.get('User_id') or request.cookies.get('user_id')
     # 根據 Email 查詢用戶數據
     sql_command = f"SELECT * FROM user where user_id='{User_id}'"
     data = db.get_data(sql_command)
