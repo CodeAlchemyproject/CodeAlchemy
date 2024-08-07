@@ -13,4 +13,3 @@ def submit_to_dolos(name, zipfile_path):
    print(response)
    json = response.json()
    return json["html_url"]
-print(submit_to_dolos('dolos','dolos\student_P.zip'))
