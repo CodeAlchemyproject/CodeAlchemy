@@ -15,7 +15,8 @@ manager_bp = Blueprint('manager', __name__)
 @manager_bp.route('/problem',methods=['GET',"POST"])
 def problem():
     if request.method=="POST":
-        return render_template()
+        url= "/manager/problem"
+        return (redirect(url))
     else:
         problem_id = request.args.get('problem_id',type=str)
         sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
