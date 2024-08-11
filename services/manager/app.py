@@ -25,19 +25,24 @@ def problem():
         example_output=data.get('example_output')
         sql_problem_command=f"UPDATE problem SET title = '{title}',content = '{content}',enter_description = '{enter_description}',output_description = '{output_description}',example_input = '{example_input}',example_output = '{example_output}' WHERE problem_id = '{problem_id}';"
         db.edit_data(sql_problem_command)
-        print(data)
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        problem_data=db.get_data(sql_problem_command)
+        sql_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
         return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
     else:
         problem_id = request.args.get('problem_id',type=str)
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        problem_data=db.get_data(sql_problem_command)
+        sql_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+        problem_data=db.get_data(sql_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
         return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
     
+@manager_bp.route('/delete',methods=['GET'])
+def delete():
+    problem_id = request.args.get('problem_id',type=str)
+    sql_command=f"DELETE FROM problem where problem_id={problem_id}"
+    db.edit_data(sql_command)
+    return redirect('/')
