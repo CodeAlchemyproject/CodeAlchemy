@@ -109,7 +109,6 @@ def problem():
             if score and score[2]=='Accepted':
                 print()
 
-
         elif "TIOJ" in file_name:
             run_time=0
             memory=0
@@ -118,7 +117,6 @@ def problem():
                 result=True
                 message="測試成功"
 
-                
             else :
                 result=False
                 message="測試失敗"
@@ -160,7 +158,6 @@ def answer_record():
 def problem_dolos():
     problem_id=request.args.get('problem_id',type=str)
     zip=dolos.create_zip(problem_id)
-    print(zip)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
 
