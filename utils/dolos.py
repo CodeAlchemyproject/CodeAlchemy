@@ -29,11 +29,10 @@ def submit_to_dolos(name, zipfile_path):
     # 提交 ZIP 檔案到 Dolos API
     with open(zipfile_path, 'rb') as zip_file:
         response = requests.post(
-            'http://localhost:3000/reports',
+            'http://123.192.165.145:3000/reports',
             files={'dataset[zipfile]': zip_file},
             data={'dataset[name]': name}
         )
-        print(response)
     
     # 解析 JSON 響應
     json_response = response.json()
