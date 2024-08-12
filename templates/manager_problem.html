@@ -17,86 +17,74 @@
     <!-- html container -->
     <div class="container-md">
         <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col-6">
-                        <div id="problem_id" style="display: none;">{{data[0][0]}}</div>
+            <form action="/manager/problem" method="POST">
+                <div class="col">
+                    <div class="row">
+                        <h3 class="mt-4">題目代號:<br></h3>
+                        <h1 class="display-6 mt-4">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="題目代號" aria-label="題目代號"
+                                    aria-describedby="basic-addon2" value="{{data[0][0]}}" name="problem_id" readonly>
+                            </div>
+                        </h1>
+                        <h3 class="mt-4">題目標題:<br></h3>
                         <h1 class="display-6 mt-4">
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="題目名稱" aria-label="題目名稱"
-                                    aria-describedby="basic-addon2" value="{{data[0][0]}}{{data[0][1]}}">
+                                    aria-describedby="basic-addon2" value="{{data[0][1]}}" name="title">
                             </div>
                         </h1>
-                        <h1>{{ status }}{{ run_time }}</h1>
 
-                    </div>
-                    <!-- 收藏按鈕 -->
-                    <div class="col-6 d-flex justify-content-center align-items-center">
-                        <button class="Btn">
-                            <span class="leftContainer">
-                                <svg fill="white" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z">
-                                    </path>
-                                </svg>
-                                <span class="like">Like</span>
-                            </span>
-                            <span class="likeCount">
-                                {{like}}
-                            </span>
-                        </button>
-                    </div>
-
-                    <div class="col-12">
-                        <h3 class="mt-4">題目說明:<br></h3>
-                        <div class="input-group">
-                            <textarea class="form-control" placeholder="題目內容" aria-label="題目內容" id="content"
-                                aria-describedby="basic-addon2">{{data.0.2}}</textarea>
+                        <div class="col-12">
+                            <h3 class="mt-4">題目說明:<br></h3>
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="題目內容" aria-label="題目內容" id="content"
+                                    aria-describedby="basic-addon2" name="content">{{data.0.2}}</textarea>
+                            </div>
+                            <!-- textarea自動適應題目說明大小 -->
+                            <script>
+                                const textarea = document.getElementById('content');
+                                textarea.addEventListener('input', function () {
+                                    this.style.height = 'auto';
+                                    this.style.height = `${this.scrollHeight}px`;
+                                });
+                                textarea.dispatchEvent(new Event('input'));
+                            </script>
+                            <h3 class="mt-4">輸入說明:<br></h3>
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
+                                    aria-describedby="basic-addon2" name="enter_description">{{data.0.3}}</textarea>
+                            </div>
+                            <h3 class="mt-4">輸出說明:<br></h3>
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
+                                    aria-describedby="basic-addon2" name="output_description">{{data.0.4}}</textarea>
+                            </div>
+                            <h3 class="mt-4">範例輸入:<br></h3>
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
+                                    aria-describedby="basic-addon2" name="example_input">{{data.0.5}}</textarea>
+                            </div>
+                            <h3 class="mt-4">範例輸出:<br></h3>
+                            <div class="input-group">
+                                <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
+                                    aria-describedby="basic-addon2" name="example_output">{{data.0.6}}</textarea>
+                            </div>
                         </div>
-                        <!-- textarea自動適應題目說明大小 -->
-                        <script>
-                            const textarea = document.getElementById('content');
-                            textarea.addEventListener('input', function () {
-                                this.style.height = 'auto';
-                                this.style.height = `${this.scrollHeight}px`;
-                            });
-                            textarea.dispatchEvent(new Event('input'));
-                        </script>
-                        <h3 class="mt-4">輸入說明:<br></h3>
-                        <div class="input-group">
-                            <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
-                                aria-describedby="basic-addon2">{{data.0.3}}</textarea>
-                        </div>
-                        <h3 class="mt-4">輸出說明:<br></h3>
-                        <div class="input-group">
-                            <textarea class="form-control" placeholder="題目內容" aria-label="題目內容"
-                                aria-describedby="basic-addon2">{{data.0.4}}</textarea>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        {% for n in range(example_inputs|length) %}
-                        <h5 class="mt-4 overflow-auto">範例{{n+1}}</h5>
-                        <div class="border-start border-4">
-                            <h6 class="ms-2 mt-4 overflow-auto">輸入</h6>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_inputs[n]|safe }}</h6>
-                            <h5 class="ms-2 mt-4 overflow-auto">輸出</h5>
-                            <h6 class="ms-2 mt-4 overflow-auto code-font">{{ example_outputs[n]|safe }}</h6>
-                        </div>
-                        {%endfor%}
                     </div>
                 </div>
-            </div>
-            <div class="col mt-5">
-                <div class="row d-flex justify-content-center">
-                    <button type="button" class="btn btn-success" id="upload_btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-floppy2-fill" viewBox="0 0 16 16">
-                            <path d="M12 2h-2v3h2z" />
-                            <path
-                                d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147.439A1.5 1.5 0 0 0 13.086 0zM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1zM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1" />
-                        </svg>儲存</button>
+                <div class="col mt-5">
+                    <div class="row d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success" id="upload_btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-floppy2-fill" viewBox="0 0 16 16">
+                                <path d="M12 2h-2v3h2z" />
+                                <path
+                                    d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147.439A1.5 1.5 0 0 0 13.086 0zM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1zM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1" />
+                            </svg>儲存</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     </div>

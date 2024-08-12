@@ -22,101 +22,112 @@
     {% include "nav_bar.html" %}
     <!-- 包含導覽列 -->
     {{data}}
-    <!-- 顯示數據 -->
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-9 mx-auto">
-                <div class="card border-0 shadow rounded-3 my-5">
-                    <div class="card-body p-4 p-sm-5">
-                        <div class="row mt-4">
-                            <form action="/user/user_data" method="post" enctype="multipart/form-data">
-                                <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-2 col-form-label">個人檔案圖片</label>
-                                    <!-- 個人檔案圖片 -->
-                                    {% if img %}
-                                    <!-- 如果有圖片 -->
-                                    <div class="card border-0 w-25">
-                                        <img src="{{ img }}" style="width: 96px;height: 96px;" class="rounded-circle">
-                                    </div>
-                                    <!-- 顯示圖片 -->
-                                    {% else %}
-                                    <!-- 如果沒有圖片 -->
-                                    {% endif %}
-                                </div>
-                                <div class="input-group mb-3">
-                                    <label for="inputEmail3" class="col-sm-2 col-form-label">上傳個人檔案圖片</label>
-                                    <!-- 上傳個人檔案圖片標籤 -->
-                                    <input type="file" class="form-control" id="inputGroupFile01" name="file"
-                                        accept="image/*">
-                                    <!-- 上傳圖片輸入框 -->
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-2 col-form-label">使用者ID</label>
-                                    <!-- 使用者ID標籤 -->
-                                    <div class="col-sm-10">
-                                        <input type="text" readonly class="form-control" id="User_id"
-                                            value="{{ User_id }}">
-                                        <!-- 顯示使用者ID -->
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label class="col-sm-2 col-form-label">使用者名稱</label>
-                                    <!-- 使用者名稱標籤 -->
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control" name="User_name" value="{{User_name}}">
-                                        <!-- 顯示使用者名稱 -->
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                                    <!-- Email標籤 -->
-                                    <div class="col-sm-10">
-                                        <input type="email" class="form-control" name="Email" value="{{Email}}">
-                                        <!-- 顯示Email -->
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label class="col-sm-2 col-form-label">連結到Google</label>
-                                    <!-- 連結到Google標籤 -->
-                                    <div class="col-sm-10">
-                                        {% if Google_id %}
-                                        <!-- 如果已連結Google -->
-                                        <label for="inputEmail3" class="col-sm-2 col-form-label">已連結到Google</label>
-                                        <!-- 顯示已連結到Google -->
-                                        {% else %}
-                                        <!-- 如果尚未連結Google -->
-                                        <input type="radio" class="btn-check" name="options-outlined"
-                                            id="success-outlined" autocomplete="off">
-                                        <a href="/auth/google" class="btn btn-light">
-                                            <!-- 嵌入 Google 圖示 SVG -->
-                                            <img src="../static/imgs/google-icon-logo.svg" alt="Google 圖示"
-                                                style="width: 3%;">
-                                            使用Google登入
-                                            <!-- 使用Google登入按鈕 -->
-                                        </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="inputEmail3" class="col-sm-2 col-form-label">密碼</label>
-                                    <!-- 密碼標籤 -->
-                                    <div class="col-sm-10">
-                                        <input type="radio" class="btn-check" name="options-outlined"
-                                            id="success-outlined" autocomplete="off">
-                                        <!-- 變更密碼按鈕 -->
-                                        <a href="/auth/change_password" class="btn btn-primary">
-                                            變更密碼
-                                        </a>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary">儲存</button>
-                                <!-- 儲存按鈕 -->
-                            </form>
+    <div class="container-md">
+        <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="menu1" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                    role="tab" aria-controls="home" aria-selected="true">個人資料</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="menu2" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                    role="tab" aria-controls="profile" aria-selected="false">個人解題紀錄</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="menu3" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+                    role="tab" aria-controls="contact" aria-selected="false">收藏紀錄</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <!-- 顯示數據 -->
+            <div class="tab-pane fade show active" id="menu1" role="tabpanel" aria-labelledby="menu1">
+                <div class="col-sm-9 col-md-7 col-lg-9 mx-auto">
+                    <form action="/user/user_data" method="post" enctype="multipart/form-data">
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">個人檔案圖片</label>
+                            <!-- 個人檔案圖片 -->
+                            {% if img %}
+                            <!-- 如果有圖片 -->
+                            <div class="card border-0 w-25">
+                                <img src="{{ img }}" style="width: 96px;height: 96px;" class="rounded-circle">
+                            </div>
+                            <!-- 顯示圖片 -->
+                            {% else %}
+                            <!-- 如果沒有圖片 -->
+                            {% endif %}
                         </div>
-                    </div>
+                        <div class="input-group mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">上傳個人檔案圖片</label>
+                            <!-- 上傳個人檔案圖片標籤 -->
+                            <input type="file" class="form-control" id="inputGroupFile01" name="file" accept="image/*">
+                            <!-- 上傳圖片輸入框 -->
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">使用者ID</label>
+                            <!-- 使用者ID標籤 -->
+                            <div class="col-sm-10">
+                                <input type="text" readonly class="form-control" id="User_id" value="{{ User_id }}">
+                                <!-- 顯示使用者ID -->
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">使用者名稱</label>
+                            <!-- 使用者名稱標籤 -->
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="User_name" value="{{User_name}}">
+                                <!-- 顯示使用者名稱 -->
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                            <!-- Email標籤 -->
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" name="Email" value="{{Email}}">
+                                <!-- 顯示Email -->
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label">連結到Google</label>
+                            <!-- 連結到Google標籤 -->
+                            <div class="col-sm-10">
+                                {% if Google_id %}
+                                <!-- 如果已連結Google -->
+                                <label for="inputEmail3" class="col-sm-2 col-form-label">已連結到Google</label>
+                                <!-- 顯示已連結到Google -->
+                                {% else %}
+                                <!-- 如果尚未連結Google -->
+                                <input type="radio" class="btn-check" name="options-outlined" id="success-outlined"
+                                    autocomplete="off">
+                                <a href="/auth/google" class="btn btn-light">
+                                    <!-- 嵌入 Google 圖示 SVG -->
+                                    <img src="../static/imgs/google-icon-logo.svg" alt="Google 圖示" style="width: 3%;">
+                                    使用Google登入
+                                    <!-- 使用Google登入按鈕 -->
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">密碼</label>
+                            <!-- 密碼標籤 -->
+                            <div class="col-sm-10">
+                                <input type="radio" class="btn-check" name="options-outlined" id="success-outlined"
+                                    autocomplete="off">
+                                <!-- 變更密碼按鈕 -->
+                                <a href="/auth/change_password" class="btn btn-primary">
+                                    變更密碼
+                                </a>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">儲存</button>
+                        <!-- 儲存按鈕 -->
+                    </form>
                 </div>
             </div>
+            <div class="tab-pane fade" id="menu2" role="tabpanel" aria-labelledby="menu2">
+                <p>ESN</p>
+            </div>
         </div>
+
     </div>
 </body>
 
