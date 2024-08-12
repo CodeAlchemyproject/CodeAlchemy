@@ -1,64 +1,30 @@
-# from datetime import datetime
-# import random
-# from utils import db
+import os
+import requests
 
-# ensue=['Accepted',
-#        'Not Accept',
-#        'Wrong Answer',
-#        'Time Limit Exceed',
-#        'Memory Limit Exceed',
-#        'Output Limit Exceed',
-#        'Runtime Error',
-#        'Restricted Function',
-#        'Compile Error',
-#        'System Error',
-#        'Unknown Error']
-# # 定義對應的權重
-# weights = [
-#     60,   # 'Accepted' 的權重
-#     27,   # 'Not Accept' 的權重
-#     27,   # 'Wrong Answer' 的權重
-#     1,    # 'Time Limit Exceed' 的權重
-#     1,    # 'Memory Limit Exceed' 的權重
-#     1,    # 'Output Limit Exceed' 的權重
-#     1,    # 'Runtime Error' 的權重
-#     1,    # 'Restricted Function' 的權重
-#     1,    # 'Compile Error' 的權重
-#     1,    # 'System Error' 的權重
-#     1     # 'Unknown Error' 的權重
-# ]
-# language=['python','c++']
+# 將 YOUR_API_KEY 替換為你的實際 API 金鑰
+API_KEY = "AIzaSyAgXhsExTg7jfS_e5VnWyAf7oG8e8mvtNc"
+API_URL = "https://api.gemini.com/v1/generate"
 
-# user_id=db.get_data('SELECT user_id FROM user;')
-# user_ids = [user[0] for user in user_id]
+def generate_text(prompt):
+    headers = {
+        "Authorization": f"Bearer {API_KEY}"
+    }
+    data = {
+        "model": "gemini-pro-1.5",
+        "prompt": prompt,
+        "max_tokens": 100,  # 調整生成文本的最大長度
+        "temperature": 0.7,   # 調整生成文本的隨機性
+    }
+    response = requests.post(API_URL, headers=headers, json=data)
 
-# problem_id=db.get_data('SELECT problem_id FROM problem where problem_id like "TIOJ%";')
-# problem_ids= [problem[0] for problem in problem_id]
+    if response.status_code == 200:
+        return response.json()["choices"][0]["text"]
+    else:
+        raise Exception(f"API request failed with status code {response.status_code}")
 
-# # 使用random.choices進行隨機選取
-# for i in range(1,50):   
-#     e = random.choices(ensue, weights=weights, k=1)[0]
-#     u = random.choice(user_ids)
-#     p = random.choice(problem_ids)
-#     l = random.choice(language)
-#     r = round(random.uniform(20, 60), 2)
-#     m = round(random.uniform(15, 40), 2)
-#     conn = db.connection()
-#     if conn:
-#         # 產生執行sql命令的物件, 再執行sql   
-#         cursor = conn.cursor()
-#         # 這裡加篩選條件
-#         sql_command=f'''
-#             INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
-#             VALUES ('{u}','{p}','{e}', '{l}','{r}','{m}','{str(datetime.now())}')
-#         '''
-#         cursor.execute(sql_command)
-#         conn.commit()
-
-
-#     print(f'user_id: {u}  problem_id: {p}')
-
-# # 關閉資料庫連線    
-# conn.close()
-from crawler.submit import test_submit
-test_submit("哈囉")
+while True:
+    user_input = input("請輸入你的文字：")
+    if user_input.lower() == "exit":
+        break
+    response_text = generate_text(user_input)
+    print("Gemini 回應：", response_text)
