@@ -28,32 +28,32 @@
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
                         <form id="competitionForm" action="/contest/create" method="post">
-                            <h1><b>Create Competition</b></h1>
+                            <h1><b>創建比賽</b></h1>
                             <div class="form">
                                 <div class="mb-3">
-                                    <label class="form-label">Competition Name:</label>
+                                    <label class="form-label">比賽名稱:</label>
                                     <input type="text" class="form-control" id="contest_name" placeholder="name"
                                         name="contest_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Description</label>
+                                    <label class="form-label">比賽說明</label>
                                     <input type="text" class="form-control" id="description" placeholder="description"
                                         name="description" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Type:</label>
+                                    <label class="form-label">比賽類型:</label>
                                     <select class="form-select" id="state">
-                                        <option value="public">public</option>
-                                        <option value="private">private</option>
+                                        <option value="public">公開</option>
+                                        <option value="private">私人</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Add question:</label>
+                                    <label class="form-label">新增題目:</label>
                                     <div>
                                         <div id="questionContainer">
                                             <!-- 這裡會動態添加所選擇的題目 -->
                                         </div>
-                                        <input href="#" class="btn btn-success" type="button" value="Add Question"
+                                        <input href="#" class="btn btn-success" type="button" value="新增題目"
                                             data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                     </div>
                                 </div>
@@ -65,7 +65,7 @@
                                         <div class="modal-content">
                                             <!-- Header -->
                                             <div class="modal-header">
-                                                <h3>problem list</h3>
+                                                <h3>題目列表</h3>
                                                 <button type="button" class="btn-close"
                                                     data-bs-dismiss="modal"></button>
                                             </div>
@@ -138,9 +138,9 @@
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col">Title</th>
-                                                                <th scope="col">Description</th>
-                                                                <th scope="col">Difficulty</th>
+                                                                <th scope="col">題目名稱</th>
+                                                                <th scope="col">題目說明</th>
+                                                                <th scope="col">難易度</th>
                                                                 <th scope="col">Action</th>
                                                             </tr>
                                                         </thead>
@@ -163,7 +163,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Languages:</label>
+                                    <label class="form-label">語言:</label>
                                     <span class="value">
                                         <div class="checkbox-row">
                                             <input class="form-check-input" type="checkbox" id="python"
@@ -182,14 +182,14 @@
                                     </span>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="name">Start Time:</span>
+                                    <span class="name">開始時間:</span>
                                     <span class="value">
                                         <input type="datetime-local" class="form-control" id="startTime"
                                             name="startTime" required>
                                     </span>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="name">End Time:</span>
+                                    <span class="name">結束時間:</span>
                                     <span class="value">
                                         <input type="datetime-local" class="form-control" id="endTime" name="endTime"
                                             required>
@@ -198,8 +198,7 @@
                                 <div class="mb-3">
                                     <span class="value">
                                         <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
-                                            value="create">Create
-                                            Competition</button>
+                                            value="create">創建比賽</button>
                                     </span>
                                 </div>
                         </form>
