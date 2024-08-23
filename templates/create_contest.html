@@ -246,16 +246,28 @@
                         contestTableBody.append(row);
                     });
 
-                    // 添加分页控件
+                    // 添加分页控件的代码部分
                     var pagination = $('#pagination');
                     pagination.empty(); // 清空现有的分页按钮
-                    
-                    var total_pages = response.total_pages;
-                    for(let i=1; i <= total_pages; i++){
-                        var activeClass = response.page === i ? 'active' : '';
+
+                    var total_pages = response.total_pages; // 总页数
+                    var page = response.page; // 当前页码
+
+                    var startPage = Math.max(page - 2, 1); // 计算起始页码，确保不会小于1
+                    var endPage = Math.min(page + 2, total_pages); // 计算结束页码，确保不会大于总页数
+
+                    // 添加跳转到第一页的按钮
+                    pagination.append(`<li class="page-item ${page === 1 ? 'disabled' : ''}" data-page="1"><a class="page-link" href="#"><<</a></li>`);
+
+                    // 生成分页按钮
+                    for (let i = startPage; i <= endPage; i++) {
+                        var activeClass = page === i ? 'active' : ''; // 当前页码按钮高亮
                         var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
                         pagination.append(pageItem);
                     }
+
+                    // 添加跳转到最后一页的按钮
+                    pagination.append(`<li class="page-item ${page === total_pages ? 'disabled' : ''}" data-page="${total_pages}"><a class="page-link" href="#">>></a></li>`);
 
                     // 绑定分页按钮的点击事件
                     $('.page-item').click(function(e){
