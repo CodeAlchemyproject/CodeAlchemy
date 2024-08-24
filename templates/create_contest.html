@@ -241,10 +241,25 @@
                                 <td>${title}</td>
                                 <td>${content}</td>
                                 <td>${difficulty}</td>
-                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                                <td><button class="btn btn-primary add-btn" type="button" data-title="${title}">Add</button></td>
                             </tr>`;
                         contestTableBody.append(row);
                     });
+
+
+                    /*
+                    response.data.forEach(function (problem) {
+                        var title = problem[0]; // 标题
+                        var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
+                        var difficulty = problem[2]; // 难度
+                        var row = `<tr>
+                                <td>${title}</td>
+                                <td>${content}</td>
+                                <td>${difficulty}</td>
+                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
+                            </tr>`;
+                        contestTableBody.append(row);
+                    });*/
 
                     // 添加分页控件的代码部分
                     var pagination = $('#pagination');
@@ -288,6 +303,22 @@
             var fullContent = decodeURIComponent($(this).data('content'));
             $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
         });
+
+
+        $('#contestTableBody').on('click', '.add-btn', function () {
+            var title = $(this).data('title'); // 從按鈕獲取題目名稱
+            var questionContainer = $('#questionContainer'); // 獲取題目容器
+
+            // 創建一個新的顯示題目名稱的元素
+            var questionElement = `<div class="added-question">${title}</div>`;
+            
+            // 將新元素添加到題目容器
+            questionContainer.append(questionElement);
+
+            // 選擇性: 關閉模態框
+            $('#loginModal').modal('hide');
+        });
+
 
         // 初始化加载第一页数据
         loadTable(1);
