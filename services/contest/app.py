@@ -243,30 +243,30 @@ def connect_contest_and_problem(contest_id, problem_id):
 '''
 
 
-# 路由：处理创建比赛的POST请求
+# 路由：處理創建比賽的POST請求
 @contest_bp.route('/create', methods=['POST'])
 def create_contest():
     connection = None
     try:
-        # 从表单获取数据
+        # 從表單取得數據
         contest_name = request.form.get('contest_name')
         start_date = request.form.get('startTime')
         end_date = request.form.get('endTime')
         description = request.form.get('description')
         type = request.form.get('description')
         
-        # 打印接收到的数据以调试
+        # 列印接收到的資料以調試
         print("Received contest_name:", contest_name)
         print("Received start_date:", start_date)
         print("Received end_date:", end_date)
         print("Received description:", description)
         print("Received type:", description)
 
-        # 确保所有必要的字段都被正确接收
+        # 確保所有必要的欄位都被正確接收
         if not contest_name or not start_date or not end_date or not description or not type:
             raise ValueError("All contest fields must be provided")
 
-        # 从表单数据中解析题目ID
+        # 從表單資料中解析題目ID
         contest_data = request.form.to_dict()
         problem_ids = contest_data.get('problem_ids', '').split(',')
         
@@ -275,34 +275,34 @@ def create_contest():
 
         print("Received problem_ids:", problem_ids)
 
-        # 数据库连接
+        # 資料庫連線
         connection = db.connection()
 
-        # 新增到contest资料表
+        # 新增到contest資料表
         cursor = connection.cursor()
         cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
                        (contest_name, start_date, end_date, description, type))
         
-        # 获取新创建的contest_id
+        # 取得新建立的contest_id
         contest_id = cursor.lastrowid
 
-        # 循环添加题目到 contest problem 表
+        # 循環新增題目到 contest problem 表
         for problem_id in problem_ids:
             connect_contest_and_problem(connection, contest_id, problem_id)
 
         connection.commit()
 
-        # 比赛创建成功后渲染 create_contest_success.html
+        # 比賽建立成功後渲染 create_contest_success.html
         return render_template('create_contest_success.html')
     except Exception as e:
         print("Error occurred:", e)
         return jsonify({"status": "error", "message": str(e)})
     finally:
-        # 确保关闭数据库连接
+        # 確保關閉資料庫連接
         if connection:
             connection.close()
 
-# 辅助函数：将 contest_id 和 problem_id 关联起来
+# 輔助函數：將 contest_id 和 problem_id 關聯起來
 def connect_contest_and_problem(connection, contest_id, problem_id):
     cursor = connection.cursor()
 
