@@ -138,6 +138,7 @@
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
+                                                                <th scope="col">題目編號</th>
                                                                 <th scope="col">題目名稱</th>
                                                                 <th scope="col">題目說明</th>
                                                                 <th scope="col">難易度</th>
@@ -211,117 +212,117 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-        function simplifyContent(content, maxLength) {
-            if (content.length > maxLength) {
-                return content.substring(0, maxLength) +
-                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
-            }
-            return content;
-        }
-
-        // 加载并显示问题列表和分页控件
-        function loadTable(page) {
-            $.ajax({
-                url: '/contest/get_problems',
-                type: 'GET',
-                data: {
-                    page: page,
-                    per_page: 10 // 每页显示10条数据
-                },
-                success: function (response) {
-                    var contestTableBody = $("#contestTableBody");
-                    contestTableBody.empty(); // 清空表格内容
-
-                    // 添加表格内容
-                    response.data.forEach(function (problem) {
-                        var title = problem[0]; // 标题
-                        var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
-                        var difficulty = problem[2]; // 难度
-                        var row = `<tr>
-                                <td>${title}</td>
-                                <td>${content}</td>
-                                <td>${difficulty}</td>
-                                <td><button class="btn btn-primary add-btn" type="button" data-title="${title}">Add</button></td>
-                            </tr>`;
-                        contestTableBody.append(row);
-                    });
-
-
-                    /*
-                    response.data.forEach(function (problem) {
-                        var title = problem[0]; // 标题
-                        var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
-                        var difficulty = problem[2]; // 难度
-                        var row = `<tr>
-                                <td>${title}</td>
-                                <td>${content}</td>
-                                <td>${difficulty}</td>
-                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
-                            </tr>`;
-                        contestTableBody.append(row);
-                    });*/
-
-                    // 添加分页控件的代码部分
-                    var pagination = $('#pagination');
-                    pagination.empty(); // 清空现有的分页按钮
-
-                    var total_pages = response.total_pages; // 总页数
-                    var page = response.page; // 当前页码
-
-                    var startPage = Math.max(page - 2, 1); // 计算起始页码，确保不会小于1
-                    var endPage = Math.min(page + 2, total_pages); // 计算结束页码，确保不会大于总页数
-
-                    // 添加跳转到第一页的按钮
-                    pagination.append(`<li class="page-item ${page === 1 ? 'disabled' : ''}" data-page="1"><a class="page-link" href="#"><<</a></li>`);
-
-                    // 生成分页按钮
-                    for (let i = startPage; i <= endPage; i++) {
-                        var activeClass = page === i ? 'active' : ''; // 当前页码按钮高亮
-                        var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
-                        pagination.append(pageItem);
-                    }
-
-                    // 添加跳转到最后一页的按钮
-                    pagination.append(`<li class="page-item ${page === total_pages ? 'disabled' : ''}" data-page="${total_pages}"><a class="page-link" href="#">>></a></li>`);
-
-                    // 绑定分页按钮的点击事件
-                    $('.page-item').click(function(e){
-                        e.preventDefault();
-                        var selectedPage = $(this).data('page');
-                        loadTable(selectedPage); // 使用选中的页码重新加载表格
-                    });
-                },
-                error: function () {
-                    alert('数据载入失败。');
+            function simplifyContent(content, maxLength) {
+                if (content.length > maxLength) {
+                    return content.substring(0, maxLength) +
+                        `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
                 }
+                return content;
+            }
+
+            // 加载并显示问题列表和分页控件
+            function loadTable(page) {
+                $.ajax({
+                    url: '/contest/get_problems',
+                    type: 'GET',
+                    data: {
+                        page: page,
+                        per_page: 10 // 每页显示10条数据
+                    },
+                    success: function (response) {
+                        var contestTableBody = $("#contestTableBody");
+                        contestTableBody.empty(); // 清空表格内容
+
+                        // 添加表格内容
+                        response.data.forEach(function (problem) {
+                            var problem_id = problem[0]; // 标题
+                            var title = problem[1]; // 标题
+                            var content = simplifyContent(problem[2], 100); // 描述内容，只取前100个字符
+                            var difficulty = problem[3]; // 难度
+                            var row = `<tr>
+                                    <td>${problem_id}</td>
+                                    <td>${title}</td>
+                                    <td>${content}</td>
+                                    <td>${difficulty}</td>
+                                    <td><button class="btn btn-primary add-btn" type="button" data-title="${title}" data-problem-id="${problem[0]}">Add</button></td>
+                                </tr>`;
+                            contestTableBody.append(row);
+                        });
+
+                        // 添加分页控件的代码部分
+                        var pagination = $('#pagination');
+                        pagination.empty(); // 清空现有的分页按钮
+
+                        var total_pages = response.total_pages; // 总页数
+                        var page = response.page; // 当前页码
+
+                        var startPage = Math.max(page - 2, 1); // 计算起始页码，确保不会小于1
+                        var endPage = Math.min(page + 2, total_pages); // 计算结束页码，确保不会大于总页数
+
+                        // 添加跳转到第一页的按钮
+                        pagination.append(`<li class="page-item ${page === 1 ? 'disabled' : ''}" data-page="1"><a class="page-link" href="#"><<</a></li>`);
+
+                        // 生成分页按钮
+                        for (let i = startPage; i <= endPage; i++) {
+                            var activeClass = page === i ? 'active' : ''; // 当前页码按钮高亮
+                            var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
+                            pagination.append(pageItem);
+                        }
+
+                        // 添加跳转到最后一页的按钮
+                        pagination.append(`<li class="page-item ${page === total_pages ? 'disabled' : ''}" data-page="${total_pages}"><a class="page-link" href="#">>></a></li>`);
+
+                        // 绑定分页按钮的点击事件
+                        $('.page-item').click(function(e){
+                            e.preventDefault();
+                            var selectedPage = $(this).data('page');
+                            loadTable(selectedPage); // 使用选中的页码重新加载表格
+                        });
+                    },
+                    error: function () {
+                        alert('数据载入失败。');
+                    }
+                });
+            }
+
+            // 添加点击事件来显示全部内容
+            $('#contestTableBody').on('click', '.more-link', function (e) {
+                e.preventDefault();
+                var fullContent = decodeURIComponent($(this).data('content'));
+                $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
             });
-        }
 
-        // 添加点击事件来显示全部内容
-        $('#contestTableBody').on('click', '.more-link', function (e) {
-            e.preventDefault();
-            var fullContent = decodeURIComponent($(this).data('content'));
-            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
-        });
+            // 处理添加问题按钮点击事件
+            $('#contestTableBody').on('click', '.add-btn', function () {
+                var title = $(this).data('title'); // 從按鈕獲取題目名稱
+                var problemId = $(this).data('problem-id'); // 獲取題目ID
+                var questionContainer = $('#questionContainer'); // 獲取題目容器
 
+                // 創建一個帶有problemId的元素顯示在頁面上
+                var questionElement = `<div class="added-question" data-problem-id="${problemId}">${title}</div>`;
+                $('#questionContainer').append(questionElement);
 
-        $('#contestTableBody').on('click', '.add-btn', function () {
-            var title = $(this).data('title'); // 從按鈕獲取題目名稱
-            var questionContainer = $('#questionContainer'); // 獲取題目容器
+                // 選擇性: 關閉模態框
+                $('#loginModal').modal('hide');
+            });
 
-            // 創建一個新的顯示題目名稱的元素
-            var questionElement = `<div class="added-question">${title}</div>`;
-            
-            // 將新元素添加到題目容器
-            questionContainer.append(questionElement);
+            // 处理表单提交事件
+            $('#competitionForm').submit(function (e) {
+                // 不再需要阻止默认行为和手动处理跳转
+                var selectedProblemIds = $('.added-question').map(function () {
+                    return $(this).data('problem-id');
+                }).get();
 
-            // 選擇性: 關閉模態框
-            $('#loginModal').modal('hide');
-        });
+                // 将选定的 problem_ids 附加到表单数据中
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'problem_ids',
+                    value: selectedProblemIds.join(',')
+                }).appendTo('#competitionForm');
+            });
 
-
-        // 初始化加载第一页数据
-        loadTable(1);
+            // 初始化加载第一页数据
+            loadTable(1);
         });
     </script>
 
