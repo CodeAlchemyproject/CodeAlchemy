@@ -17,6 +17,18 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .btn-add-success {
+            background-color: green;
+            color: white;
+        }
+
+        .btn-add-success:after {
+            content: "\2713"; /* Unicode字符代表打勾 */
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style>
 
 </head>
 
@@ -300,10 +312,13 @@
 
                 // 建立一個帶有problemId的元素顯示在頁面上
                 var questionElement = `<div class="added-question" data-problem-id="${problemId}">${title}</div>`;
-                $('#questionContainer').append(questionElement);
+                questionContainer.append(questionElement);
 
                 // 選擇性: 關閉模態框
-                $('#loginModal').modal('hide');
+                //$('#loginModal').modal('hide');
+                
+                // 顏色變化和打勾
+                $(this).addClass('btn-add-success').html('');
             });
 
             // 處理表單提交事件
