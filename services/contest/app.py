@@ -90,7 +90,7 @@ def join_contest():
     return render_template('contest_joined.html', contest_name=contest_name)
 '''
 
-
+'''
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
@@ -111,7 +111,28 @@ def join_contest():
     contest_name = result[0]
 
     return render_template('contest_joined.html', contest_name=contest_name)
+'''
 
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    conn = db.connection()
+    cursor = conn.cursor()
+
+    # 查詢比賽名稱、開始時間和結束時間
+    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if result is None:
+        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
+
+    contest_name = result[0]
+    start_time = result[1]
+    end_time = result[2]
+
+    # 將查詢結果傳遞給模板
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time)
 
 
 

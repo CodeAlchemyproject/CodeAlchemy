@@ -10,13 +10,67 @@
         crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    
+    <style>
+        .competition-box {
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    
+        .start-time, .end-time {
+            font-size: 16px;  /* 調整開始時間和結束時間的字體大小 */
+            font-weight: bold;
+        }
+    
+        .contest-name {
+            font-size: 28px;  /* 調整比賽名稱的字體大小，使其更大 */
+            font-weight: bold;
+        }
+    
+        .status {
+            font-size: 18px;
+            color: red;
+            font-weight: bold;
+        }
+    
+        .text-center {
+            text-align: center;
+        }
+    
+        .text-end {
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>你已成功加入比賽</h1>
-        <p>比賽名稱: {{ contest_name }}</p>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    
+    <div class="container mt-4">
+        <!-- 新增的比賽資訊框 -->
+        <div class="competition-box">
+            <div class="row">
+                <div class="col-4">
+                    <p class="start-time">開始時間: {{ start_time }}</p>
+                </div>
+                <div class="col-4 text-center">
+                    <p class="contest-name">{{ contest_name }}</p>
+                </div>
+                <div class="col-4 text-end">
+                    <p class="end-time">結束時間: {{ end_time }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <p class="status">running</p>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
