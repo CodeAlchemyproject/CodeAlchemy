@@ -94,28 +94,6 @@ def join_contest():
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
-    print("Received contest_id:", contest_id)  # 打印出來看看接收到的 contest_id
-    
-    conn = db.connection()
-    cursor = conn.cursor()
-    
-    cursor.execute("SELECT contest_name FROM contest WHERE contest_id = %s", (contest_id,))
-    result = cursor.fetchone()
-    print("Query result:", result)  # 打印查詢結果，檢查是否為 None
-    
-    conn.close()
-    
-    if result is None:
-        return "比賽不存在", 404
-    
-    contest_name = result[0]
-
-    return render_template('contest_joined.html', contest_name=contest_name)
-'''
-
-@contest_bp.route('/join', methods=['POST'])
-def join_contest():
-    contest_id = request.form['contest_id']
     conn = db.connection()
     cursor = conn.cursor()
 
@@ -133,6 +111,71 @@ def join_contest():
 
     # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time)
+'''
+
+
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    conn = db.connection()
+    cursor = conn.cursor()
+
+    # 查詢比賽名稱、開始時間和結束時間
+    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
+    result = cursor.fetchone()
+
+    if result is None:
+        conn.close()
+        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
+
+    contest_name = result[0]
+    start_time = result[1]
+    end_time = result[2]
+
+    # 查詢與該比賽相關的所有題目 problem_id
+    cursor.execute("SELECT problem_id FROM `contest problem` WHERE contest_id = %s", (contest_id,))
+    problems = cursor.fetchall()
+
+    conn.close()
+  
+    # 將查詢結果傳遞給模板
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
+
+
+'''
+@contest_bp.route('/contest/<int:contest_id>/problems')
+def contest_problems(contest_id):
+    try:
+        print(f"Accessing contest_problems route with contest_id: {contest_id}")
+
+        conn = db.connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT problem_id, title, difficulty 
+            FROM problem 
+            WHERE problem_id IN (
+                SELECT problem_id 
+                FROM `contest problem` 
+                WHERE contest_id = %s
+            )
+        """, (contest_id,))
+
+        problems = cursor.fetchall()
+
+        print("Query result:", problems)
+
+        conn.close()
+
+        if problems:
+            return jsonify(problems)
+        else:
+            return jsonify([])
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify([]), 500
+'''
 
 
 

@@ -52,7 +52,8 @@
     {% include "nav_bar.html" %}
     
     <div class="container mt-4">
-        <!-- 新增的比賽資訊框 -->
+
+        <!-- 比賽資訊框 -->
         <div class="competition-box">
             <div class="row">
                 <div class="col-4">
@@ -69,6 +70,71 @@
                 <div class="col text-center">
                     <p class="status">running</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- 書籤選單 -->
+        <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="problems-tab" data-bs-toggle="tab" href="#problems" role="tab" aria-controls="problems" aria-selected="true">題目</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="ranking-tab" data-bs-toggle="tab" href="#ranking" role="tab" aria-controls="ranking" aria-selected="false">排名</a>
+            </li>
+        </ul>
+
+        <!-- 內容區塊 -->
+        <div class="tab-content" id="myTabContent">
+            <!-- 題目表格 -->
+            <div class="tab-pane fade show active" id="problems" role="tabpanel" aria-labelledby="problems-tab">
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">題目編號</th>
+                            <th scope="col">難度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for problem in problems %}
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                <td>{{ problem[0] }}</td> <!-- 假設 problem 以元組形式返回 -->
+                                <td>未知</td> <!-- 難度暫時寫為 ‘未知’，你可以依據需求做調整 -->
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3">無相關題目</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 排名表格 -->
+            <div class="tab-pane fade" id="ranking" role="tabpanel" aria-labelledby="ranking-tab">
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">排名</th>
+                            <th scope="col">使用者</th>
+                            <th scope="col">分數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>使用者1</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>使用者2</td>
+                            <td>90</td>
+                        </tr>
+                        <!-- 在這裡添加更多排名 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
