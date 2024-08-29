@@ -65,7 +65,7 @@ def contest_join():
     conn = db.connection()  # Get database connection
     cursor = conn.cursor()
 
-    cursor.execute("SELECT contest_name, start_date, end_date, description, type FROM contest")
+    cursor.execute("SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest")
     contests = cursor.fetchall()
 
     # close db conn
@@ -73,6 +73,45 @@ def contest_join():
 
     # 渲染 join_contest.html 
     return render_template('join_contest_form.html', contests=contests)
+
+'''
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    
+    conn = db.connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT contest_name FROM contest WHERE contest_id = %s", (contest_id,))
+    contest_name = cursor.fetchone()[0]
+    
+    conn.close()
+
+    return render_template('contest_joined.html', contest_name=contest_name)
+'''
+
+
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    print("Received contest_id:", contest_id)  # 打印出來看看接收到的 contest_id
+    
+    conn = db.connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT contest_name FROM contest WHERE contest_id = %s", (contest_id,))
+    result = cursor.fetchone()
+    print("Query result:", result)  # 打印查詢結果，檢查是否為 None
+    
+    conn.close()
+    
+    if result is None:
+        return "比賽不存在", 404
+    
+    contest_name = result[0]
+
+    return render_template('contest_joined.html', contest_name=contest_name)
+
 
 
 
