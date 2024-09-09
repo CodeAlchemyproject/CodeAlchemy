@@ -17,6 +17,18 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .btn-add-success {
+            background-color: green;
+            color: white;
+        }
+
+        .btn-add-success:after {
+            content: "\2713"; /* Unicode字符代表打勾 */
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style>
 
 </head>
 
@@ -28,32 +40,32 @@
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
                         <form id="competitionForm" action="/contest/create" method="post">
-                            <h1><b>Create Competition</b></h1>
+                            <h1><b>創建比賽</b></h1>
                             <div class="form">
                                 <div class="mb-3">
-                                    <label class="form-label">Competition Name:</label>
+                                    <label class="form-label">比賽名稱:</label>
                                     <input type="text" class="form-control" id="contest_name" placeholder="name"
                                         name="contest_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Description</label>
+                                    <label class="form-label">比賽說明</label>
                                     <input type="text" class="form-control" id="description" placeholder="description"
                                         name="description" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Type:</label>
+                                    <label class="form-label">比賽類型:</label>
                                     <select class="form-select" id="state">
-                                        <option value="public">public</option>
-                                        <option value="private">private</option>
+                                        <option value="public">公開</option>
+                                        <option value="private">私人</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Add question:</label>
+                                    <label class="form-label">新增題目:</label>
                                     <div>
                                         <div id="questionContainer">
                                             <!-- 這裡會動態添加所選擇的題目 -->
                                         </div>
-                                        <input href="#" class="btn btn-success" type="button" value="Add Question"
+                                        <input href="#" class="btn btn-success" type="button" value="新增題目"
                                             data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                     </div>
                                 </div>
@@ -65,7 +77,7 @@
                                         <div class="modal-content">
                                             <!-- Header -->
                                             <div class="modal-header">
-                                                <h3>problem list</h3>
+                                                <h3>題目列表</h3>
                                                 <button type="button" class="btn-close"
                                                     data-bs-dismiss="modal"></button>
                                             </div>
@@ -138,9 +150,10 @@
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col">Title</th>
-                                                                <th scope="col">Description</th>
-                                                                <th scope="col">Difficulty</th>
+                                                                <th scope="col">題目編號</th>
+                                                                <th scope="col">題目名稱</th>
+                                                                <th scope="col">題目說明</th>
+                                                                <th scope="col">難易度</th>
                                                                 <th scope="col">Action</th>
                                                             </tr>
                                                         </thead>
@@ -163,7 +176,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label class="form-label">Languages:</label>
+                                    <label class="form-label">語言:</label>
                                     <span class="value">
                                         <div class="checkbox-row">
                                             <input class="form-check-input" type="checkbox" id="python"
@@ -182,14 +195,14 @@
                                     </span>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="name">Start Time:</span>
+                                    <span class="name">開始時間:</span>
                                     <span class="value">
                                         <input type="datetime-local" class="form-control" id="startTime"
                                             name="startTime" required>
                                     </span>
                                 </div>
                                 <div class="mb-3">
-                                    <span class="name">End Time:</span>
+                                    <span class="name">結束時間:</span>
                                     <span class="value">
                                         <input type="datetime-local" class="form-control" id="endTime" name="endTime"
                                             required>
@@ -198,8 +211,7 @@
                                 <div class="mb-3">
                                     <span class="value">
                                         <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
-                                            value="create">Create
-                                            Competition</button>
+                                            value="create">創建比賽</button>
                                     </span>
                                 </div>
                         </form>
@@ -212,74 +224,120 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-        function simplifyContent(content, maxLength) {
-            if (content.length > maxLength) {
-                return content.substring(0, maxLength) +
-                    `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
-            }
-            return content;
-        }
-
-        // 加载并显示问题列表和分页控件
-        function loadTable(page) {
-            $.ajax({
-                url: '/contest/get_problems',
-                type: 'GET',
-                data: {
-                    page: page,
-                    per_page: 10 // 每页显示10条数据
-                },
-                success: function (response) {
-                    var contestTableBody = $("#contestTableBody");
-                    contestTableBody.empty(); // 清空表格内容
-
-                    // 添加表格内容
-                    response.data.forEach(function (problem) {
-                        var title = problem[0]; // 标题
-                        var content = simplifyContent(problem[1], 100); // 描述内容，只取前100个字符
-                        var difficulty = problem[2]; // 难度
-                        var row = `<tr>
-                                <td>${title}</td>
-                                <td>${content}</td>
-                                <td>${difficulty}</td>
-                                <td><button class="btn btn-primary add-btn" type="button">Add</button></td>
-                            </tr>`;
-                        contestTableBody.append(row);
-                    });
-
-                    // 添加分页控件
-                    var pagination = $('#pagination');
-                    pagination.empty(); // 清空现有的分页按钮
-                    
-                    var total_pages = response.total_pages;
-                    for(let i=1; i <= total_pages; i++){
-                        var activeClass = response.page === i ? 'active' : '';
-                        var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
-                        pagination.append(pageItem);
-                    }
-
-                    // 绑定分页按钮的点击事件
-                    $('.page-item').click(function(e){
-                        e.preventDefault();
-                        var selectedPage = $(this).data('page');
-                        loadTable(selectedPage); // 使用选中的页码重新加载表格
-                    });
-                },
-                error: function () {
-                    alert('数据载入失败。');
+            function simplifyContent(content, maxLength) {
+                if (content.length > maxLength) {
+                    return content.substring(0, maxLength) +
+                        `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
                 }
+                return content;
+            }
+
+            // 載入並顯示問題清單和分頁控件
+            function loadTable(page) {
+                $.ajax({
+                    url: '/contest/get_problems',
+                    type: 'GET',
+                    data: {
+                        page: page,
+                        per_page: 10 // 每頁顯示10條數據
+                    },
+                    success: function (response) {
+                        var contestTableBody = $("#contestTableBody");
+                        contestTableBody.empty(); // 清空表格内容
+
+                        // 添加表格内容
+                        response.data.forEach(function (problem) {
+                            var problem_id = problem[0]; // problem_id
+                            var title = problem[1]; // 標題
+                            var content = simplifyContent(problem[2], 100); // 描述內容，只取前100個字符
+                            var difficulty = problem[3]; // 難度
+                            var row = `<tr>
+                                    <td>${problem_id}</td>
+                                    <td>${title}</td>
+                                    <td>${content}</td>
+                                    <td>${difficulty}</td>
+                                    <td><button class="btn btn-primary add-btn" type="button" data-title="${title}" data-problem-id="${problem[0]}">Add</button></td>
+                                </tr>`;
+                            contestTableBody.append(row);
+                        });
+
+                        // 新增分頁控制項的程式碼部分
+                        var pagination = $('#pagination');
+                        pagination.empty(); // 清空現有的分頁按鈕
+
+                        var total_pages = response.total_pages; // 總頁數
+                        var page = response.page; // 目前頁碼
+
+                        var startPage = Math.max(page - 2, 1); // 計算起始頁碼，確保不會小於1
+                        var endPage = Math.min(page + 2, total_pages); // 計算結束頁碼，確保不會大於總頁數
+
+                        // 新增跳到第一頁的按鈕
+                        pagination.append(`<li class="page-item ${page === 1 ? 'disabled' : ''}" data-page="1"><a class="page-link" href="#"><<</a></li>`);
+
+                        // 生成分頁按鈕
+                        for (let i = startPage; i <= endPage; i++) {
+                            var activeClass = page === i ? 'active' : ''; // 當前頁碼按鈕高亮
+                            var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
+                            pagination.append(pageItem);
+                        }
+
+                        // 新增跳到最後一頁的按鈕
+                        pagination.append(`<li class="page-item ${page === total_pages ? 'disabled' : ''}" data-page="${total_pages}"><a class="page-link" href="#">>></a></li>`);
+
+                        // 綁定分頁按鈕的點擊事件
+                        $('.page-item').click(function(e){
+                            e.preventDefault();
+                            var selectedPage = $(this).data('page');
+                            loadTable(selectedPage); // 使用選取的頁碼重新載入表格
+                        });
+                    },
+                    error: function () {
+                        alert('数据载入失败。');
+                    }
+                });
+            }
+
+            // 新增點擊事件來顯示全部內容
+            $('#contestTableBody').on('click', '.more-link', function (e) {
+                e.preventDefault();
+                var fullContent = decodeURIComponent($(this).data('content'));
+                $(this).parent().html(fullContent); // 使用完整內容替換簡化內容和more鏈接
             });
-        }
 
-        // 添加点击事件来显示全部内容
-        $('#contestTableBody').on('click', '.more-link', function (e) {
-            e.preventDefault();
-            var fullContent = decodeURIComponent($(this).data('content'));
-            $(this).parent().html(fullContent); // 使用完整内容替换简化内容和more链接
-        });
+            // 處理新增問題按鈕點擊事件
+            $('#contestTableBody').on('click', '.add-btn', function () {
+                var title = $(this).data('title'); // 從按鈕獲取題目名稱
+                var problemId = $(this).data('problem-id'); // 獲取題目ID
+                var questionContainer = $('#questionContainer'); // 獲取題目容器
 
-        // 初始化加载第一页数据
-        loadTable(1);
+                // 建立一個帶有problemId的元素顯示在頁面上
+                var questionElement = `<div class="added-question" data-problem-id="${problemId}">${title}</div>`;
+                questionContainer.append(questionElement);
+
+                // 選擇性: 關閉模態框
+                //$('#loginModal').modal('hide');
+                
+                // 顏色變化和打勾
+                $(this).addClass('btn-add-success').html('');
+            });
+
+            // 處理表單提交事件
+            $('#competitionForm').submit(function (e) {
+                // 不再需要阻止預設行為和手動處理跳轉
+                var selectedProblemIds = $('.added-question').map(function () {
+                    return $(this).data('problem-id');
+                }).get();
+
+                // 將選定的 problem_ids 附加到表單資料中
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'problem_ids',
+                    value: selectedProblemIds.join(',')
+                }).appendTo('#competitionForm');
+            });
+
+            // 初始化載入第一頁數據
+            loadTable(1);
         });
     </script>
 

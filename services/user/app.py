@@ -32,13 +32,22 @@ def user_data():
     # 根據 Email 查詢用戶數據
     sql_command = f"SELECT * FROM user where user_id='{User_id}'"
     data = db.get_data(sql_command)
-    # 提取用戶數據中的相關信息
+    # 提取用戶數據
     User_id = data[0][0]
     User_name = data[0][1]
     Google_id = data[0][3]
     Email = data[0][4]
     img = data[0][5]
     register_time = data[0][8]
+    # 取得個人解題紀錄
+    sql_command = f"SELECT * FROM `answer record` where user_id='{User_id}';"
+    data = db.get_data(sql_command)
+    answer_record=data
+    # 取得個人收藏紀錄
+    sql_command = f"SELECT collection.user_id,collection.problem_id,problem.title,problem.difficulty FROM `113-CodeAlchemy`.collection left join `113-CodeAlchemy`.problem on collection.problem_id=problem.problem_id where collection.user_id={User_id};"
+    data = db.get_data(sql_command)
+    collection=data
+    print(collection)
 
     # 如果是 POST 請求，處理用戶上傳的文件
     if request.method == "POST":
@@ -63,4 +72,4 @@ def user_data():
         return redirect(url_for('user.user_data'))
     else:
         # 如果是 GET 請求，將用戶數據傳遞給模板並返回相應的頁面
-        return render_template('./user_data.html', User_id=User_id, User_name=User_name, Google_id=Google_id, Email=Email, img=img, register_time=register_time)
+        return render_template('./user_data.html', User_id=User_id, User_name=User_name, Google_id=Google_id, Email=Email, img=img, register_time=register_time,answer_record=answer_record,collection=collection)

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    {% include "_site_header.html" %}
+    <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    
+    <style>
+        .competition-box {
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+    
+        .start-time, .end-time {
+            font-size: 16px;  /* 調整開始時間和結束時間的字體大小 */
+            font-weight: bold;
+        }
+    
+        .contest-name {
+            font-size: 28px;  /* 調整比賽名稱的字體大小，使其更大 */
+            font-weight: bold;
+        }
+    
+        .status {
+            font-size: 18px;
+            color: red;
+            font-weight: bold;
+        }
+    
+        .text-center {
+            text-align: center;
+        }
+    
+        .text-end {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    
+    <div class="container mt-4">
+
+        <!-- 比賽資訊框 -->
+        <div class="competition-box">
+            <div class="row">
+                <div class="col-4">
+                    <p class="start-time">開始時間: {{ start_time }}</p>
+                </div>
+                <div class="col-4 text-center">
+                    <p class="contest-name">{{ contest_name }}</p>
+                </div>
+                <div class="col-4 text-end">
+                    <p class="end-time">結束時間: {{ end_time }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <p class="status">running</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 書籤選單 -->
+        <ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="problems-tab" data-bs-toggle="tab" href="#problems" role="tab" aria-controls="problems" aria-selected="true">題目</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="ranking-tab" data-bs-toggle="tab" href="#ranking" role="tab" aria-controls="ranking" aria-selected="false">排名</a>
+            </li>
+        </ul>
+
+        <!-- 內容區塊 -->
+        <div class="tab-content" id="myTabContent">
+            <!-- 題目表格 -->
+            <div class="tab-pane fade show active" id="problems" role="tabpanel" aria-labelledby="problems-tab">
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">題目編號</th>
+                            <th scope="col">難度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for problem in problems %}
+                            <tr>
+                                <th scope="row">{{ loop.index }}</th>
+                                <td>{{ problem[0] }}</td> <!-- 假設 problem 以元組形式返回 -->
+                                <td>未知</td> <!-- 難度暫時寫為 ‘未知’，你可以依據需求做調整 -->
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3">無相關題目</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 排名表格 -->
+            <div class="tab-pane fade" id="ranking" role="tabpanel" aria-labelledby="ranking-tab">
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">排名</th>
+                            <th scope="col">使用者</th>
+                            <th scope="col">分數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>使用者1</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>使用者2</td>
+                            <td>90</td>
+                        </tr>
+                        <!-- 在這裡添加更多排名 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
