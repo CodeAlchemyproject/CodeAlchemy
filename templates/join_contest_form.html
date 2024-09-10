@@ -124,7 +124,7 @@
         <!-- 題目列表 -->
         <!-- ------- -->
         <div>
-            {% for contest in contests %}
+            {% for contest in contests[::-1] %}
             <div class="competition-box">                
                 <div class="competition-info">
                     <div class="title">{{contest[1]}}</div>

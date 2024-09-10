@@ -74,21 +74,6 @@ def contest_join():
     # 渲染 join_contest.html 
     return render_template('join_contest_form.html', contests=contests)
 
-'''
-@contest_bp.route('/join', methods=['POST'])
-def join_contest():
-    contest_id = request.form['contest_id']
-    
-    conn = db.connection()
-    cursor = conn.cursor()
-    
-    cursor.execute("SELECT contest_name FROM contest WHERE contest_id = %s", (contest_id,))
-    contest_name = cursor.fetchone()[0]
-    
-    conn.close()
-
-    return render_template('contest_joined.html', contest_name=contest_name)
-'''
 
 '''
 @contest_bp.route('/join', methods=['POST'])
@@ -113,7 +98,7 @@ def join_contest():
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time)
 '''
 
-
+'''
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
@@ -140,71 +125,70 @@ def join_contest():
   
     # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
-
-
 '''
-@contest_bp.route('/contest/<int:contest_id>/problems')
-def contest_problems(contest_id):
-    try:
-        print(f"Accessing contest_problems route with contest_id: {contest_id}")
 
-        conn = db.connection()
-        cursor = conn.cursor()
 
-        cursor.execute("""
-            SELECT problem_id, title, difficulty 
-            FROM problem 
-            WHERE problem_id IN (
-                SELECT problem_id 
-                FROM `contest problem` 
-                WHERE contest_id = %s
-            )
-        """, (contest_id,))
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    conn = db.connection()
+    cursor = conn.cursor()
 
-        problems = cursor.fetchall()
+    # 查詢比賽名稱、開始時間和結束時間
+    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
+    result = cursor.fetchone()
 
-        print("Query result:", problems)
-
+    if result is None:
         conn.close()
+        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
 
-        if problems:
-            return jsonify(problems)
-        else:
-            return jsonify([])
+    contest_name = result[0]
+    start_time = result[1]
+    end_time = result[2]
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return jsonify([]), 500
-'''
+    # 查詢與該比賽相關的所有題目 problem_id, title, difficulty
+    cursor.execute("""
+        SELECT p.problem_id, p.title, p.difficulty
+        FROM `contest problem` cp 
+        JOIN `problem` p ON cp.problem_id = p.problem_id 
+        WHERE cp.contest_id = %s
+    """, (contest_id,))
+    problems = cursor.fetchall()
+
+    conn.close()
+  
+    # 將查詢結果傳遞給模板
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
+
 
 
 
 @contest_bp.route('/get_problems')
 def get_problems():
-    # 获取URL参数中的page和per_page变量，如果没有则分别默认为1和10
+    # 取得URL參數中的page和per_page變量，如果沒有則分別預設為1和10
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
 
-    # 建立到数据库的连接
+    # 建立到資料庫的連接
     conn = db.connection()
     cur = conn.cursor()
     
-    # 计算应该跳过的记录数
+    # 計算應該跳過的記錄數
     offset = (page - 1) * per_page
     # 执行分页查询
     cur.execute("SELECT problem_id, title, content, difficulty FROM problem LIMIT %s OFFSET %s;", (per_page, offset))
     problems_data = cur.fetchall()
     
-    # 获取数据库中题目的总数以计算页数
+    # 取得資料庫中題目的總數以計算頁數
     cur.execute("SELECT COUNT(*) FROM problem;")
     total_problems = cur.fetchone()[0]
-    total_pages = (total_problems + per_page - 1) // per_page  # 计算总分页数
+    total_pages = (total_problems + per_page - 1) // per_page  # 計算總分頁數
     
-    # 关闭连接
+    # 關閉連接
     cur.close()
     conn.close()
   
-    # 返回查询结果给前端，附加分页信息
+    # 返回查詢結果給前端，附加分頁信息
     return jsonify({
         'data': problems_data,
         'total': total_problems,
@@ -250,99 +234,6 @@ def contest_create():
     finally:
         # 關閉資料庫連接
         connection.close()
-'''
-
-
-'''
-# 路由：处理创建比赛的POST请求
-@contest_bp.route('/create', methods=['POST'])
-def create_contest():
-    try:
-        # 從表單獲取數據
-        contest_name = request.form['contest_name']
-        start_date = request.form['startTime']
-        end_date = request.form['endTime']
-        description = request.form['description']
-        type = request.form['description']
-        #print("Received contest name:", contest_name)
-        print("Received start_date:", start_date)
-
-        # 从表单数据中解析数据
-        contest_data = request.form.to_dict()
-        problem_ids = contest_data.get('problem_ids').split(',')
-        print(problem_ids)
-
-        # 資料庫連接
-        connection = db.connection()
-
-        # 新增到contest資料表
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
-                    (contest_name, start_date, end_date, description, type))
-        
-        # 提交更改
-        #connection.commit()
-
-        # 创建比赛并获取 contest_id
-        contest_id = create_contest_in_db(contest_data)
-
-        # 循环添加题目到 contest_problem 表
-        for problem_id in problem_ids:
-            connect_contest_and_problem(contest_id, problem_id)
-
-        return render_template('create_contest_success.html')
-    except Exception as e:
-        print("Error occurred:", e)
-        return jsonify({"status": "error", "message": contest_data.get('problem_ids')})
-    finally:
-        # 确保关闭数据库连接
-        if 'connection' in locals():
-            connection.close()
-
-# 辅助函数：在数据库中创建比赛，并返回 contest_id
-def create_contest_in_db(contest_data):
-    connection = db.connection()
-    cursor = connection.cursor()
-
-    # 从 contest_data 字典中提取字段
-    contest_name = contest_data.get('contest_name')
-    start_date = contest_data.get('start_date')
-    end_date = contest_data.get('end_date')
-    description = contest_data.get('description')
-    type = contest_data.get('type')
-
-    #print(type)
-
-    # 插入数据并返回 contest_id
-    cursor.execute(
-        "INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s);",
-        (contest_name, start_date, end_date, description, type)
-    )  
-    
-
-    # 获取新插入记录的 contest_id
-    contest_id = cursor.lastrowid
-
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-    return contest_id
-
-# 辅助函数：将 contest_id 和 problem_id 关联起来
-def connect_contest_and_problem(contest_id, problem_id):
-    connection = db.connection()
-    cursor = connection.cursor()
-
-    # 插入 contest_id 和 problem_id 到 contest_problem 表中
-    cursor.execute(
-        "INSERT INTO contest_problem (contest_id, problem_id) VALUES (%s, %s);",
-        (contest_id, problem_id)
-    )
-
-    connection.commit()
-    cursor.close()
-    connection.close()
 '''
 
 

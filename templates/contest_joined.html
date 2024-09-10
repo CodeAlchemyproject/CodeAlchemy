@@ -92,6 +92,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">題目編號</th>
+                            <th scope="col">題目名稱</th>
                             <th scope="col">難度</th>
                         </tr>
                     </thead>
@@ -100,11 +101,12 @@
                             <tr>
                                 <th scope="row">{{ loop.index }}</th>
                                 <td>{{ problem[0] }}</td> <!-- 假設 problem 以元組形式返回 -->
-                                <td>未知</td> <!-- 難度暫時寫為 ‘未知’，你可以依據需求做調整 -->
+                                <td>{{ problem[1] }}</td> <!-- 假設 problem 以元組形式返回 -->
+                                <td>{{ problem[2] }}</td> <!-- 難度暫時寫為 ‘未知’，你可以依據需求做調整 -->
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="3">無相關題目</td>
+                                <td colspan="4">無相關題目</td>
                             </tr>
                         {% endfor %}
                     </tbody>

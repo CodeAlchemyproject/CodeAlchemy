@@ -42,36 +42,91 @@
                         <form id="competitionForm" action="/contest/create" method="post">
                             <h1><b>創建比賽</b></h1>
                             <div class="form">
-                                <div class="mb-3">
-                                    <label class="form-label">比賽名稱:</label>
-                                    <input type="text" class="form-control" id="contest_name" placeholder="name"
-                                        name="contest_name" required>
+                                <div class="form-group row mb-3">
+                                    <label for="contest_name" class="col-sm-3 col-form-label">比賽名稱:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">比賽說明</label>
-                                    <input type="text" class="form-control" id="description" placeholder="description"
-                                        name="description" required>
+
+                                <div class="form-group row mb-3">
+                                    <label for="description" class="col-sm-3 col-form-label">比賽說明:</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">比賽類型:</label>
-                                    <select class="form-select" id="state">
-                                        <option value="public">公開</option>
-                                        <option value="private">私人</option>
-                                    </select>
+
+                                <div class="form-group row mb-3">
+                                    <label for="state" class="col-sm-3 col-form-label">比賽類型:</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-select" id="state" name="state">
+                                            <option value="public">公開</option>
+                                            <option value="private">私人</option>
+                                        </select>
+                                    </div>
                                 </div>
+
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-3 col-form-label">語言:</label>
+                                    <div class="col-sm-9">
+                                        <div class="checkbox-row">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="python" name="programmingLanguages" value="Python">
+                                                <label class="form-check-label" for="python">Python</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="c" name="programmingLanguages" value="C">
+                                                <label class="form-check-label" for="c">C</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="cpp" name="programmingLanguages" value="C++">
+                                                <label class="form-check-label" for="cpp">C++</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="java" name="programmingLanguages" value="Java">
+                                                <label class="form-check-label" for="java">Java</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-3">
+                                    <label for="startTime" class="col-sm-3 col-form-label">開始時間:</label>
+                                    <div class="col-sm-9">
+                                        <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-3">
+                                    <label for="endTime" class="col-sm-3 col-form-label">結束時間:</label>
+                                    <div class="col-sm-9">
+                                        <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
+                                    </div>
+                                </div>
+
+                                <!-- 新增題目表格 -->
                                 <div class="mb-3">
                                     <label class="form-label">新增題目:</label>
                                     <div>
-                                        <div id="questionContainer">
-                                            <!-- 這裡會動態添加所選擇的題目 -->
-                                        </div>
-                                        <input href="#" class="btn btn-success" type="button" value="新增題目"
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>OJ</th>
+                                                    <th>Name</th>
+                                                    <th>Difficulty</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="questionTableBody">
+                                                <!-- 這裡會動態添加所選擇的題目 -->
+                                            </tbody>
+                                        </table>
+                                        <input href="#" class="btn btn-success w-100" type="button" value="新增題目"
                                             data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                     </div>
                                 </div>
-                                
-                                <!-- 跳出視窗內容 -->
 
+                                <!-- 跳出視窗內容 -->
                                 <div class="modal fade" id="loginModal">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
@@ -81,72 +136,10 @@
                                                 <button type="button" class="btn-close"
                                                     data-bs-dismiss="modal"></button>
                                             </div>
-                                            <!---->
-                                            <div class="row mt-4">
-                                                <div class="col-3">
-                                                    <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                                                        <option selected>狀態</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                                                            public</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                                                            private</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <select class="form-select" id="onlinejudge"
-                                                        onchange="location.href=this.options[this.selectedIndex].value">
-                                                        <option selected>online judges</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                                                            All</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge=ZeroJudge&difficulty={{difficulty}}&search={{search}}">
-                                                            ZeroJudge</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge=LeetCode&difficulty={{difficulty}}&search={{search}}">
-                                                            Leetcode</option>                                                        
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <select class="form-select" id="difficulty"
-                                                        onchange="location.href=this.options[this.selectedIndex].value">
-                                                        <option selected>難度</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
-                                                            All</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
-                                                            Hard</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
-                                                            Middle</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
-                                                            Easy</option>
-                                                        <option
-                                                            value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
-                                                            N/A</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-3">
-                                                    <form class="d-flex"
-                                                        action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
-                                                        <input type="hidden" name="page" value="{{page}}">
-                                                        <input type="hidden" name="state" value="{{state}}">
-                                                        <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
-                                                        <input type="hidden" name="difficulty" value="{{difficulty}}">
-                                                        <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <!---->
-
+                                            
                                             <!-- Body -->
                                             <div class="modal-body">
                                                 <form>
-                                                    <!-- 題目列表的表格 -->
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
@@ -169,45 +162,10 @@
                                                     </nav>
                                                 </form>
                                             </div>
-                                            <!-- Footer -->
-                                            
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">語言:</label>
-                                    <span class="value">
-                                        <div class="checkbox-row">
-                                            <input class="form-check-input" type="checkbox" id="python"
-                                                name="programmingLanguages" value="Python">
-                                            <label class="form-check-label" for="python">Python</label>
-                                            <input class="form-check-input" type="checkbox" id="c"
-                                                name="programmingLanguages" value="C">
-                                            <label for="c">C</label>
-                                            <input class="form-check-input" type="checkbox" id="cpp"
-                                                name="programmingLanguages" value="C++">
-                                            <label for="cpp">C++</label>
-                                            <input class="form-check-input" type="checkbox" id="java"
-                                                name="programmingLanguages" value="Java">
-                                            <label for="java">Java</label>
-                                        </div>
-                                    </span>
-                                </div>
-                                <div class="mb-3">
-                                    <span class="name">開始時間:</span>
-                                    <span class="value">
-                                        <input type="datetime-local" class="form-control" id="startTime"
-                                            name="startTime" required>
-                                    </span>
-                                </div>
-                                <div class="mb-3">
-                                    <span class="name">結束時間:</span>
-                                    <span class="value">
-                                        <input type="datetime-local" class="form-control" id="endTime" name="endTime"
-                                            required>
-                                    </span>
-                                </div>
                                 <div class="mb-3">
                                     <span class="value">
                                         <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
@@ -226,8 +184,8 @@
         $(document).ready(function () {
             function simplifyContent(content, maxLength) {
                 if (content.length > maxLength) {
-                    return content.substring(0, maxLength) +
-                        `<a href="#" class="more-link" data-content="${encodeURIComponent(content)}">...more</a>`;
+                    return content.substring(0, maxLength) + 
+                        '<a href="#" class="more-link" data-content="' + encodeURIComponent(content) + '">...more</a>';
                 }
                 return content;
             }
@@ -239,108 +197,93 @@
                     type: 'GET',
                     data: {
                         page: page,
-                        per_page: 10 // 每頁顯示10條數據
+                        per_page: 10
                     },
                     success: function (response) {
                         var contestTableBody = $("#contestTableBody");
-                        contestTableBody.empty(); // 清空表格内容
+                        contestTableBody.empty();
 
-                        // 添加表格内容
-                        response.data.forEach(function (problem) {
-                            var problem_id = problem[0]; // problem_id
-                            var title = problem[1]; // 標題
-                            var content = simplifyContent(problem[2], 100); // 描述內容，只取前100個字符
-                            var difficulty = problem[3]; // 難度
-                            var row = `<tr>
-                                    <td>${problem_id}</td>
-                                    <td>${title}</td>
-                                    <td>${content}</td>
-                                    <td>${difficulty}</td>
-                                    <td><button class="btn btn-primary add-btn" type="button" data-title="${title}" data-problem-id="${problem[0]}">Add</button></td>
-                                </tr>`;
+                        response.data.forEach(function (problem, index) {
+                            var problem_id = problem[0]; 
+                            var title = problem[1]; 
+                            var content = simplifyContent(problem[2], 100); 
+                            var difficulty = problem[3]; 
+                            var row = '<tr>' +
+                                    '<td>' + problem_id + '</td>' +
+                                    '<td>' + title + '</td>' +
+                                    '<td>' + content + '</td>' +
+                                    '<td>' + difficulty + '</td>' +
+                                    '<td><button class="btn btn-primary add-btn" type="button" data-title="' + title + '" data-problem-id="' + problem_id + '" data-difficulty="' + difficulty + '">Add</button></td>' +
+                                '</tr>';
                             contestTableBody.append(row);
                         });
 
-                        // 新增分頁控制項的程式碼部分
                         var pagination = $('#pagination');
-                        pagination.empty(); // 清空現有的分頁按鈕
+                        pagination.empty();
 
-                        var total_pages = response.total_pages; // 總頁數
-                        var page = response.page; // 目前頁碼
+                        var total_pages = response.total_pages;
+                        var page = response.page;
 
-                        var startPage = Math.max(page - 2, 1); // 計算起始頁碼，確保不會小於1
-                        var endPage = Math.min(page + 2, total_pages); // 計算結束頁碼，確保不會大於總頁數
+                        var startPage = Math.max(page - 2, 1); 
+                        var endPage = Math.min(page + 2, total_pages);
 
-                        // 新增跳到第一頁的按鈕
-                        pagination.append(`<li class="page-item ${page === 1 ? 'disabled' : ''}" data-page="1"><a class="page-link" href="#"><<</a></li>`);
+                        pagination.append('<li class="page-item ' + (page === 1 ? 'disabled' : '') + '" data-page="1"><a class="page-link" href="#"><<</a></li>');
 
-                        // 生成分頁按鈕
                         for (let i = startPage; i <= endPage; i++) {
-                            var activeClass = page === i ? 'active' : ''; // 當前頁碼按鈕高亮
-                            var pageItem = `<li class="page-item ${activeClass}" data-page="${i}"><a class="page-link" href="#">${i}</a></li>`;
+                            var activeClass = page === i ? 'active' : ''; 
+                            var pageItem = '<li class="page-item ' + activeClass + '" data-page="' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
                             pagination.append(pageItem);
                         }
 
-                        // 新增跳到最後一頁的按鈕
-                        pagination.append(`<li class="page-item ${page === total_pages ? 'disabled' : ''}" data-page="${total_pages}"><a class="page-link" href="#">>></a></li>`);
-
-                        // 綁定分頁按鈕的點擊事件
-                        $('.page-item').click(function(e){
-                            e.preventDefault();
-                            var selectedPage = $(this).data('page');
-                            loadTable(selectedPage); // 使用選取的頁碼重新載入表格
-                        });
-                    },
-                    error: function () {
-                        alert('数据载入失败。');
+                        pagination.append('<li class="page-item ' + (page === total_pages ? 'disabled' : '') + '" data-page="' + total_pages + '"><a class="page-link" href="#">>></a></li>');
                     }
                 });
             }
 
-            // 新增點擊事件來顯示全部內容
-            $('#contestTableBody').on('click', '.more-link', function (e) {
+            loadTable(1);
+
+            $('#pagination').on('click', 'li', function (e) {
                 e.preventDefault();
-                var fullContent = decodeURIComponent($(this).data('content'));
-                $(this).parent().html(fullContent); // 使用完整內容替換簡化內容和more鏈接
+                var page = $(this).data('page');
+                loadTable(page);
             });
 
-            // 處理新增問題按鈕點擊事件
-            $('#contestTableBody').on('click', '.add-btn', function () {
-                var title = $(this).data('title'); // 從按鈕獲取題目名稱
-                var problemId = $(this).data('problem-id'); // 獲取題目ID
-                var questionContainer = $('#questionContainer'); // 獲取題目容器
+            $("#contestTableBody").on('click', '.add-btn', function () {
+                var problemTitle = $(this).data('title');
+                var problemId = $(this).data('problem-id');
+                var difficulty = $(this).data('difficulty');
 
-                // 建立一個帶有problemId的元素顯示在頁面上
-                var questionElement = `<div class="added-question" data-problem-id="${problemId}">${title}</div>`;
-                questionContainer.append(questionElement);
+                var row = '<tr class="added-question" data-problem-id="' + problemId + '">' +
+                    '<td></td>' + 
+                    '<td></td>' +
+                    '<td>' + problemTitle + '</td>' +
+                    '<td>' + difficulty + '</td>' +
+                    '</tr>';
+                $("#questionTableBody").append(row);
 
-                // 選擇性: 關閉模態框
-                //$('#loginModal').modal('hide');
-                
-                // 顏色變化和打勾
-                $(this).addClass('btn-add-success').html('');
+                $('#loginModal').modal('hide');
             });
 
-            // 處理表單提交事件
             $('#competitionForm').submit(function (e) {
-                // 不再需要阻止預設行為和手動處理跳轉
                 var selectedProblemIds = $('.added-question').map(function () {
                     return $(this).data('problem-id');
                 }).get();
 
-                // 將選定的 problem_ids 附加到表單資料中
+                if (selectedProblemIds.length === 0) {
+                    alert("請選擇至少一個題目");
+                    e.preventDefault();  // 停止提交表單
+                    return;
+                }
+
                 $('<input>').attr({
                     type: 'hidden',
                     name: 'problem_ids',
                     value: selectedProblemIds.join(',')
                 }).appendTo('#competitionForm');
             });
-
-            // 初始化載入第一頁數據
-            loadTable(1);
         });
     </script>
-
 </body>
+
 
 </html>
