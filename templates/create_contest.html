@@ -34,13 +34,16 @@
 
 <body>
     {% include "nav_bar.html" %}
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card border-0 shadow rounded-3 my-5">
+                <!--<div class="card border-0 shadow rounded-3 my-5">-->
                     <div class="card-body p-4 p-sm-5">
                         <form id="competitionForm" action="/contest/create" method="post">
                             <h1><b>創建比賽</b></h1>
+
+                            <hr class="my-4">
+
                             <div class="form">
                                 <div class="form-group row mb-3">
                                     <label for="contest_name" class="col-sm-3 col-form-label">比賽名稱:</label>
@@ -52,7 +55,7 @@
                                 <div class="form-group row mb-3">
                                     <label for="description" class="col-sm-3 col-form-label">比賽說明:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
+                                        <input type="text" class="form-control" id="description" placeholder="description" name="description" style="width: 100%;" required>
                                     </div>
                                 </div>
 
@@ -104,9 +107,12 @@
                                     </div>
                                 </div>
 
+                                <hr class="my-4">
+
+
                                 <!-- 新增題目表格 -->
                                 <div class="mb-3">
-                                    <label class="form-label">新增題目:</label>
+                                    <label class="form-label">題目列表:</label>
                                     <div>
                                         <table class="table">
                                             <thead>
@@ -121,7 +127,7 @@
                                                 <!-- 這裡會動態添加所選擇的題目 -->
                                             </tbody>
                                         </table>
-                                        <input href="#" class="btn btn-success w-100" type="button" value="新增題目"
+                                        <input href="#" class="btn btn-success w-100" type="button" value="+ 新增題目"
                                             data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                     </div>
                                 </div>
@@ -166,10 +172,14 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-3">
+                                <hr class="my-4">
+
+                                <div class="mb-3 text-center">
                                     <span class="value">
-                                        <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
-                                            value="create">創建比賽</button>
+                                        <!-- 取消按鈕 -->
+                                        <button class="btn btn-outline-secondary text-uppercase fw-bold me-2" type="button" onclick="window.location.href='/'">取消</button>
+                                        <!-- 創建比賽按鈕 -->
+                                        <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">創建比賽</button>
                                     </span>
                                 </div>
                         </form>
