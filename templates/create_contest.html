@@ -111,6 +111,7 @@
                                                     <th>OJ</th>
                                                     <th>Name</th>
                                                     <th>Difficulty</th>
+                                                    <th>Remove</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="questionTableBody">
@@ -254,10 +255,12 @@
                 loadTable(page);
             });
 
-            $("#contestTableBody").on('click', '.add-btn:not(.disabled)', function () {
+            //$("#contestTableBody").on('click', '.add-btn:not(.disabled)', function () {
+            $('#contestTableBody').on('click', '.add-btn', function () {
                 var problemTitle = $(this).data('title');
                 var problemId = $(this).data('problem-id');
                 var difficulty = $(this).data('difficulty');
+                var addButton = $(this);
 
                 if (!selectedProblems.includes(problemId)) { // 检查以避免重复添加
                     selectedProblems.push(problemId); // 将当前题目ID添加到已选择题目数组
@@ -267,6 +270,7 @@
                          <td></td>
                          <td>${problemTitle}</td>
                          <td>${difficulty}</td>
+                         <td class="text-center"><button class="btn btn-danger remove-btn" data-problem-id="${problemId}"><i class="fas fa-trash-alt"></i></button></td>
                        </tr>`;
                         $("#questionTableBody").append(row);
 
@@ -300,6 +304,25 @@
                     name: 'problem_ids',
                     value: selectedProblemIds.join(',')
                 }).appendTo('#competitionForm');
+            });
+
+            // 刪除表格中的問題
+            $('#questionTableBody').on('click', '.remove-btn', function () {
+                var row = $(this).closest('tr');
+                var index = row.index();
+                var problem_id = selectedProblems[index];
+
+                // 刪除所選題目並移除該行
+                selectedProblems.splice(index, 1);
+                row.remove();
+
+                // 更新行號
+                $('#questionTableBody tr').each(function (i) {
+                    $(this).find('td:first').text(i + 1);
+                });
+
+                // 恢復互動視窗中的按鈕狀態
+                $('#contestTableBody button[data-problem-id="' + problem_id + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
             });
         });
     </script>
