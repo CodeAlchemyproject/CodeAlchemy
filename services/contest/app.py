@@ -57,7 +57,7 @@ def contest_create():
         connection.close()
 '''
 
-
+'''(contest list無頁碼版)
 #contest_list
 @contest_bp.route('/join/form')
 def contest_join(): 
@@ -73,6 +73,34 @@ def contest_join():
 
     # 渲染 join_contest.html 
     return render_template('join_contest_form.html', contests=contests)
+'''
+
+
+@contest_bp.route('/join/form')
+def contest_join():
+    conn = db.connection()  # Get database connection
+    cursor = conn.cursor()
+
+    # 从请求中获取页码，默认为第一页
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # 每页显示的比赛数量
+
+    offset = (page - 1) * per_page  # 计算当前页的起始位置
+
+    total_contests_query = "SELECT COUNT(*) FROM contest"
+    cursor.execute(total_contests_query)
+    total_contests = cursor.fetchone()[0]  # 获取总比赛数
+
+    query = "SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest LIMIT %s OFFSET %s"
+    cursor.execute(query, (per_page, offset))
+    contests = cursor.fetchall()
+
+    conn.close()
+
+    total_pages = (total_contests + per_page - 1) // per_page  # 计算总页数
+
+    # 渲染 join_contest.html，传入 contests 和分页信息
+    return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
 
 
 '''
