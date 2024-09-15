@@ -47,6 +47,6 @@ def problem():
 @manager_bp.route('/delete',methods=['GET'])
 def delete():
     problem_id = request.args.get('problem_id',type=str)
-    sql_command=f"DELETE FROM problem where problem_id={problem_id}"
+    sql_command=f"DELETE FROM problem where problem_id='{problem_id}'"
     db.edit_data(sql_command)
     return redirect('/')
