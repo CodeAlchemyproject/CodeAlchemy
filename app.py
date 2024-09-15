@@ -154,13 +154,6 @@ def answer_record():
     data=db.get_data(sql_problem_command)
     return render_template('./answer_record.html',data=data)
   
-@app.route('/dolos', methods=['GET'])
-def problem_dolos():
-    problem_id=request.args.get('problem_id',type=str)
-    zip=dolos.create_zip(problem_id)
-    url=dolos.submit_to_dolos(zip[0],zip[1])
-    return (redirect(url))
-
 # 收藏
 @app.route('/add_to_collection', methods=['POST'])
 def add_to_collection():
@@ -176,6 +169,14 @@ def add_to_collection():
         return jsonify({'message': 'Item added to collection'}), 201
     except KeyError:
         return jsonify({'error': 'Missing item_id or user_id'}), 400
+    
+@app.route('/dolos', methods=['GET'])
+def problem_dolos():
+    problem_id=request.args.get('problem_id',type=str)
+    zip=dolos.create_zip(problem_id)
+    url=dolos.submit_to_dolos(zip[0],zip[1])
+    return (redirect(url))
+
 @app.route("/rank")
 def rank():
     data=db.get_data(f'''

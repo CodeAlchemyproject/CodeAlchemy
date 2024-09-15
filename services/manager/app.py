@@ -1,6 +1,4 @@
 # 匯入必要的模組
-import os
-import uuid
 from flask import request, render_template, redirect, url_for, session
 from werkzeug.utils import secure_filename
 from flask import Blueprint
@@ -12,6 +10,12 @@ manager_bp = Blueprint('manager', __name__)
 #--------------------------
 # 在user服務藍圖加入路由
 #--------------------------
+@manager_bp.route('add_problem',methods=["GET","POST"])
+def add_problem():
+    if request.method=="POST":
+        return redirect('/')
+    else:
+        return render_template('./add_problem.html')
 @manager_bp.route('/problem',methods=['GET',"POST"])
 def problem():
     if request.method=="POST":

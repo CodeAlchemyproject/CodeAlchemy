@@ -124,7 +124,7 @@
         <!-- 題目列表 -->
         <!-- ------- -->
         <div>
-            {% for contest in contests %}
+            {% for contest in contests[::-1] %}
             <div class="competition-box">                
                 <div class="competition-info">
                     <div class="title">{{contest[1]}}</div>
@@ -140,6 +140,31 @@
                 </div>               
             </div>            
             {% endfor %}
+        </div>
+
+        <!-- 分頁按钮 -->
+        <div class="d-flex justify-content-center mt-5">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- 第一頁按钮 -->
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% for p in range(1, total_pages + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                    </li>
+                    {% endfor %}
+                    <!-- 最後一頁按钮 -->
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ total_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     
     </div>
