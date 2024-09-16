@@ -13,6 +13,7 @@ manager_bp = Blueprint('manager', __name__)
 @manager_bp.route('add_problem',methods=["GET","POST"])
 def add_problem():
     if request.method=="POST":
+        sql_command=""
         return redirect('/')
     else:
         return render_template('./add_problem.html')
