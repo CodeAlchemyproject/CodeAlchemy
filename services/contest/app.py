@@ -91,7 +91,14 @@ def contest_join():
     cursor.execute(total_contests_query)
     total_contests = cursor.fetchone()[0]  # 获取总比赛数
 
-    query = "SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest LIMIT %s OFFSET %s"
+    # 修改这个查询以包含适当的ORDER BY子句，以确保数据是按照开始时间的降序返回的
+    query = """
+    SELECT contest_id, contest_name, start_date, end_date, description, type 
+    FROM contest 
+    ORDER BY contest_id DESC  -- 这里假设你希望根据start_date字段排序
+    LIMIT %s OFFSET %s
+    """
+    
     cursor.execute(query, (per_page, offset))
     contests = cursor.fetchall()
 
