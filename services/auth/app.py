@@ -70,36 +70,39 @@ def login_google():
 # Google 登入回調路由
 @auth_bp.route('/google-callback')
 def authorize():
-    # 取得 Google 登入的存取令牌
-    token = google.authorize_access_token()
-    # 通過存取令牌向 Google API 發送請求，獲取用戶資訊
-    user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
-    # 從用戶資訊中提取必要的數據
-    Goole_ID = user_info['id']
-    Email = user_info['email']
-    imgs = user_info['picture']
-    # 在數據庫中查詢是否有使用該郵箱註冊過
-    sql_user_command = f"SELECT * FROM user where email='{Email}'"
-    user_data = db.get_data(sql_user_command)
-    # 如果郵箱已註冊
-    if len(user_data) == 1:
-        # 將用戶資訊存入 session
-        session['User_id']=user_data[0][0]
-        session['Email'] = Email
-        session['logged_in'] = True
-        session['User_name'] = user_data[0][1]
-        session['Permission']=user_data[0][6]
-        session['google_id'] = Goole_ID
-        session['imgs'] = imgs
-        # 如果數據庫中的 Google ID 與 Google 返回的 ID 一致，則重定向到首頁
-        if user_data[0][3] == Goole_ID:
-            return redirect('/')
-        # 否則，重定向到連結 Google 賬戶頁面
+    try:
+        # 取得 Google 登入的存取令牌
+        token = google.authorize_access_token()
+        # 通過存取令牌向 Google API 發送請求，獲取用戶資訊
+        user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+        # 從用戶資訊中提取必要的數據
+        Goole_ID = user_info['id']
+        Email = user_info['email']
+        imgs = user_info['picture']
+        # 在數據庫中查詢是否有使用該郵箱註冊過
+        sql_user_command = f"SELECT * FROM user where email='{Email}'"
+        user_data = db.get_data(sql_user_command)
+        # 如果郵箱已註冊
+        if len(user_data) == 1:
+            # 將用戶資訊存入 session
+            session['User_id']=user_data[0][0]
+            session['Email'] = Email
+            session['logged_in'] = True
+            session['User_name'] = user_data[0][1]
+            session['Permission']=user_data[0][6]
+            session['google_id'] = Goole_ID
+            session['imgs'] = imgs
+            # 如果數據庫中的 Google ID 與 Google 返回的 ID 一致，則重定向到首頁
+            if user_data[0][3] == Goole_ID:
+                return redirect('/')
+            # 否則，重定向到連結 Google 賬戶頁面
+            else:
+                return redirect('/auth/connect_google')
+        # 如果郵箱尚未註冊，則重定向到註冊頁面
         else:
-            return redirect('/auth/connect_google')
-    # 如果郵箱尚未註冊，則重定向到註冊頁面
-    else:
-        return redirect('/auth/register')
+            return redirect('/auth/register')
+    except:
+        return redirect('/auth/login')
 
 # 連結 Google 賬戶路由
 @auth_bp.route('/connect_google',methods=['GET','POST'])
