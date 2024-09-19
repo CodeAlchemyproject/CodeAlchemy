@@ -16,7 +16,7 @@ import glob
 import traceback
 
 from utils.common import ZJ_translated_return_abbreviation
-def test_submit(title):
+def test_submit():
     try:
         chrome_options = webdriver.ChromeOptions()
         s = Service(ChromeDriverManager().install())
@@ -37,8 +37,8 @@ def test_submit(title):
 
         if account_input and passwd_input:
             # 輸入帳號和密碼
-            account_input.send_keys('TestCase2024')
-            passwd_input.send_keys('TestCase2024')
+            account_input.send_keys('zero')
+            passwd_input.send_keys('!@#$zerojudge')
 
             # 找到登入按鈕並點擊
             login_button = driver.find_element_by_css_selector('button.btn.btn-primary')
@@ -47,29 +47,29 @@ def test_submit(title):
             # 等待登入完成，這裡可以根據需要加入等待條件，例如等待特定元素載入完成
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, 'searchword')))
 
-            # 輸入搜索關鍵字
-            searchword_input = driver.find_element_by_name('searchword')
-            searchword_input.send_keys(title)
+            # # 輸入搜索關鍵字
+            # searchword_input = driver.find_element_by_name('searchword')
+            # searchword_input.send_keys(title)
 
-            # 找到搜索表單並提交
-            search_form = searchword_input.find_element_by_xpath('ancestor::form')
-            search_form.submit()
+            # # 找到搜索表單並提交
+            # search_form = searchword_input.find_element_by_xpath('ancestor::form')
+            # search_form.submit()
 
-            # 等待新頁面載入完成
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'table.table-hover')))
+            # # 等待新頁面載入完成
+            # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'table.table-hover')))
 
-            # 獲取表格中的第一個連結
-            table = driver.find_element_by_class_name('table.table-hover')
-            first_a_element = table.find_element_by_xpath('.//a[contains(@href, "ShowProblem?problemid=")]')
+            # # 獲取表格中的第一個連結
+            # table = driver.find_element_by_class_name('table.table-hover')
+            # first_a_element = table.find_element_by_xpath('.//a[contains(@href, "ShowProblem?problemid=")]')
 
-            # 點擊第一個連結
-            first_a_element.click()
+            # # 點擊第一個連結
+            # first_a_element.click()
 
-            # 等待新頁面載入完成
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'pre')))
+            # # 等待新頁面載入完成
+            # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'pre')))
 
-            # 獲取新頁面的內容並輸出
-            print(driver.page_source)
+            # # 獲取新頁面的內容並輸出
+            # print(driver.page_source)
 
     finally:
         # 關閉瀏覽器
