@@ -14,3 +14,5 @@
 # response = requests.post(url, headers=headers, json=data)
 # print(f"response status_code: {response.status_code}")
 # print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+from crawler.submit import TIOJ_submit
+TIOJ_submit()
