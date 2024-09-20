@@ -82,21 +82,11 @@ def TIOJ_submit(file_name, number):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
-        chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
         chrome_options.add_argument("disable-infobars")
 
-        driver = webdriver.Chrome(service=s, options=chrome_options)
+        driver = webdriver.Chrome()
         driver.maximize_window()
         wait_max = 10
-
-        driver.get("chrome-extension://bihmplhobchoageeokmgbdihknkjbknd/panel/index.html")
-        sleep(2)
-        btn_connect = WebDriverWait(driver, wait_max).until(EC.presence_of_element_located((By.ID, "ConnectionButton")))
-        btn_connect.click()
-        sleep(2)
-        all_windows = driver.window_handles
-        driver.switch_to.window(all_windows[0])
 
         submit_program_dict = dict()
         files = glob.glob(f'./source/{file_name}')
