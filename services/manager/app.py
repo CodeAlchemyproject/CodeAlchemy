@@ -29,12 +29,12 @@ def add_problem():
                 example_input=data.get('example_input')
                 example_output=data.get('example_output')
                 difficulty=data.get('difficulty')
-                print(title)
-                sql_command=f"INSERT INTO `113-CodeAlchemy`.`problem` (`problem_id`, `title`, `content`, `enter_description`, `output_description`, `example_input`, `example_output`, `difficulty`, `tag`, `solved`, `submission`, `update_time`) VALUES ('CAOJ-{new_no}', '{title}', '{content}', '{enter_description}', '{output_description}', '{example_input}' , '{example_output}', '{difficulty}', 'N/A', '0', '0', '{datetime.now()}');"
+                tag=data.get('tag')
+                video_id=data.get('video_id')
+                sql_command=f"INSERT INTO `113-CodeAlchemy`.`problem` (`problem_id`, `title`, `content`, `enter_description`, `output_description`, `example_input`, `example_output`, `difficulty`, `tag`, `video_id` ,`solved`, `submission`, `update_time`) VALUES ('CAOJ-{new_no}', '{title}', '{content}', '{enter_description}', '{output_description}', '{example_input}' , '{example_output}', '{difficulty}', '{tag}', '{video_id}', '0', '0', '{datetime.now()}');"
                 db.edit_data(sql_command)
-                return redirect('./add_problem.html')
+                return redirect('/')
             else:
-                print('GAWA')
                 return render_template('./add_problem.html')
     except:
         return redirect('/')
@@ -53,7 +53,7 @@ def problem():
                 example_output=data.get('example_output')
                 difficulty=data.get('difficulty')
                 tag=data.get('tag')
-                sql_problem_command=f"UPDATE problem SET title = '{title}',content = '{content}',enter_description = '{enter_description}',output_description = '{output_description}',example_input = '{example_input}',example_output = '{example_output}' ,difficulty='{difficulty}' ,tag='{tag}' WHERE problem_id = '{problem_id}';"
+                sql_problem_command=f"UPDATE problem SET title = '{title}',content = '{content}',enter_description = '{enter_description}',output_description = '{output_description}',example_input = '{example_input}',example_output = '{example_output}' ,difficulty='{difficulty}' ,tag='{tag}' ,video_id='{video_id}' WHERE problem_id = '{problem_id}';"
                 db.edit_data(sql_problem_command)
                 sql_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
                 # problem_data=db.get_data(sql_command)
@@ -68,7 +68,8 @@ def problem():
                 example_outputs = problem_data[0][6].split('|||')
                 difficulty = problem_data[0][7]
                 tag= problem_data[0][8]
-                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag)
+                video_id = problem_data[0][9]
+                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag,video_id=video_id)
     except:
         return redirect('/')
 
