@@ -83,8 +83,9 @@ def TIOJ_submit(file_name, number):
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_argument("disable-infobars")
-
-        driver = webdriver.Chrome()
+        # 強制指定為 win64 版本
+        os.environ["WDM_ARCH"] = "64" 
+        driver = webdriver.Chrome(service=s, options=chrome_options)
         driver.maximize_window()
         wait_max = 10
 
