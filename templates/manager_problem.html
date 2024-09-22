@@ -70,11 +70,18 @@
                             <h3 class="mt-4">難度<br></h3>
                             <div class="mb-3">
                                 <select class="form-select form-select-lg" name="difficulty" id="">
-                                    <option value="easy" {% if (difficulty == 'easy') %}selected{% endif %}>Easy</option>
-                                    <option value="middle" {% if (difficulty == "middle") %}selected{% endif %}>Middle</option>
-                                    <option value="hard" {% if (difficulty == "hard") %}selected{% endif %}>Hard</option>
+                                    <option value="easy" {% if (difficulty=='easy' ) %}selected{% endif %}>Easy</option>
+                                    <option value="middle" {% if (difficulty=="middle" ) %}selected{% endif %}>Middle
+                                    </option>
+                                    <option value="hard" {% if (difficulty=="hard" ) %}selected{% endif %}>Hard</option>
                                 </select>
                             </div>
+                            <h3 class="mt-4">標籤</h3>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" name="tag" id="" aria-describedby="標籤"
+                                    placeholder="" value="{{data.0.8}}"/>
+                            </div>
+
                         </div>
                     </div>
                 </div>

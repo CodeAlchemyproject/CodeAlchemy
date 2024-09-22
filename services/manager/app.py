@@ -32,8 +32,9 @@ def add_problem():
                 print(title)
                 sql_command=f"INSERT INTO `113-CodeAlchemy`.`problem` (`problem_id`, `title`, `content`, `enter_description`, `output_description`, `example_input`, `example_output`, `difficulty`, `tag`, `solved`, `submission`, `update_time`) VALUES ('CAOJ-{new_no}', '{title}', '{content}', '{enter_description}', '{output_description}', '{example_input}' , '{example_output}', '{difficulty}', 'N/A', '0', '0', '{datetime.now()}');"
                 db.edit_data(sql_command)
-                return redirect('/')
+                return redirect('./add_problem.html')
             else:
+                print('GAWA')
                 return render_template('./add_problem.html')
     except:
         return redirect('/')
@@ -51,14 +52,14 @@ def problem():
                 example_input=data.get('example_input')
                 example_output=data.get('example_output')
                 difficulty=data.get('difficulty')
-                sql_problem_command=f"UPDATE problem SET title = '{title}',content = '{content}',enter_description = '{enter_description}',output_description = '{output_description}',example_input = '{example_input}',example_output = '{example_output}' ,difficulty='{difficulty}' WHERE problem_id = '{problem_id}';"
+                tag=data.get('tag')
+                sql_problem_command=f"UPDATE problem SET title = '{title}',content = '{content}',enter_description = '{enter_description}',output_description = '{output_description}',example_input = '{example_input}',example_output = '{example_output}' ,difficulty='{difficulty}' ,tag='{tag}' WHERE problem_id = '{problem_id}';"
                 db.edit_data(sql_problem_command)
                 sql_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-                problem_data=db.get_data(sql_command)
-                example_inputs = problem_data[0][5].split('|||')
-                example_outputs = problem_data[0][6].split('|||')
-                like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
-                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty)
+                # problem_data=db.get_data(sql_command)
+                # example_inputs = problem_data[0][5].split('|||')
+                # example_outputs = problem_data[0][6].split('|||')
+                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag)
             else:
                 problem_id = request.args.get('problem_id',type=str)
                 sql_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
@@ -66,7 +67,8 @@ def problem():
                 example_inputs = problem_data[0][5].split('|||')
                 example_outputs = problem_data[0][6].split('|||')
                 difficulty = problem_data[0][7]
-                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty)
+                tag= problem_data[0][8]
+                return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag)
     except:
         return redirect('/')
 
