@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from time import sleep
 
-def CodeAlchemy_submit():
+def CodeAlchemy_submit(title):
     # crawler setting
     main_url = 'http://123.192.165.145:8081/Login'
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
@@ -26,8 +26,8 @@ def CodeAlchemy_submit():
         driver.maximize_window()
         wait_max = 10
 
-        username = 'zero'
-        password = '!@#$zerojudge'
+        username = 'TestCase2024'
+        password = 'TestCase2024'
 
         driver.get(main_url)
         try:
@@ -63,6 +63,30 @@ def CodeAlchemy_submit():
         except BaseException as e:
             print(e)
             return []  # 返回空列表，表示登錄失敗
+        
     except:
         None
-CodeAlchemy_submit()
+    # # 輸入搜索關鍵字
+    searchword_input = driver.find_element_by_name('searchword')
+    searchword_input.send_keys(title)
+
+    # 找到搜索表單並提交
+    search_form = searchword_input.find_element_by_xpath('ancestor::form')
+    search_form.submit()
+
+    # 等待新頁面載入完成
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'table.table-hover')))
+
+    # 獲取表格中的第一個連結
+    table = driver.find_element_by_class_name('table.table-hover')
+    first_a_element = table.find_element_by_xpath('.//a[contains(@href, "ShowProblem?problemid=")]')
+
+    # 點擊第一個連結
+    first_a_element.click()
+
+    # 等待新頁面載入完成
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'pre')))
+
+    # 獲取新頁面的內容並輸出
+    print(driver.page_source)
+CodeAlchemy_submit('哈囉')
