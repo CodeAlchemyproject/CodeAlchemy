@@ -78,12 +78,12 @@ def contest_join():
 
 @contest_bp.route('/join/form')
 def contest_join():
-    contest_id = request.form['contest_id']
-    user_id = request.form['user_id']  # 这里假定前端表单中有包含user_id的信息，或者从session中获取当前登录用户的user_id
+    contest_id = request.form['contest_id']#**
+    user_id = request.form['user_id']  # **这里假定前端表单中有包含user_id的信息，或者从session中获取当前登录用户的user_id
     conn = db.connection()  # Get database connection
     cursor = conn.cursor()
 
-    # 检查用户是否已经加入了该比赛
+    # **检查用户是否已经加入了该比赛
     cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
     if cursor.fetchone():
         # 如果已经加入，可以选择返回一个提示消息
@@ -112,14 +112,14 @@ def contest_join():
     cursor.execute(query, (per_page, offset))
     contests = cursor.fetchall()
 
-    # 向 contest participant 表中插入记录
+    # **向 contest participant 表中插入记录
     cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
-    conn.commit()
+    conn.commit()#**
     conn.close()
 
     total_pages = (total_contests + per_page - 1) // per_page  # 计算总页数
 
-    flash('You have successfully joined the contest.', 'success')  # 提示用户成功加入比赛
+    flash('You have successfully joined the contest.', 'success')  # **提示用户成功加入比赛
     # 渲染 join_contest.html，传入 contests 和分页信息
     return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
 
