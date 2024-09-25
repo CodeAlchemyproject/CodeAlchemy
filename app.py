@@ -1,4 +1,3 @@
-# 引入模組
 from datetime import datetime
 import os
 from flask import Flask, render_template, session, request,jsonify,redirect
@@ -19,7 +18,7 @@ from utils import db
 from utils.common import ZJ_translated_return_abbreviation, paginate
 from utils import dolos
 
-# 產生主程式, 加入主畫面
+# 產生主程式,加入主畫面
 app = Flask(__name__)
 # google登入安全鑰匙(勿動)
 app.secret_key = 'c5533f80-cedf-4e3a-94d3-b0d5093dbef4'
@@ -74,7 +73,7 @@ def index():
 @app.route('/problem',methods=['GET','POST'])
 def problem():
     if request.method=="POST":
-        #從傳入封包取得資料
+        # 從傳入封包取得資料
         data = request.form
         type = data.get('type')
         problem_id = data.get('problem_id')
@@ -141,8 +140,9 @@ def problem():
         problem_data=db.get_data(sql_problem_command)
         example_inputs = problem_data[0][5].split('|||')
         example_outputs = problem_data[0][6].split('|||')
+        video_id = problem_data[0][9]
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
-        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like)
+        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like,video_id=video_id)
 @app.route('/answer_record',methods=['GET'])
 def answer_record():
     problem_id = request.args.get('problem_id',type=str)

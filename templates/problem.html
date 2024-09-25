@@ -100,11 +100,15 @@
                         <!-- 教學影片 -->
                         <div class="tab-pane fade" id="menu2">
                             <div class="col-12">
+                                {% if video_id == None %}
+                                <h3 class="justify-content-center">本題暫時沒有解題影片</h3>
+                                {% else %}
                                 <iframe width="560" height="315"
-                                    src="https://www.youtube.com/embed/nZqMjBUp3Fs?si=_5ERs1-g2_hBQgmT"
+                                    src="https://www.youtube.com/embed/{{video_id}}"
                                     title="YouTube video player" frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
