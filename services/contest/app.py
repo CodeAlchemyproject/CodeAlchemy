@@ -1,7 +1,8 @@
 # 匯入Blueprint模組
-from flask import request, render_template, jsonify, json, redirect, url_for, flash, session
+from flask import request, render_template, jsonify, json, redirect, session
 import sqlite3
 from flask import Blueprint
+from flask_login import current_user
 
 
 from utils import db
@@ -20,42 +21,6 @@ contest_bp = Blueprint('contest_bp', __name__)
 def contest_create_form():
     return render_template('create_contest.html') 
 
-'''
-#create contest
-@contest_bp.route('/create', methods=['POST'])
-def contest_create():
-    try:
-        # 從表單獲取數據
-        contest_name = request.form['contest_name']
-        start_date = request.form['startTime']
-        end_date = request.form['endTime']
-        description = request.form['description']
-        type = request.form['description']
-        #print("Received contest name:", contest_name)
-        #print("Received description:", description)
-
-
-        # 資料庫連接
-        connection = db.connection()
-
-        # 新增到contest資料表
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
-                    (contest_name, start_date, end_date, description, type))
-
-        # 提交更改
-        connection.commit()
-
-        # 若成功取得數據，導向create_contest_success.html
-        return render_template('create_contest_success.html')
-    except Exception as e:
-        # 若發生錯誤，導向失敗頁面
-        print("Error occurred:", e)
-        #return render_template('login.html', error=str(e))
-    finally:
-        # 關閉資料庫連接
-        connection.close()
-'''
 
 '''(contest list無頁碼版)
 #contest_list
@@ -77,31 +42,24 @@ def contest_join():
 
 
 @contest_bp.route('/join/form')
-def contest_join():
-    #contest_id = request.form['contest_id'] #**
-    #user_id = request.form['user_id']  # **这里假定前端表单中有包含user_id的信息，或者从session中获取当前登录用户的user_id
+def contest_join():    
     conn = db.connection()  # Get database connection
     cursor = conn.cursor()
 
-    # **检查用户是否已经加入了该比赛
-    #cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
-    #if cursor.fetchone():
-        # 如果已经加入，可以选择返回一个提示消息
-        #conn.close()
-        #flash('You have already joined this contest.', 'info')  # 使用 flash 提示用户
-        #return redirect(url_for('your_contest_list_page'))  # 返回比赛列表页面或其他适当的页面
-
-    # 从请求中获取页码，默认为第一页
+    # **使用者 ID，假設已經有登入系統並且 session 中有 user_id
+    user_id = session['User_id']
+    
+    # 從請求中取得頁碼，預設為第一頁
     page = request.args.get('page', 1, type=int)
-    per_page = 10  # 每页显示的比赛数量
+    per_page = 10  # 每頁顯示的比賽數量
 
-    offset = (page - 1) * per_page  # 计算当前页的起始位置
+    offset = (page - 1) * per_page  # 計算目前頁的起始位置
 
     total_contests_query = "SELECT COUNT(*) FROM contest"
     cursor.execute(total_contests_query)
-    total_contests = cursor.fetchone()[0]  # 获取总比赛数
+    total_contests = cursor.fetchone()[0]  # 取得總比賽數
 
-    # 修改这个查询以包含适当的ORDER BY子句，以确保数据是按照开始时间的降序返回的
+    # 修改這個查詢以包含適當的ORDER BY子句，以確保資料是按照開始時間的降序傳回的
     query = """
     SELECT contest_id, contest_name, start_date, end_date, description, type 
     FROM contest 
@@ -112,15 +70,23 @@ def contest_join():
     cursor.execute(query, (per_page, offset))
     contests = cursor.fetchall()
 
-    # **向 contest participant 表中插入记录
-    #cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
-    #conn.commit()#**
+    # **查詢該用戶參加過的比賽
+    cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
+    joined_contests = set([row[0] for row in cursor.fetchall()])  # 得到參加過的比賽 ID 集合
+    
     conn.close()
 
-    total_pages = (total_contests + per_page - 1) // per_page  # 计算总页数
+    # **添加參加狀態到 contests 中
+    contests_with_status = []
+    for contest in contests:
+        contest_id = contest[0]
+        if contest_id in joined_contests:
+            contests_with_status.append((*contest, "joined"))
+        else:
+            contests_with_status.append((*contest, "not_joined"))
 
-    #flash('You have successfully joined the contest.', 'success')  # **提示用户成功加入比赛
-    # 渲染 join_contest.html，传入 contests 和分页信息
+    total_pages = (total_contests + per_page - 1) // per_page  # 計算總頁數
+    
     return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
 
 
@@ -182,36 +148,34 @@ def join_contest():
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
-    # 假设你已经在用户登录时获取了用户的 user_id
+    # 假設你已經在使用者登入時取得了使用者的 user_id
     user_id = session['User_id']
     
     conn = db.connection()
     cursor = conn.cursor()
 
-    # 检查用户是否已经参加过这个比赛
-    cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
-    if cursor.fetchone():
-        conn.close()
-        return "您已经参加过这个比赛了"  # 如果用户已经参加过比赛，可以返回提示信息或重定向到其他页面
+    # 檢查該使用者是否已經參加過該比賽
+    cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
+    already_joined = cursor.fetchone()
 
-    # 向 contest participant 表中插入参赛记录
-    insert_query = "INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)"
-    cursor.execute(insert_query, (contest_id, user_id))
-    conn.commit()
+    # 如果尚未參加過該比賽，則寫入 contest participant 資料表
+    if not already_joined:
+        cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
+        conn.commit()
 
-    # 查询比赛名称、开始时间和结束时间
+    # 查詢比賽名稱、開始時間和結束時間
     cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
     result = cursor.fetchone()
 
     if result is None:
         conn.close()
-        return "比赛不存在", 404  # 如果查不到数据，返回错误信息
+        return "比赛不存在", 404  # 如果查不到數據，回傳錯誤訊息
 
     contest_name = result[0]
     start_time = result[1]
     end_time = result[2]
 
-    # 查询与该比赛相关的所有题目 problem_id, title, difficulty
+    # 查詢與該比賽相關的所有主題 problem_id, title, difficulty
     cursor.execute("""
         SELECT p.problem_id, p.title, p.difficulty
         FROM `contest problem` cp 
@@ -222,8 +186,61 @@ def join_contest():
 
     conn.close()
   
-    # 将查询结果传递给模板
+    # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
+
+
+
+
+
+'''
+def get_contests_from_database():
+    conn = db.connection()  # Establish the database connection
+    cur = conn.cursor()
+    
+    # SQL query to fetch all contests
+    query = "SELECT contest_id, contest_name, start_time, end_time, description FROM contests"
+    cur.execute(query)
+    contests = cur.fetchall()  # Fetch all contest data
+    return contests
+
+
+def get_joined_contests(user_id):
+    conn = db.connection()
+    cur = conn.cursor()
+
+    # SQL query to check contests the user has already joined
+    query = "SELECT contest_id FROM contest_participant WHERE user_id = %s"
+    cur.execute(query, (user_id,))
+    joined_contests = cur.fetchall()
+    joined_contest_ids = [contest[0] for contest in joined_contests]  # Extract contest IDs
+    return joined_contest_ids
+
+
+@contest_bp.route('/join_contest_form', methods=['GET'])
+def show_contests():
+    user_id = session['User_id']  # Fetch the logged-in user ID
+    
+    contests = get_contests_from_database()  # Get all contests
+    joined_contests = get_joined_contests(user_id)  # Get contests user has already joined
+
+    contests_display = []
+    
+    # Format contests and check if the user has joined each one
+    for contest in contests:
+        contest_id, contest_name, start_time, end_time, description = contest
+        if contest_id in joined_contests:
+            status = "joined"
+        else:
+            status = "not_joined"
+        contests_display.append((contest_id, contest_name, start_time, end_time, description, status))
+    
+    return render_template('join_contest_form.html', contests=contests_display)
+'''
+
+
+
+
 
 
 
