@@ -22,25 +22,7 @@ def contest_create_form():
     return render_template('create_contest.html') 
 
 
-'''(contest list無頁碼版)
-#contest_list
-@contest_bp.route('/join/form')
-def contest_join(): 
-  
-    conn = db.connection()  # Get database connection
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest")
-    contests = cursor.fetchall()
-
-    # close db conn
-    conn.close()
-
-    # 渲染 join_contest.html 
-    return render_template('join_contest_form.html', contests=contests)
 '''
-
-
 @contest_bp.route('/join/form')
 def contest_join():    
     conn = db.connection()  # Get database connection
@@ -88,6 +70,58 @@ def contest_join():
     total_pages = (total_contests + per_page - 1) // per_page  # 計算總頁數
     
     return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
+'''
+
+
+@contest_bp.route('/join/form')
+def contest_join():    
+    conn = db.connection()  # Get database connection
+    cursor = conn.cursor()
+
+    # 使用者 ID，假設已經有登入系統並且 session 中有 user_id
+    user_id = session['User_id']
+    
+    # 從請求中取得頁碼，預設為第一頁
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # 每頁顯示的比賽數量
+
+    offset = (page - 1) * per_page  # 計算目前頁的起始位置
+
+    # 獲取總比賽數
+    total_contests_query = "SELECT COUNT(*) FROM contest"
+    cursor.execute(total_contests_query)
+    total_contests = cursor.fetchone()[0]
+
+    # 查詢比賽資料
+    query = """
+    SELECT contest_id, contest_name, start_date, end_date, description, type 
+    FROM contest 
+    ORDER BY contest_id DESC
+    LIMIT %s OFFSET %s
+    """
+    
+    cursor.execute(query, (per_page, offset))
+    contests = cursor.fetchall()
+
+    # 查詢該用戶參加過的比賽
+    cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
+    joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
+
+    conn.close()
+
+    # 添加參加狀態到 contests 中
+    contests_with_status = []
+    for contest in contests:
+        contest_id = contest[0]
+        if contest_id in joined_contests:
+            contests_with_status.append((*contest, "joined"))
+        else:
+            contests_with_status.append((*contest, "not_joined"))
+
+    total_pages = (total_contests + per_page - 1) // per_page
+    
+    return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages)
+
 
 
 '''OK
@@ -145,6 +179,7 @@ def join_contest():
 '''
 
 
+
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
@@ -188,58 +223,6 @@ def join_contest():
   
     # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
-
-
-
-
-
-'''
-def get_contests_from_database():
-    conn = db.connection()  # Establish the database connection
-    cur = conn.cursor()
-    
-    # SQL query to fetch all contests
-    query = "SELECT contest_id, contest_name, start_time, end_time, description FROM contests"
-    cur.execute(query)
-    contests = cur.fetchall()  # Fetch all contest data
-    return contests
-
-
-def get_joined_contests(user_id):
-    conn = db.connection()
-    cur = conn.cursor()
-
-    # SQL query to check contests the user has already joined
-    query = "SELECT contest_id FROM contest_participant WHERE user_id = %s"
-    cur.execute(query, (user_id,))
-    joined_contests = cur.fetchall()
-    joined_contest_ids = [contest[0] for contest in joined_contests]  # Extract contest IDs
-    return joined_contest_ids
-
-
-@contest_bp.route('/join_contest_form', methods=['GET'])
-def show_contests():
-    user_id = session['User_id']  # Fetch the logged-in user ID
-    
-    contests = get_contests_from_database()  # Get all contests
-    joined_contests = get_joined_contests(user_id)  # Get contests user has already joined
-
-    contests_display = []
-    
-    # Format contests and check if the user has joined each one
-    for contest in contests:
-        contest_id, contest_name, start_time, end_time, description = contest
-        if contest_id in joined_contests:
-            status = "joined"
-        else:
-            status = "not_joined"
-        contests_display.append((contest_id, contest_name, start_time, end_time, description, status))
-    
-    return render_template('join_contest_form.html', contests=contests_display)
-'''
-
-
-
 
 
 

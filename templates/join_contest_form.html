@@ -29,9 +29,9 @@
             font-size: 16px;
             margin-bottom: 10px;
         }
-        .join-button {
-            background-color: #4CAF50;
-            color: white;
+        .join-button {  
+            background-color: green;
+            color: white;          
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
@@ -44,6 +44,11 @@
         .competition-details {
             flex: 2;
             padding-left: 150px;
+        }
+        
+        .btn-purple {
+            background-color: purple;
+            color: white;
         }
     </style>
 
@@ -127,16 +132,22 @@
             {% for contest in contests %}
             <div class="competition-box">                
                 <div class="competition-info">
-                    <div class="title">{{contest[1]}}</div>
-                    <div class="description">{{contest[4]}}</div>
+                    <div class="title">{{ contest[1] }}</div>
+                    <div class="description">{{ contest[4] }}</div>
                     <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
-                        <button type="submit" class="join-button">加入比賽</button>
+                        {% if contest[6] == "joined" %}
+                            <!-- 如果已經加入比賽，按鈕變紫色並且顯示"繼續完成比賽" -->
+                            <button type="submit" class="join-button btn btn-purple">繼續完成比賽</button>
+                        {% else %}
+                            <!-- 否則顯示加入比賽按鈕 -->
+                            <button type="submit" class="join-button btn">加入比賽</button>
+                        {% endif %}
                     </form>
                 </div>
                 <div class="competition-details">
                     <p>參加人數：100</p>
-                    <p>開始時間：{{contest[2]}}</p>
+                    <p>開始時間：{{ contest[2] }}</p>
                 </div>               
             </div>            
             {% endfor %}
