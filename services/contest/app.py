@@ -1,5 +1,5 @@
 # 匯入Blueprint模組
-from flask import request, render_template, jsonify, json, redirect, url_for, flash
+from flask import request, render_template, jsonify, json, redirect, url_for, flash, session
 import sqlite3
 from flask import Blueprint
 
@@ -78,7 +78,7 @@ def contest_join():
 
 @contest_bp.route('/join/form')
 def contest_join():
-    #contest_id = request.form['contest_id']#**
+    #contest_id = request.form['contest_id'] #**
     #user_id = request.form['user_id']  # **这里假定前端表单中有包含user_id的信息，或者从session中获取当前登录用户的user_id
     conn = db.connection()  # Get database connection
     cursor = conn.cursor()
@@ -124,64 +124,26 @@ def contest_join():
     return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
 
 
-'''
+'''OK
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
-    contest_id = request.form['contest_id']
+    contest_id = request.form.get('contest_id')
+    #user_id = request.form.get('user_id')  # **假设用户ID以某种方式（如表单或会话）传递
+
+    #**
+    #if not contest_id or not user_id:
+        #flash('Missing contest ID or user ID.', 'error')
+        #return redirect(url_for('display_page'))  # 修改为适当的重定向
+
     conn = db.connection()
     cursor = conn.cursor()
 
-    # 查詢比賽名稱、開始時間和結束時間
-    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
-    result = cursor.fetchone()
-    conn.close()
-
-    if result is None:
-        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
-
-    contest_name = result[0]
-    start_time = result[1]
-    end_time = result[2]
-
-    # 將查詢結果傳遞給模板
-    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time)
-'''
-
-'''
-@contest_bp.route('/join', methods=['POST'])
-def join_contest():
-    contest_id = request.form['contest_id']
-    conn = db.connection()
-    cursor = conn.cursor()
-
-    # 查詢比賽名稱、開始時間和結束時間
-    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
-    result = cursor.fetchone()
-
-    if result is None:
-        conn.close()
-        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
-
-    contest_name = result[0]
-    start_time = result[1]
-    end_time = result[2]
-
-    # 查詢與該比賽相關的所有題目 problem_id
-    cursor.execute("SELECT problem_id FROM `contest problem` WHERE contest_id = %s", (contest_id,))
-    problems = cursor.fetchall()
-
-    conn.close()
-  
-    # 將查詢結果傳遞給模板
-    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
-'''
-
-
-@contest_bp.route('/join', methods=['POST'])
-def join_contest():
-    contest_id = request.form['contest_id']
-    conn = db.connection()
-    cursor = conn.cursor()
+    # **检查该用户是否已加入比赛
+    #cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
+    #if cursor.fetchone():
+        #flash('You have already joined this contest.', 'info')
+        #conn.close()
+        #return redirect(url_for('display_page'))  # 修改为适当的重定向    
 
     # 查詢比賽名稱、開始時間和結束時間
     cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
@@ -204,14 +166,64 @@ def join_contest():
     """, (contest_id,))
     problems = cursor.fetchall()
 
+    # 加入比赛
+    #cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id)) #**
+    #conn.commit() #**
     conn.close()
+
+    #flash('You have successfully joined the contest.', 'success')
+    #return redirect(url_for('display_page'))  # 修改为适当的重定向
   
     # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
+'''
 
 
+@contest_bp.route('/join', methods=['POST'])
+def join_contest():
+    contest_id = request.form['contest_id']
+    # 假设你已经在用户登录时获取了用户的 user_id
+    user_id = session['User_id']
+    
+    conn = db.connection()
+    cursor = conn.cursor()
 
+    # 检查用户是否已经参加过这个比赛
+    cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
+    if cursor.fetchone():
+        conn.close()
+        return "您已经参加过这个比赛了"  # 如果用户已经参加过比赛，可以返回提示信息或重定向到其他页面
 
+    # 向 contest participant 表中插入参赛记录
+    insert_query = "INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)"
+    cursor.execute(insert_query, (contest_id, user_id))
+    conn.commit()
+
+    # 查询比赛名称、开始时间和结束时间
+    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
+    result = cursor.fetchone()
+
+    if result is None:
+        conn.close()
+        return "比赛不存在", 404  # 如果查不到数据，返回错误信息
+
+    contest_name = result[0]
+    start_time = result[1]
+    end_time = result[2]
+
+    # 查询与该比赛相关的所有题目 problem_id, title, difficulty
+    cursor.execute("""
+        SELECT p.problem_id, p.title, p.difficulty
+        FROM `contest problem` cp 
+        JOIN `problem` p ON cp.problem_id = p.problem_id 
+        WHERE cp.contest_id = %s
+    """, (contest_id,))
+    problems = cursor.fetchall()
+
+    conn.close()
+  
+    # 将查询结果传递给模板
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
 
 
 
