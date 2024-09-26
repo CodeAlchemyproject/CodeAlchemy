@@ -84,7 +84,6 @@ def contest_join():
     # 從請求中取得頁碼，預設為第一頁
     page = request.args.get('page', 1, type=int)
     per_page = 10  # 每頁顯示的比賽數量
-
     offset = (page - 1) * per_page  # 計算目前頁的起始位置
 
     # 獲取總比賽數
@@ -107,18 +106,29 @@ def contest_join():
     cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
     joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
 
-    conn.close()
+    # 查詢每個比賽的參加人數
+    contest_participants_query = """
+    SELECT contest_id, COUNT(user_id) 
+    FROM `contest participant` 
+    GROUP BY contest_id
+    """
+    cursor.execute(contest_participants_query)
+    contest_participants = cursor.fetchall()
 
-    # 添加參加狀態到 contests 中
+    # 將比賽ID對應到參加人數
+    contest_participants_dict = {row[0]: row[1] for row in contest_participants}    
+
+    # **添加參加狀態到 contests 中，並將參加人數也加上
     contests_with_status = []
     for contest in contests:
         contest_id = contest[0]
-        if contest_id in joined_contests:
-            contests_with_status.append((*contest, "joined"))
-        else:
-            contests_with_status.append((*contest, "not_joined"))
+        participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
+        status = "joined" if contest_id in joined_contests else "not_joined"
+        contests_with_status.append((*contest, status, participant_count))
 
     total_pages = (total_contests + per_page - 1) // per_page
+
+    conn.close()
     
     return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages)
 

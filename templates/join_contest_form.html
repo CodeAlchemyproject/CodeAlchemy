@@ -31,6 +31,7 @@
         }
         .join-button {  
             background-color: green;
+            font-weight: bolder;
             color: white;          
             padding: 10px 20px;
             border: none;
@@ -48,6 +49,7 @@
         
         .btn-purple {
             background-color: purple;
+            font-weight: bolder;
             color: white;
         }
     </style>
@@ -146,7 +148,8 @@
                     </form>
                 </div>
                 <div class="competition-details">
-                    <p>參加人數：100</p>
+                    <!-- 顯示從資料庫查詢的參加人數 -->
+                    <p>參加人數：{{ contest[7] }}</p>
                     <p>開始時間：{{ contest[2] }}</p>
                 </div>               
             </div>            
