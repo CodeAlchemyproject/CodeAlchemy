@@ -217,7 +217,6 @@ def ZeroJudge_submit(file_name, number):
     newResult = []  # 初始化 newResult 變數
 
     try:
-        s = ChromeDriverManager().install()
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -225,7 +224,7 @@ def ZeroJudge_submit(file_name, number):
         chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
         chrome_options.add_argument("disable-infobars")
 
-        driver = webdriver.Chrome(options=chrome_options , service=s)
+        driver = webdriver.Chrome(options=chrome_options)
         print(driver)
         driver.maximize_window()
         wait_max = 10
