@@ -108,41 +108,39 @@ def contest_join():
     cursor.execute(query, (per_page, offset))
     contests = cursor.fetchall()
 
-    if user_id:  # 如果使用者已登入
-        # 查詢該用戶參加過的比賽
-        cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
-        joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
+    # 查詢每個比賽的參加人數
+    contest_participants_query = """
+    SELECT contest_id, COUNT(user_id) 
+    FROM `contest participant` 
+    GROUP BY contest_id
+    """
+    cursor.execute(contest_participants_query)
+    contest_participants = cursor.fetchall()
 
-        # 查詢每個比賽的參加人數
-        contest_participants_query = """
-        SELECT contest_id, COUNT(user_id) 
-        FROM `contest participant` 
-        GROUP BY contest_id
-        """
-        cursor.execute(contest_participants_query)
-        contest_participants = cursor.fetchall()
+    # 將比賽ID對應到參加人數
+    contest_participants_dict = {row[0]: row[1] for row in contest_participants}
 
-        # 將比賽ID對應到參加人數
-        contest_participants_dict = {row[0]: row[1] for row in contest_participants}
-
-        # 添加參加狀態到 contests 中，並將參加人數也加上
-        contests_with_status = []
-        for contest in contests:
-            contest_id = contest[0]
-            participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
+    # 添加參加狀態到 contests 中
+    contests_with_status = []
+    for contest in contests:
+        contest_id = contest[0]
+        participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
+        if user_id:  # 如果使用者已登入
+            # 查詢該用戶參加過的比賽
+            cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
+            joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
             status = "joined" if contest_id in joined_contests else "not_joined"
-            contests_with_status.append((*contest, status, participant_count))
+        else:  # 如果使用者未登入
+            status = "not_joined"
 
-    else:  # 如果使用者未登入
-        # 不需要處理使用者參加過的比賽
-        # 將參加狀態設為 "not_joined"，參加人數設為 0
-        contests_with_status = [(contest[0], contest[1], contest[2], contest[3], contest[4], contest[5], "not_joined", 0) for contest in contests]
+        contests_with_status.append((*contest, status, participant_count))
 
     total_pages = (total_contests + per_page - 1) // per_page
 
     conn.close()
     
     return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages)
+
 
 
 
