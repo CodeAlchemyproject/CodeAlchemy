@@ -1,5 +1,5 @@
 # 匯入Blueprint模組
-from flask import request, render_template, jsonify, json, redirect, session
+from flask import request, render_template, jsonify, json, redirect, session , url_for
 import sqlite3
 from flask import Blueprint
 from flask_login import current_user
@@ -190,10 +190,9 @@ def join_contest():
 
 
 
-@contest_bp.route('/join', methods=['POST'])
+@contest_bp.route('/join', methods=["POST"])
 def join_contest():
     contest_id = request.form['contest_id']
-    # 假設你已經在使用者登入時取得了使用者的 user_id
     user_id = session['User_id']
     
     conn = db.connection()
@@ -207,6 +206,27 @@ def join_contest():
     if not already_joined:
         cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
         conn.commit()
+
+    conn.close()
+    
+    # 使用 redirect 重導向到顯示結果的 GET 路由
+    return redirect(url_for('contest_bp.contest_info', contest_id=contest_id))
+
+
+@contest_bp.route('/contest/<contest_id>', methods=["GET"])
+def contest_info(contest_id):
+    user_id = session['User_id']
+    
+    conn = db.connection()
+    cursor = conn.cursor()
+
+    # 檢查該使用者是否有參加該比賽
+    cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
+    joined = cursor.fetchone()
+
+    if not joined:
+        conn.close()
+        return "你未參加該比賽，無法查看相關資訊", 403  # 如果使用者未參加該比賽，返回 403 錯誤
 
     # 查詢比賽名稱、開始時間和結束時間
     cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
@@ -230,12 +250,9 @@ def join_contest():
     problems = cursor.fetchall()
 
     conn.close()
-  
+
     # 將查詢結果傳遞給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
-
-
-
 
 @contest_bp.route('/get_problems')
 def get_problems():
