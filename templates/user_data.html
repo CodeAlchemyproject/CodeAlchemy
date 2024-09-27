@@ -144,7 +144,11 @@
                                 <td>{{each_answer_record[5]}}</td>
                                 <td>{{each_answer_record[6]}}</td>
                                 <td>{{each_answer_record[7]}}</td>
-                                <td>{{each_answer_record[3]}}</td>
+                                {% if each_answer_record[3] == 'Accepted'%}
+                                <td><p class="text-success">通過</p></td>
+                                {% else %}
+                                <td><p class="text-danger">未通過</p></td>
+                                {% endif %}
                             </tr>
                             {% endfor %}
                         </tbody>
