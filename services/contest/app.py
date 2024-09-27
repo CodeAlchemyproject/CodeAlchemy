@@ -1,5 +1,5 @@
 # 匯入Blueprint模組
-from flask import request, render_template, jsonify, json, redirect, session
+from flask import request, render_template, jsonify, json, redirect, session, url_for, flash
 import sqlite3
 from flask import Blueprint
 from flask_login import current_user
@@ -19,6 +19,12 @@ contest_bp = Blueprint('contest_bp', __name__)
 #contest create form
 @contest_bp.route('/create/form')
 def contest_create_form():
+    # 檢查使用者是否已登入
+    user_id = session.get('User_id')
+    if not user_id:
+        # 如果未登入，渲染 login.html 並顯示提示訊息
+        #flash('請先登入以參加比賽', 'warning')  # 可以顯示提示訊息
+        return render_template('login.html')  # 直接渲染登入頁面
     return render_template('create_contest.html') 
 
 
@@ -74,13 +80,13 @@ def contest_join():
 
 
 @contest_bp.route('/join/form')
-def contest_join():    
-    conn = db.connection()  # Get database connection
+def contest_join():
+    conn = db.connection()  # 獲取資料庫連接
     cursor = conn.cursor()
 
-    # 使用者 ID，假設已經有登入系統並且 session 中有 user_id
-    user_id = session['User_id']
-    
+    # 檢查使用者 ID 是否存在於 session 中
+    user_id = session.get('User_id')
+
     # 從請求中取得頁碼，預設為第一頁
     page = request.args.get('page', 1, type=int)
     per_page = 10  # 每頁顯示的比賽數量
@@ -102,29 +108,35 @@ def contest_join():
     cursor.execute(query, (per_page, offset))
     contests = cursor.fetchall()
 
-    # 查詢該用戶參加過的比賽
-    cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
-    joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
+    if user_id:  # 如果使用者已登入
+        # 查詢該用戶參加過的比賽
+        cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
+        joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
 
-    # 查詢每個比賽的參加人數
-    contest_participants_query = """
-    SELECT contest_id, COUNT(user_id) 
-    FROM `contest participant` 
-    GROUP BY contest_id
-    """
-    cursor.execute(contest_participants_query)
-    contest_participants = cursor.fetchall()
+        # 查詢每個比賽的參加人數
+        contest_participants_query = """
+        SELECT contest_id, COUNT(user_id) 
+        FROM `contest participant` 
+        GROUP BY contest_id
+        """
+        cursor.execute(contest_participants_query)
+        contest_participants = cursor.fetchall()
 
-    # 將比賽ID對應到參加人數
-    contest_participants_dict = {row[0]: row[1] for row in contest_participants}    
+        # 將比賽ID對應到參加人數
+        contest_participants_dict = {row[0]: row[1] for row in contest_participants}
 
-    # **添加參加狀態到 contests 中，並將參加人數也加上
-    contests_with_status = []
-    for contest in contests:
-        contest_id = contest[0]
-        participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
-        status = "joined" if contest_id in joined_contests else "not_joined"
-        contests_with_status.append((*contest, status, participant_count))
+        # 添加參加狀態到 contests 中，並將參加人數也加上
+        contests_with_status = []
+        for contest in contests:
+            contest_id = contest[0]
+            participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
+            status = "joined" if contest_id in joined_contests else "not_joined"
+            contests_with_status.append((*contest, status, participant_count))
+
+    else:  # 如果使用者未登入
+        # 不需要處理使用者參加過的比賽
+        # 將參加狀態設為 "not_joined"，參加人數設為 0
+        contests_with_status = [(contest[0], contest[1], contest[2], contest[3], contest[4], contest[5], "not_joined", 0) for contest in contests]
 
     total_pages = (total_contests + per_page - 1) // per_page
 
@@ -193,9 +205,14 @@ def join_contest():
 @contest_bp.route('/join', methods=['POST'])
 def join_contest():
     contest_id = request.form['contest_id']
-    # 假設你已經在使用者登入時取得了使用者的 user_id
-    user_id = session['User_id']
     
+    # 檢查使用者 ID 是否存在於 session 中
+    user_id = session.get('User_id')
+    
+    # 如果使用者未登入，渲染 login.html
+    if not user_id:
+        return render_template('login.html')
+
     conn = db.connection()
     cursor = conn.cursor()
 
@@ -221,8 +238,8 @@ def join_contest():
     end_time = result[2]
 
     # 查詢與該比賽相關的所有主題 problem_id, title, difficulty
-    cursor.execute("""
-        SELECT p.problem_id, p.title, p.difficulty
+    cursor.execute(""" 
+        SELECT p.problem_id, p.title, p.difficulty 
         FROM `contest problem` cp 
         JOIN `problem` p ON cp.problem_id = p.problem_id 
         WHERE cp.contest_id = %s
