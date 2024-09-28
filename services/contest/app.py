@@ -268,7 +268,7 @@ def contest_info(contest_id):
     conn.close()
 
     # 將查詢結果傳遞給模板
-    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems, contest_id=contest_id)
 
 @contest_bp.route('/get_problems')
 def get_problems():
