@@ -69,6 +69,7 @@ def index():
 
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+
 #題目
 @app.route('/problem',methods=['GET','POST'])
 def problem():
@@ -126,8 +127,8 @@ def problem():
         if type == 'upload':
             # 執行 SQL 插入語句
             db.edit_data(f'''
-                INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
-                VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
+                #INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
+                #VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
             ''')
             
         return jsonify({'result':result,
@@ -143,6 +144,114 @@ def problem():
         video_id = problem_data[0][9]
         like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
         return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like,video_id=video_id)
+
+
+
+
+####################
+'''
+# 題目
+@app.route('/problem', methods=['GET', 'POST'])
+def problem():
+    if request.method == "POST":
+        # 從傳入封包取得資料
+        data = request.form
+        type = data.get('type')
+        problem_id = data.get('problem_id')
+        language = data.get('language')
+        code = data.get('code')
+
+        # 使用 request.args 來獲取 URL 參數（source 和 contest_id）
+        source = request.args.get('source')  # URL 查詢參數
+        contest_id = request.args.get('contest_id')  # URL 查詢參數
+
+        # 確認是否收到正確的參數
+        print(f"POST request - Source: {source}, Contest ID: {contest_id}")
+        print(request.url)  # 打印完整的 URL，確認你是否得到了正確的地址
+        print(request.args)  # 打印出 URL 參數
+
+        # 定義語言對應的文件擴展名字典
+        file_extensions = {
+            'python': '.py',
+            'text/x-java': '.java',
+            'text/x-csrc': '.c',
+            'text/x-c++src': '.cpp'
+        }
+
+        # 生成 6 位數的亂碼
+        random_code = str(uuid.uuid4())[:6]
+        while not random_code[0].isalpha():
+            random_code = str(uuid.uuid4())[:6]
+        # 構建文件路徑
+        file_name = f'{random_code}_{problem_id}{file_extensions[language]}'
+        file_path = os.path.join('./source', file_name)
+
+        # 確保目錄存在
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        # 寫入內容到文件中
+        with open(file_path, 'w') as file:
+            file.write(code)
+
+        if "ZJ" in file_name:
+            score = ZeroJudge_submit(file_name, session['User_id'])
+        elif "TIOJ" in file_name:
+            score = TIOJ_submit(file_name, str(session['User_id']))
+
+        result = False
+        message = "測試失敗"
+        run_time = 0
+        memory = 0
+        ensue = "Rejected"
+
+        if score and score[2] == 'Accepted':
+            result = True
+            message = "測試成功"
+            run_time = score[3]
+            memory = score[4]
+            ensue = score[2]
+
+        # 如果是從比賽中提交
+        if source == 'contest' and contest_id:
+            # 插入記錄到 contest_submission 資料表
+            db.edit_data(f'''
+                #INSERT INTO `contest submission` (contest_id, user_id, problem_id, language, run_time, memory, is_finish, finish_time)
+                #VALUES ('{contest_id}', '{session['User_id']}', '{problem_id}', '{language}', '{run_time}', '{memory}', '{ensue}', '{score[-1]}')
+            #''')
+       # else:
+            # 插入記錄到 answer record 資料表
+            #db.edit_data(f'''
+                #INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
+                #VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
+            #''')
+
+        #return jsonify({
+            #'result': result,
+            #'message': message,
+            #'run_time': run_time,
+            #'memory': memory
+        #})
+    #else:
+        # GET 請求處理邏輯
+        
+        #problem_id = request.args.get('problem_id', type=str)
+        #source = request.args.get('source')
+        #contest_id = request.args.get('contest_id')
+
+        #sql_problem_command = f"SELECT * FROM problem WHERE problem_id='{problem_id}'"
+        #problem_data = db.get_data(sql_problem_command)
+
+        #example_inputs = problem_data[0][5].split('|||')
+        #example_outputs = problem_data[0][6].split('|||')
+        #video_id = problem_data[0][9]
+        #like = db.get_data(f"SELECT IFNULL(COUNT(*), 0) FROM collection WHERE problem_id='{problem_id}'")[0][0]
+
+        #return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id)
+###################
+
+
+
+
 
 @app.route('/answer_record',methods=['GET'])
 def answer_record():
