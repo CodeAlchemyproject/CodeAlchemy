@@ -1,8 +1,8 @@
 # 匯入Blueprint模組
-from flask import request, render_template, jsonify, json, redirect, session, url_for, flash
+from flask import request, render_template, jsonify, json, redirect, session, url_for
 import sqlite3
 from flask import Blueprint
-from flask_login import current_user
+from datetime import datetime
 
 
 from utils import db
@@ -14,6 +14,16 @@ contest_bp = Blueprint('contest_bp', __name__)
 #--------------------------
 # 在contest服務藍圖加入路由
 #--------------------------
+
+# 註冊一個全域模板變數來獲取當前時間
+#@contest_bp.context_processor
+#def inject_current_time():
+#    return dict(current_time=datetime.now())
+
+# 自定義 datetime 轉換過濾器
+#@contest_bp.template_filter('to_datetime')
+#def to_datetime(date_string, format='%Y-%m-%d %H:%M:%S'):
+#    return datetime.strptime(date_string, format)
 
 
 #contest create form
@@ -27,56 +37,6 @@ def contest_create_form():
         return render_template('login.html')  # 直接渲染登入頁面
     return render_template('create_contest.html') 
 
-
-'''
-@contest_bp.route('/join/form')
-def contest_join():    
-    conn = db.connection()  # Get database connection
-    cursor = conn.cursor()
-
-    # **使用者 ID，假設已經有登入系統並且 session 中有 user_id
-    user_id = session['User_id']
-    
-    # 從請求中取得頁碼，預設為第一頁
-    page = request.args.get('page', 1, type=int)
-    per_page = 10  # 每頁顯示的比賽數量
-
-    offset = (page - 1) * per_page  # 計算目前頁的起始位置
-
-    total_contests_query = "SELECT COUNT(*) FROM contest"
-    cursor.execute(total_contests_query)
-    total_contests = cursor.fetchone()[0]  # 取得總比賽數
-
-    # 修改這個查詢以包含適當的ORDER BY子句，以確保資料是按照開始時間的降序傳回的
-    query = """
-    SELECT contest_id, contest_name, start_date, end_date, description, type 
-    FROM contest 
-    ORDER BY contest_id DESC  -- 这里假设你希望根据start_date字段排序
-    LIMIT %s OFFSET %s
-    """
-    
-    cursor.execute(query, (per_page, offset))
-    contests = cursor.fetchall()
-
-    # **查詢該用戶參加過的比賽
-    cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
-    joined_contests = set([row[0] for row in cursor.fetchall()])  # 得到參加過的比賽 ID 集合
-    
-    conn.close()
-
-    # **添加參加狀態到 contests 中
-    contests_with_status = []
-    for contest in contests:
-        contest_id = contest[0]
-        if contest_id in joined_contests:
-            contests_with_status.append((*contest, "joined"))
-        else:
-            contests_with_status.append((*contest, "not_joined"))
-
-    total_pages = (total_contests + per_page - 1) // per_page  # 計算總頁數
-    
-    return render_template('join_contest_form.html', contests=contests, page=page, total_pages=total_pages)
-'''
 
 
 @contest_bp.route('/join/form')
