@@ -5,7 +5,6 @@ import math
 import uuid
 import re
 from crawler.submit import ZeroJudge_submit,TIOJ_submit
-from urllib.parse import urlparse, parse_qs
 #-----------------------
 
 # 匯入各個服務藍圖
