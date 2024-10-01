@@ -75,7 +75,28 @@ def problem():
                 return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag,video_id=video_id)
     except:
         return redirect('/')
-
+@manager_bp.route('/user', methods=['GET','POST'])
+def user():
+    try:
+        if session["Permission"]=='Manager':
+            if request.method=='GET':
+                sql_command=f"SELECT * FROM `113-CodeAlchemy`.user;"
+                user_data=db.get_data(sql_command)
+                return render_template('./manager_user.html',data=user_data )
+            else:
+                new_data=request.form
+                new_data=list(new_data.items())
+                sql_command=f"SELECT * FROM `113-CodeAlchemy`.user;"
+                user_data=db.get_data(sql_command)
+                for i in range(len(new_data)):
+                    if new_data[i][1]!=user_data[i][6]:
+                        sql_command=f"UPDATE `113-CodeAlchemy`.`user` SET `permission` = '{new_data[i][1]}' WHERE (`user_id` = '{user_data[i][0]}');"
+                        db.edit_data(sql_command)
+                sql_command=f"SELECT * FROM `113-CodeAlchemy`.user;"
+                user_data=db.get_data(sql_command)
+                return render_template('./manager_user.html',data=user_data)
+    except:
+        return redirect('/')
 @manager_bp.route('/delete',methods=['GET'])
 def delete():
     try:

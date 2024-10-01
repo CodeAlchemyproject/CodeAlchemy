@@ -98,7 +98,7 @@
                     </thead>
                     <tbody>
                         {% for problem in problems %}
-                            <tr onclick="window.location='/problem?problem_id={{problem[0]}}'">
+                        <tr onclick="window.location='/problem?problem_id={{problem[0]}}&source=contest&contest_id={{ contest_id }}'">
                                 <th scope="row">{{ loop.index }}</th>
                                 <td>{{ problem[0] }}</td> <!-- 假設 problem 以元組形式返回 -->
                                 <td>{{ problem[1] }}</td> <!-- 假設 problem 以元組形式返回 -->
