@@ -268,9 +268,6 @@ def problem():
 ###################
 
 
-
-
-
 @app.route('/answer_record',methods=['GET'])
 def answer_record():
     problem_id = request.args.get('problem_id',type=str)

@@ -42,6 +42,13 @@
         .text-end {
             text-align: right;
         }
+        .circle-img {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 0.5px solid black; /* 添加黑色外框 */
+            object-fit: cover;  /* 確保圖片不變形 */
+        }
     </style>
 </head>
 
@@ -94,15 +101,21 @@
                             <th scope="col">題目編號</th>
                             <th scope="col">題目名稱</th>
                             <th scope="col">難度</th>
+                            <th scope="col" style="text-align: center; vertical-align: middle;">finish</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for problem in problems %}
-                        <tr onclick="window.location='/problem?problem_id={{problem[0]}}&source=contest&contest_id={{ contest_id }}'">
+                        <tr {% if problem[3] == 0 %} onclick="window.location='/problem?problem_id={{problem[0]}}&source=contest&contest_id={{ contest_id }}'" {% else %} style="cursor: not-allowed;" {% endif %}>
                                 <th scope="row">{{ loop.index }}</th>
                                 <td>{{ problem[0] }}</td> <!-- 假設 problem 以元組形式返回 -->
                                 <td>{{ problem[1] }}</td> <!-- 假設 problem 以元組形式返回 -->
-                                <td>{{ problem[2] }}</td> <!-- 難度暫時寫為 ‘未知’，你可以依據需求做調整 -->
+                                <td>{{ problem[2] }}</td> 
+                                <td style="text-align: center; vertical-align: middle;">
+                                    {% if problem[3] == 1 %}
+                                        <span style="color: #238d23;"><strong>✔ 已完成</strong></span>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% else %}
                             <tr>
@@ -118,23 +131,31 @@
                 <table class="table mt-3">
                     <thead>
                         <tr>
-                            <th scope="col">排名</th>
-                            <th scope="col">使用者</th>
-                            <th scope="col">分數</th>
+                            <th scope="col">名次</th>
+                            <th scope="col">用戶名稱</th>
+                            <th scope="col">正確答題數</th>
+                            <th scope="col">正確率</th>
+                            <th scope="col">平均執行時間</th>
+                            <th scope="col">平均使用記憶體</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody>                        
+                        {% for item in data %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td>使用者1</td>
-                            <td>100</td>
+                            <td>{{ loop.index }}</td>
+                            <td>{% if item[2] is none %}
+                                <img src="./static/user_icon/default.png" class="circle-img">
+                            {% else %}
+                                <img src="{{ item[2] }}" class="circle-img">
+                            {% endif %}
+                            {{ item[1] }}
+                            </td>
+                            <td>{{ item[3] }}</td>
+                            <td>{{ item[4] }}</td> 
+                            <td>{{ item[5] }}ms</td> 
+                            <td>{{ item[6] }}MB</td> 
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>使用者2</td>
-                            <td>90</td>
-                        </tr>
-                        <!-- 在這裡添加更多排名 -->
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

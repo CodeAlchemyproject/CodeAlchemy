@@ -256,19 +256,48 @@ def contest_info(contest_id):
     start_time = result[1]
     end_time = result[2]
 
-    # 查詢與該比賽相關的所有主題 problem_id, title, difficulty
+    # 查詢與該比賽相關的所有題目及是否完成
     cursor.execute(""" 
-        SELECT p.problem_id, p.title, p.difficulty 
+        SELECT p.problem_id, p.title, p.difficulty,
+               CASE 
+                   WHEN EXISTS (SELECT 1 FROM `contest submission` cs 
+                                WHERE cs.problem_id = p.problem_id AND cs.contest_id = %s 
+                                AND cs.user_id = %s AND cs.is_finish = 'Accepted') 
+                   THEN 1 
+                   ELSE 0 
+               END AS is_finished
         FROM `contest problem` cp 
         JOIN `problem` p ON cp.problem_id = p.problem_id 
         WHERE cp.contest_id = %s
-    """, (contest_id,))
+    """, (contest_id, user_id, contest_id))
     problems = cursor.fetchall()
+
+    #Contest Rank
+    data=db.get_data(f'''
+        SELECT 
+            cp.user_id, 
+            u.user_name,
+            u.image,  -- 取得使用者的圖片
+            SUM(CASE WHEN cs.is_finish = 'Accepted' THEN 1 ELSE 0 END) AS 正確答題數,
+            CONCAT(ROUND(SUM(CASE WHEN cs.is_finish = 'Accepted' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2), '%') AS 答題正確率,
+            ROUND(AVG(cs.run_time), 2) AS 平均執行時間,
+            ROUND(AVG(cs.memory), 2) AS 平均使用記憶體
+        FROM 
+            `113-CodeAlchemy`.`contest submission` AS cs
+        LEFT JOIN 
+            `contest participant` AS cp ON cp.user_id = cs.user_id
+        LEFT JOIN 
+            `user` AS u ON cp.user_id = u.user_id
+        GROUP BY 
+            cp.user_id, u.user_name, u.image
+        ORDER BY 
+            正確答題數 DESC;''')
 
     conn.close()
 
     # 將查詢結果傳遞給模板
-    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems, contest_id=contest_id)
+    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems, contest_id=contest_id, data=data)
+
 
 @contest_bp.route('/get_problems')
 def get_problems():
@@ -304,44 +333,6 @@ def get_problems():
         'per_page': per_page
     })
 
-
-
-'''
-#create contest
-@contest_bp.route('/create', methods=['POST'])
-def contest_create():
-    try:
-        # 從表單獲取數據
-        contest_name = request.form['contest_name']
-        start_date = request.form['startTime']
-        end_date = request.form['endTime']
-        description = request.form['description']
-        type = request.form['description']
-        #print("Received contest name:", contest_name)
-        #print("Received description:", description)
-
-
-        # 資料庫連接
-        connection = db.connection()
-
-        # 新增到contest資料表
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
-                    (contest_name, start_date, end_date, description, type))
-
-        # 提交更改
-        connection.commit()
-
-        # 若成功取得數據，導向create_contest_success.html
-        return render_template('create_contest_success.html')
-    except Exception as e:
-        # 若發生錯誤，導向失敗頁面
-        print("Error occurred:", e)
-        #return render_template('login.html', error=str(e))
-    finally:
-        # 關閉資料庫連接
-        connection.close()
-'''
 
 
 # 路由：處理創建比賽的POST請求
