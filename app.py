@@ -106,8 +106,10 @@ def problem():
         if "ZJ" in file_name:
             # 調用 ZeroJudge_submit 函數進行題目提交
             score = ZeroJudge_submit(file_name,session['User_id'])
+            
             if score and score[2]=='Accepted':
                 print()
+                
 
         elif "TIOJ" in file_name:
             run_time=0
@@ -127,8 +129,8 @@ def problem():
         if type == 'upload':
             # 執行 SQL 插入語句
             db.edit_data(f'''
-                #INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
-                #VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
+                INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
+                VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
             ''')
             
         return jsonify({'result':result,

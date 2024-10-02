@@ -223,7 +223,7 @@ def ZeroJudge_submit(file_name, number):
         chrome_options.add_extension('./crawler/extension/reCAPTCHA_extension.crx')
         chrome_options.add_extension('./crawler/extension/vpn_extension_Touch.crx')
         chrome_options.add_argument("disable-infobars")
-
+        os.environ["WDM_ARCH"] = "64" 
         driver = webdriver.Chrome(options=chrome_options)
         print(driver)
         driver.maximize_window()
