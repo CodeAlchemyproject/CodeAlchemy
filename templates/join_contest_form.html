@@ -143,7 +143,10 @@
                     <div class="description">{{ contest[4] }}</div>
                     <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
-                        {% if contest[6] == "joined" %}
+                        {% if contest[2] > current_time %}
+                        <!-- 如果比賽尚未開始，按鈕變成灰色背景，並顯示深灰色文字的"尚未開始" -->
+                        <button type="button" class="join-button btn" style="background-color: #8d8d8d; color: #000000;" disabled>尚未開始</button>
+                        {% elif contest[6] == "joined" %}
                         <!-- 如果已經加入比賽，按鈕變紫色並且顯示"繼續完成比賽" -->
                         <button type="submit" class="join-button btn btn-purple">繼續完成比賽</button>
                         {% else %}

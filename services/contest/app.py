@@ -44,6 +44,8 @@ def contest_join():
     conn = db.connection()  # 獲取資料庫連接
     cursor = conn.cursor()
 
+    current_time = datetime.now()  # 獲取當前時間
+
     # 檢查使用者 ID 是否存在於 session 中
     user_id = session.get('User_id')
 
@@ -99,7 +101,7 @@ def contest_join():
 
     conn.close()
     
-    return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages)
+    return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages, current_time=current_time)
 
 
 
