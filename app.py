@@ -106,7 +106,7 @@ def problem():
         if "ZJ" in file_name:
             # 調用 ZeroJudge_submit 函數進行題目提交
             score = ZeroJudge_submit(file_name,session['User_id'])
-            
+
             if score and score[2]=='Accepted':
                 print()
                 
@@ -150,7 +150,6 @@ def problem():
 
 
 
-####################
 '''
 # 題目
 @app.route('/problem', methods=['GET', 'POST'])

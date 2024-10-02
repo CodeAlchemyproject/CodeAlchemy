@@ -384,22 +384,3 @@ def ZeroJudge_submit(file_name, number):
         if driver:
             driver.quit()
         return newResult
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-       
-
-
