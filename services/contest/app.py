@@ -39,9 +39,6 @@ def contest_create_form():
 
 
 
-
-from datetime import datetime
-
 @contest_bp.route('/join/form')
 def contest_join():
     conn = db.connection()  # 獲取資料庫連接
