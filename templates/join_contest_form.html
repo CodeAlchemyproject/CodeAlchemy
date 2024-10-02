@@ -160,9 +160,13 @@
                 </div>
                 <div class="competition-details">
                     <!-- 顯示從資料庫查詢的參加人數 -->
-                    <p>參加人數：{{ contest[7] }}</p>
-                    <p>開始時間：{{ contest[2] }}</p>
-                    <p>結束時間：{{ contest[3] }}</p>
+                    <p style="margin-bottom: 10px;">參加人數：{{ contest[7] }}</p>
+                    <p style="margin-bottom: 10px;">開始時間：{{ contest[2] }}</p>
+                    <p style="margin-bottom: 10px;">結束時間：{{ contest[3] }}</p>
+                    <!-- 顯示倒數天數、比賽進行中或已結束 -->
+                    <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>  <!-- 這裡顯示 time_status -->
+
+                    <!--<p style="color: red; margin-bottom: 0;">比賽已結束</strong></p>-->
                 </div>
             </div>
             {% endfor %}

@@ -39,6 +39,9 @@ def contest_create_form():
 
 
 
+
+from datetime import datetime
+
 @contest_bp.route('/join/form')
 def contest_join():
     conn = db.connection()  # 獲取資料庫連接
@@ -86,79 +89,44 @@ def contest_join():
     contests_with_status = []
     for contest in contests:
         contest_id = contest[0]
-        participant_count = contest_participants_dict.get(contest_id, 0)  # 取得該比賽的參加人數
-        if user_id:  # 如果使用者已登入
-            # 查詢該用戶參加過的比賽
+        participant_count = contest_participants_dict.get(contest_id, 0)
+
+        # 使用從資料庫讀取的 start_date 和 end_date，這已經是 datetime 物件
+        start_date = contest[2]  # 假設這是 datetime 物件
+        end_date = contest[3]    # 假設這是 datetime 物件
+        
+        # 計算剩餘天數
+        remaining_days = (end_date - current_time).days
+
+        if start_date > current_time:  # 比賽尚未開始
+            countdown_days = (start_date - current_time).days
+            countdown_hours = (start_date - current_time).seconds // 3600
+            if countdown_days >= 1:
+                time_status = f"倒數 {countdown_days} 天開始"
+            elif countdown_days < 1:
+                if countdown_hours >= 1:
+                    time_status = f"倒數 {countdown_hours} 小時開始"
+                else:
+                    time_status = "即將開始"
+        elif remaining_days > 0:  # 比賽進行中
+            time_status = f"剩餘天數: {remaining_days} 天"
+        else:  # 比賽已結束
+            time_status = "比賽已結束"
+
+        if user_id:
             cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
-            joined_contests = set([row[0] for row in cursor.fetchall()])  # 取得該使用者參加過的比賽 ID
+            joined_contests = set([row[0] for row in cursor.fetchall()])
             status = "joined" if contest_id in joined_contests else "not_joined"
-        else:  # 如果使用者未登入
+        else:
             status = "not_joined"
 
-        contests_with_status.append((*contest, status, participant_count))
+        contests_with_status.append((*contest, status, participant_count, time_status))
 
     total_pages = (total_contests + per_page - 1) // per_page
 
     conn.close()
     
     return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages, current_time=current_time)
-
-
-
-
-'''OK
-@contest_bp.route('/join', methods=['POST'])
-def join_contest():
-    contest_id = request.form.get('contest_id')
-    #user_id = request.form.get('user_id')  # **假设用户ID以某种方式（如表单或会话）传递
-
-    #**
-    #if not contest_id or not user_id:
-        #flash('Missing contest ID or user ID.', 'error')
-        #return redirect(url_for('display_page'))  # 修改为适当的重定向
-
-    conn = db.connection()
-    cursor = conn.cursor()
-
-    # **检查该用户是否已加入比赛
-    #cursor.execute("SELECT * FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
-    #if cursor.fetchone():
-        #flash('You have already joined this contest.', 'info')
-        #conn.close()
-        #return redirect(url_for('display_page'))  # 修改为适当的重定向    
-
-    # 查詢比賽名稱、開始時間和結束時間
-    cursor.execute("SELECT contest_name, start_date, end_date FROM contest WHERE contest_id = %s", (contest_id,))
-    result = cursor.fetchone()
-
-    if result is None:
-        conn.close()
-        return "比賽不存在", 404  # 如果查不到資料，返回錯誤訊息
-
-    contest_name = result[0]
-    start_time = result[1]
-    end_time = result[2]
-
-    # 查詢與該比賽相關的所有題目 problem_id, title, difficulty
-    cursor.execute("""
-        SELECT p.problem_id, p.title, p.difficulty
-        FROM `contest problem` cp 
-        JOIN `problem` p ON cp.problem_id = p.problem_id 
-        WHERE cp.contest_id = %s
-    """, (contest_id,))
-    problems = cursor.fetchall()
-
-    # 加入比赛
-    #cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id)) #**
-    #conn.commit() #**
-    conn.close()
-
-    #flash('You have successfully joined the contest.', 'success')
-    #return redirect(url_for('display_page'))  # 修改为适当的重定向
-  
-    # 將查詢結果傳遞給模板
-    return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems)
-'''
 
 
 
