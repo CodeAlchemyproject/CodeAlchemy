@@ -152,6 +152,14 @@ def problem():
 
 ####################
 '''
+# 確認使用者有登入
+@app.route('/get_user_id', methods=['GET'])
+def get_user_id():
+    if 'User_id' in session:
+        return jsonify({'user_id': session['User_id']})
+    else:
+        return jsonify({'error': 'User not logged in'}), 401
+    
 # 題目
 @app.route('/problem', methods=['GET', 'POST'])
 def problem():
@@ -163,8 +171,6 @@ def problem():
         code = data.get('code')
         source = data.get('source')
         contest_id = data.get('contest_id')
-        print(source)
-        print(contest_id)
         ###########################
         # 獲取完整的 URL
         # full_url = request.form.get('fullUrl')  # 使用 request.form 獲取資料
@@ -205,7 +211,7 @@ def problem():
         # 寫入內容到文件中
         with open(file_path, 'w') as file:
             file.write(code)
-
+            
         if "ZJ" in file_name:
             score = ZeroJudge_submit(file_name, session['User_id'])
         elif "TIOJ" in file_name:
