@@ -47,11 +47,15 @@ def contest_join():
     # 獲取總比賽數的查詢條件
     total_contests_query = "SELECT COUNT(*) FROM contest"
 
-    # 用來篩選比賽狀態的條件
+    # 用來篩選比賽狀態和類型的條件
     where_clause = []
     params = []  # 存放參數
 
-    if state == 'not_started':
+    if state == 'public':
+        where_clause.append("type = 'public'")
+    elif state == 'private':
+        where_clause.append("type = 'private'")
+    elif state == 'not_started':
         where_clause.append("start_date > %s")
         params.append(current_time)  # 將 current_time 加入參數
     elif state == 'ongoing':
@@ -60,6 +64,7 @@ def contest_join():
     elif state == 'finished':
         where_clause.append("end_date <= %s")
         params.append(current_time)  # 將 current_time 加入參數
+
 
     # 構建完整的 SQL 查詢
     if where_clause:
@@ -85,6 +90,7 @@ def contest_join():
     # 執行查詢比賽資料
     cursor.execute(contest_query, tuple(params + [per_page, offset]))
     contests = cursor.fetchall()
+
 
     # 查詢每個比賽的參加人數
     contest_participants_query = """
@@ -147,6 +153,8 @@ def contest_join():
             no_contest_message = "沒有正在進行中的比賽"
         elif state == 'not_started':
             no_contest_message = "沒有尚未開始的比賽"
+        elif contest_type:
+            no_contest_message = "沒有符合條件的比賽"
 
     total_pages = (total_contests + per_page - 1) // per_page
 
@@ -156,6 +164,7 @@ def contest_join():
                            page=page, total_pages=total_pages, 
                            current_time=current_time, 
                            no_contest_message=no_contest_message)
+
 
 
 

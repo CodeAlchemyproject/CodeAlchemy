@@ -72,10 +72,10 @@
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>設定</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        value="?page={{ page }}&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
                         公開</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        value="?page={{ page }}&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
                         私人</option>
                 </select>
             </div>
@@ -134,7 +134,13 @@
             {% for contest in contests %}
             <div class="competition-box">
                 <div class="competition-info">
-                    <div class="title">{{ contest[1] }}</div>
+                    <div class="title">
+                        {% if contest[5] == 'private' %}
+                        <!-- 顯示黃色小鎖符號 -->
+                        <span style="color: yellow;">🔒</span>
+                        {% endif %}
+                        {{ contest[1] }}
+                    </div>
                     <div class="description">{{ contest[4] }}</div>
                     <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
@@ -160,8 +166,6 @@
                     <p style="margin-bottom: 10px;">結束時間：{{ contest[3] }}</p>
                     <!-- 顯示倒數天數、比賽進行中或已結束 -->
                     <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>  <!-- 這裡顯示 time_status -->
-
-                    <!--<p style="color: red; margin-bottom: 0;">比賽已結束</strong></p>-->
                 </div>
             </div>
             {% endfor %}
