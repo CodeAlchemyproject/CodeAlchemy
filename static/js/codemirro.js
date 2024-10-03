@@ -51,11 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
                 userId = response.user_id;
-                console.log("使用者 ID: ", userId);
+                // console.log("使用者 ID: ", userId);
                 // 你可以在這裡使用 userId 或將其保存到全局變數中以供後續使用
-            } else {
-                console.error("無法獲取使用者 ID，請先登入");
-                // alert("請先登入");
             }
         }
     };
