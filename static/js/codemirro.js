@@ -36,131 +36,173 @@ selectLanguageButton.addEventListener('click', function (event) {
         editor.setOption('mode', mode);
     }
 });
-// 監聽按鈕點擊事件
-document.getElementById("test_btn").addEventListener("click", function () {
-    var type = 'test';  // 預設是 test
-    var urlParams = new URLSearchParams(window.location.search);
-    var source = urlParams.get('source');
-    var contestId = urlParams.get('contest_id');
-    var problem_id = document.getElementById('problem_id').innerHTML;
-    var language = mode;
 
-    // 獲取編輯器中的程式碼
-    var code = editor.getValue();
+// 定義變數以保存使用者 ID
+var userId = null;
+document.addEventListener("DOMContentLoaded", function () {
 
-    // 構建表單數據
-    var formData = new FormData();
-
-    // 根據 URL 判斷是否來自 contest
-    if (source === 'contest' && contestId) {
-        formData.append("contest_id", contestId);
-    }
-
-    formData.append("type", type);
-    formData.append("problem_id", problem_id);
-    formData.append("language", language);
-    formData.append("code", code);
-    formData.append("source", source)
-
-    // 發送 POST 請求到伺服器
+    // 發送請求以獲取使用者 ID
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/problem");
-    xhr.send(formData);
+    xhr.open("GET", "/get_user_id", true);  // 這裡的路徑是之前後端定義的接口
+    xhr.send();
 
-    // 顯示 loading 視窗
-    //showLoading();
-
-    // 處理伺服器返回的數據
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                hideLoading();  // 隱藏 loading 視窗
-                var responseData = JSON.parse(xhr.responseText);
-                // 提取返回的數據
-                var result = responseData.result;
-                var message = responseData.message;
-                var runTime = responseData.run_time;
-                var memory = responseData.memory;
-
-                // 根據測試結果更新頁面內容
-                if (result) {
-                    // 測試通過，顯示 passed 狀態的信息
-                    document.getElementById("passed_status").innerText = "測試通過";
-                    document.getElementById("passed_run_time").innerText = "執行時間：" + runTime + "毫秒";
-                    document.getElementById("passed_memory").innerText = "記憶體使用量：" + memory + "MB";
-                    document.getElementById("passed").style.display = "block"; // 顯示 passed 的信息
-                } else {
-                    // 測試失敗，顯示 failed 狀態的信息
-                    document.getElementById("failed_status").innerText = "測試失敗";
-                    document.getElementById("failed_error_reason").innerText = "錯誤原因：" + message;
-                    document.getElementById("failed").style.display = "block"; // 顯示 failed 的信息
-                }
+                var response = JSON.parse(xhr.responseText);
+                userId = response.user_id;
+                console.log("使用者 ID: ", userId);
+                // 你可以在這裡使用 userId 或將其保存到全局變數中以供後續使用
             } else {
-                // 請求失敗，輸出錯誤信息到控制台
-                console.error('請求失敗');
+                console.error("無法獲取使用者 ID，請先登入");
+                // alert("請先登入");
             }
         }
     };
 });
+// 監聽按鈕點擊事件
+document.getElementById("test_btn").addEventListener("click", function () {
+    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+
+    if (!userId) {
+        // 如果沒有取得 userId，顯示登入提示模態視窗
+        loginModal.show();
+        return;  // 阻止請求發送
+    } else {
+        // 如果已登入，顯示測試中的模態視窗
+        loadingModal.show();
+
+        // 這裡可以繼續執行你的後續請求邏輯
+        var type = 'test';  // 預設是 test
+        var urlParams = new URLSearchParams(window.location.search);
+        var source = urlParams.get('source');
+        var contestId = urlParams.get('contest_id');
+        var problem_id = document.getElementById('problem_id').innerHTML;
+        var language = mode;
+
+        // 獲取編輯器中的程式碼
+        var code = editor.getValue();
+
+        // 構建表單數據
+        var formData = new FormData();
+        formData.append("user_id", userId);  // 添加使用者 ID
+        formData.append("type", type);
+        formData.append("problem_id", problem_id);
+        formData.append("language", language);
+        formData.append("code", code);
+        formData.append("source", source);
+
+        // 發送 POST 請求到伺服器
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/problem");
+        xhr.send(formData);
+
+        // 處理伺服器返回的數據
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    loadingModal.hide();  // 請求完成後隱藏 loading 視窗
+                    var responseData = JSON.parse(xhr.responseText);
+                    var result = responseData.result;
+                    var message = responseData.message;
+                    var runTime = responseData.run_time;
+                    var memory = responseData.memory;
+
+                    if (result) {
+                        document.getElementById("passed_status").innerText = "測試通過";
+                        document.getElementById("passed_run_time").innerText = "執行時間：" + runTime + "毫秒";
+                        document.getElementById("passed_memory").innerText = "記憶體使用量：" + memory + "MB";
+                        document.getElementById("passed").style.display = "block";
+                    } else {
+                        document.getElementById("failed_status").innerText = "測試失敗";
+                        document.getElementById("failed_error_reason").innerText = "錯誤原因：" + message;
+                        document.getElementById("failed").style.display = "block";
+                    }
+                } else {
+                    console.error('請求失敗');
+                }
+            }
+        };
+    }
+});
 //上傳
 // 監聽按鈕點擊事件
 document.getElementById("upload_btn").addEventListener("click", function () {
-    var type = 'upload';
-    var urlParams = new URLSearchParams(window.location.search);
-    var problem_id = document.getElementById('problem_id').innerHTML;
-    var language = mode;
-    var source = urlParams.get('source');
-    var contestId = urlParams.get('contest_id')
-    // 獲取編輯器中的程式碼
-    var code = editor.getValue();
-    // 構建表單數據
-    var formData = new FormData();
-    // 根據 URL 判斷是否來自 contest
-    if (source === 'contest' && contestId) {
-        formData.append("contest_id", contestId);
+    // 初始化模態視窗
+    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+
+    // 檢查使用者是否已登入
+    if (!userId) {
+        loginModal.show(); // 如果沒有取得 userId，顯示登入提示模態視窗
+        return;  // 阻止請求發送
     }
 
+    // 如果已登入，顯示測試中的模態視窗
+    loadingModal.show();
+
+    // 獲取必要的參數
+    var type = 'upload';
+    var urlParams = new URLSearchParams(window.location.search);
+    var problem_id = document.getElementById('problem_id').innerText;
+    var language = mode;  // mode 應該是你在代碼其他地方定義的變數
+    var source = urlParams.get('source');
+    var contestId = urlParams.get('contest_id');
+    var code = editor.getValue(); // 從編輯器中獲取程式碼
+
+    // 構建表單數據
+    var formData = new FormData();
     formData.append("type", type);
     formData.append("problem_id", problem_id);
     formData.append("language", language);
     formData.append("code", code);
-    formData.append("source", source)
+    formData.append("source", source);
+
+    // 如果是來自 contest 的請求，添加 contest_id
+    if (source === 'contest' && contestId) {
+        formData.append("contest_id", contestId);
+    }
+
     // 發送 POST 請求到伺服器
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/problem");
-    xhr.send(formData);
-    // 顯示 loading 視窗
-    showLoading();
+    xhr.open("POST", "/problem", true);
 
     // 處理伺服器返回的數據
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
-                hideLoading();  // 隱藏 loading 視窗
+                // 隱藏 loading 視窗
+                loadingModal.hide();
+
+                // 處理伺服器返回的響應
                 var responseData = JSON.parse(xhr.responseText);
-                // 提取返回的數據
                 var result = responseData.result;
                 var message = responseData.message;
                 var runTime = responseData.run_time;
                 var memory = responseData.memory;
 
-                // 根據測試結果更新頁面內容
                 if (result) {
-                    // 測試通過，顯示 passed 狀態的信息
+                    // 測試通過，顯示成功信息
                     document.getElementById("passed_status").innerText = "測試通過";
                     document.getElementById("passed_run_time").innerText = "執行時間：" + runTime + "毫秒";
                     document.getElementById("passed_memory").innerText = "記憶體使用量：" + memory + "MB";
                     document.getElementById("passed").style.display = "block"; // 顯示 passed 的信息
                 } else {
-                    // 測試失敗，顯示 failed 狀態的信息
+                    // 測試失敗，顯示錯誤信息
                     document.getElementById("failed_status").innerText = "測試失敗";
                     document.getElementById("failed_error_reason").innerText = "錯誤原因：" + message;
                     document.getElementById("failed").style.display = "block"; // 顯示 failed 的信息
                 }
             } else {
-                // 請求失敗，輸出錯誤信息到控制台
-                console.error('請求失敗');
+                // 請求失敗，隱藏 loading 視窗並顯示錯誤信息
+                loadingModal.hide();
+                console.error('請求失敗，狀態碼：', xhr.status);
+                alert('提交失敗，請稍後再試。');
             }
         }
     };
+
+    // 發送表單數據
+    xhr.send(formData);
 });
