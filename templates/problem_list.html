@@ -28,15 +28,15 @@
                         All
                     </option>
                     <option
-                        value="?page={{ page }}&state=accept&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page={{ page }}&state=accept&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='accept' ) %}selected{% endif %}>
                         通過
                     </option>
                     <option
-                        value="?page={{ page }}&state=error&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page={{ page }}&state=error&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='error' ) %}selected{% endif %}>
                         錯誤
                     </option>
                     <option
-                        value="?page={{ page }}&state=none&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page={{ page }}&state=none&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='none' ) %}selected{% endif %}>
                         未做
                     </option>
                 </select>
@@ -50,15 +50,15 @@
                         All
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=ZJ&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page=1&state={{ state }}&onlinejudge=ZJ&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='ZJ' ) %}selected{% endif %}>
                         ZeroJudge
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=TIOJ&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page=1&state={{ state }}&onlinejudge=TIOJ&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='TIOJ' ) %}selected{% endif %}>
                         TIOJ
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=LeetCode&difficulty={{ difficulty }}&search={{ search }}">
+                        value="?page=1&state={{ state }}&onlinejudge=LeetCode&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='LeetCode' ) %}selected{% endif %}>
                         LeetCode
                     </option>
                 </select>
@@ -72,15 +72,15 @@
                         All
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Hard&search={{ search }}">
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Hard&search={{ search }}"{% if ( difficulty=='Hard' ) %}selected{% endif %}>
                         Hard
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&search={{ search }}">
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&search={{ search }}"{% if ( difficulty=='Normal' ) %}selected{% endif %}>
                         Middle
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&search={{ search }}">
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&search={{ search }}" {% if ( difficulty=='Easy' ) %}selected{% endif %}>
                         Easy
                     </option>
                 </select>
