@@ -94,6 +94,7 @@ def contest_join():
         
         # 計算剩餘天數
         remaining_days = (end_date - current_time).days
+        remaining_seconds = (end_date - current_time).seconds  # 剩餘的秒數
 
         if start_date > current_time:  # 比賽尚未開始
             countdown_days = (start_date - current_time).days
@@ -105,8 +106,14 @@ def contest_join():
                     time_status = f"倒數 {countdown_hours} 小時開始"
                 else:
                     time_status = "即將開始"
-        elif remaining_days > 0:  # 比賽進行中
-            time_status = f"剩餘天數: {remaining_days} 天"
+        elif remaining_days > 0 or (remaining_days == 0 and remaining_seconds > 0):  # 比賽進行中
+            if remaining_days == 0:  # 剩餘小於一天
+                current_hours = current_time.hour
+                end_hours = end_date.hour
+                remaining_hours = (end_date - current_time).seconds // 3600  # 計算剩餘小時數
+                time_status = f"比賽將在 {remaining_hours} 小時後結束"
+            else:
+                time_status = f"剩餘天數: {remaining_days} 天"
         else:  # 比賽已結束
             time_status = "比賽已結束"
 
