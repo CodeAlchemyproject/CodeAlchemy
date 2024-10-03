@@ -139,23 +139,29 @@
                             <th scope="col">平均使用記憶體</th>
                         </tr>
                     </thead>
-                    <tbody>                        
-                        {% for item in data %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{% if item[2] is none %}
-                                <img src="./static/user_icon/default.png" class="circle-img">
-                            {% else %}
-                                <img src="{{ item[2] }}" class="circle-img">
-                            {% endif %}
-                            {{ item[1] }}
-                            </td>
-                            <td>{{ item[3] }}</td>
-                            <td>{{ item[4] }}</td> 
-                            <td>{{ item[5] }}ms</td> 
-                            <td>{{ item[6] }}MB</td> 
-                        </tr>
-                        {% endfor %}
+                    <tbody>
+                        {% if data %}
+                            {% for item in data %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{% if item[2] is none %}
+                                    <img src="./static/user_icon/default.png" class="circle-img">
+                                {% else %}
+                                    <img src="{{ item[2] }}" class="circle-img">
+                                {% endif %}
+                                {{ item[1] }}
+                                </td>
+                                <td>{{ item[3] }}</td>
+                                <td>{{ item[4] }}</td> 
+                                <td>{{ item[5] }}ms</td> 
+                                <td>{{ item[6] }}MB</td> 
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">目前無參賽者</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

@@ -177,7 +177,7 @@ def contest_info(contest_id):
 
     if result is None:
         conn.close()
-        return "比赛不存在", 404  # 如果查不到數據，回傳錯誤訊息
+        return "比賽不存在", 404  # 如果查不到數據，回傳錯誤訊息
 
     contest_name = result[0]
     start_time = result[1]
@@ -199,31 +199,28 @@ def contest_info(contest_id):
     """, (contest_id, user_id, contest_id))
     problems = cursor.fetchall()
 
-    #Contest Rank
-    data=db.get_data(f'''
+    # Contest Rank 查詢
+    data = db.get_data(f'''
         SELECT 
-            cp.user_id, 
+            cs.contest_id,
             u.user_name,
-            u.image,  -- 取得使用者的圖片
+            u.image,
             SUM(CASE WHEN cs.is_finish = 'Accepted' THEN 1 ELSE 0 END) AS 正確答題數,
             CONCAT(ROUND(SUM(CASE WHEN cs.is_finish = 'Accepted' THEN 1 ELSE 0 END) / COUNT(*) * 100, 2), '%') AS 答題正確率,
             ROUND(AVG(cs.run_time), 2) AS 平均執行時間,
             ROUND(AVG(cs.memory), 2) AS 平均使用記憶體
-        FROM 
-            `113-CodeAlchemy`.`contest submission` AS cs
-        LEFT JOIN 
-            `contest participant` AS cp ON cp.user_id = cs.user_id
-        LEFT JOIN 
-            `user` AS u ON cp.user_id = u.user_id
-        GROUP BY 
-            cp.user_id, u.user_name, u.image
-        ORDER BY 
-            正確答題數 DESC;''')
+        FROM `113-CodeAlchemy`.`contest submission` cs
+        JOIN `113-CodeAlchemy`.`user` u ON cs.user_id = u.user_id
+        WHERE cs.contest_id = {contest_id}  -- 直接將 contest_id 嵌入查詢語句中
+        GROUP BY cs.contest_id, u.user_name, u.image
+        ORDER BY 正確答題數 DESC, 答題正確率 DESC, 平均執行時間, 平均使用記憶體;
+    ''')
 
     conn.close()
 
-    # 將查詢結果傳遞給模板
+    # 傳遞 contest_id 和 data 給模板
     return render_template('contest_joined.html', contest_name=contest_name, start_time=start_time, end_time=end_time, problems=problems, contest_id=contest_id, data=data)
+
 
 
 @contest_bp.route('/get_problems')
