@@ -22,21 +22,24 @@
         <div class="row mt-4">
             <div class="col-3">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>狀態</option>
+                    <option selected disabled>狀態</option>
                     <option
                         value="?page={{ page }}&state=*&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">
                         All
                     </option>
                     <option
-                        value="?page={{ page }}&state=accept&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='accept' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state=accept&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( state=='accept' ) %}selected{% endif %}>
                         通過
                     </option>
                     <option
-                        value="?page={{ page }}&state=error&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='error' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state=error&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( state=='error' ) %}selected{% endif %}>
                         錯誤
                     </option>
                     <option
-                        value="?page={{ page }}&state=none&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" {% if ( state=='none' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state=none&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( state=='none' ) %}selected{% endif %}>
                         未做
                     </option>
                 </select>
@@ -44,21 +47,24 @@
             <div class="col-3">
                 <select class="form-select" id="onlinejudge"
                     onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>OnlineJudge</option>
+                    <option selected disabled>OnlineJudge</option>
                     <option
                         value="?page=1&state={{ state }}&onlinejudge=*&difficulty={{ difficulty }}&search={{ search }}">
                         All
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=ZJ&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='ZJ' ) %}selected{% endif %}>
+                        value="?page=1&state={{ state }}&onlinejudge=ZJ&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( onlinejudge=='ZJ' ) %}selected{% endif %}>
                         ZeroJudge
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=TIOJ&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='TIOJ' ) %}selected{% endif %}>
+                        value="?page=1&state={{ state }}&onlinejudge=TIOJ&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( onlinejudge=='TIOJ' ) %}selected{% endif %}>
                         TIOJ
                     </option>
                     <option
-                        value="?page=1&state={{ state }}&onlinejudge=LeetCode&difficulty={{ difficulty }}&search={{ search }}"{% if ( onlinejudge=='LeetCode' ) %}selected{% endif %}>
+                        value="?page=1&state={{ state }}&onlinejudge=LeetCode&difficulty={{ difficulty }}&search={{ search }}"
+                        {% if ( onlinejudge=='LeetCode' ) %}selected{% endif %}>
                         LeetCode
                     </option>
                 </select>
@@ -66,21 +72,24 @@
             <div class="col-3">
                 <select class="form-select" id="difficulty"
                     onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>難度</option>
+                    <option selected disabled>難度</option>
                     <option
                         value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=*&search={{ search }}">
                         All
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Hard&search={{ search }}"{% if ( difficulty=='Hard' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Hard&search={{ search }}"
+                        {% if ( difficulty=='Hard' ) %}selected{% endif %}>
                         Hard
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&search={{ search }}"{% if ( difficulty=='Normal' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&search={{ search }}"
+                        {% if ( difficulty=='Normal' ) %}selected{% endif %}>
                         Middle
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&search={{ search }}" {% if ( difficulty=='Easy' ) %}selected{% endif %}>
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&search={{ search }}"
+                        {% if ( difficulty=='Easy' ) %}selected{% endif %}>
                         Easy
                     </option>
                 </select>
@@ -91,7 +100,8 @@
                     <input type="hidden" name="state" value="{{ state }}">
                     <input type="hidden" name="onlinejudge" value="{{ onlinejudge }}">
                     <input type="hidden" name="difficulty" value="{{ difficulty }}">
-                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search" value="{{ search }}">
+                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search"
+                        value="{{ search }}">
                 </form>
             </div>
         </div>
@@ -122,11 +132,7 @@
                     <tr onclick="window.location='./problem?problem_id={{item[0]}}&source=main'">
                         <td class="text-success">
                             {% if item['passed'] %}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-check-lg" viewBox="0 0 16 16">
-                                <path
-                                    d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z" />
-                            </svg>
+                            <span style="color: #238d23;"><strong>✔ 已完成</strong></span>
                             {% endif %}
                         </td>
                         <td>
@@ -155,8 +161,9 @@
                                         d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
                                 </svg></a></td>
                         <!-- 刪除 -->
-                        <td><a class="btn btn-danger" href="/manager/delete?problem_id={{item[0]}}" role="button"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <td><a class="btn btn-danger" href="/manager/delete?problem_id={{item[0]}}" role="button"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash" viewBox="0 0 16 16">
                                     <path
                                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                                     <path

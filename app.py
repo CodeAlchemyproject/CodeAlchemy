@@ -31,34 +31,52 @@ def index():
     onlinejudge = request.args.get('onlinejudge', '*', type=str)
     difficulty = request.args.get('difficulty', '*', type=str)
     search = request.args.get('search', '', type=str)
-    
-    condition = ' WHERE '  # where前後的空格勿動
-    sql_problem_command = 'SELECT p.*, acceptance_data.acceptance_rate FROM `113-CodeAlchemy`.problem AS p '
-    sql_problem_command += 'LEFT JOIN ('
+
+    try:
+        # 檢查使用者有沒有登入
+        user_id=session['User_id']
+        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate, MAX(state.result) AS result
+FROM `113-CodeAlchemy`.problem AS p"""
+        sql_command=f""" LEFT JOIN (
+    SELECT problem_id, user_id, result
+    FROM `113-CodeAlchemy`.`answer record` WHERE user_id = '{user_id}'
+GROUP BY problem_id, user_id, result"""
+        sql_problem_command+=sql_command
+        sql_problem_command+=""")AS state ON p.problem_id = state.problem_id"""
+    except:
+        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate
+FROM `113-CodeAlchemy`.problem AS p"""
+
     sql_problem_command += """
-        SELECT 
-            ar.problem_id,
-            CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.result) * 100, 2), '%') AS acceptance_rate
-        FROM 
-            `113-CodeAlchemy`.`answer record` AS ar
-        GROUP BY 
-            ar.problem_id
-    ) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
-    
+        LEFT JOIN (
+    SELECT ar.problem_id,
+        CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.result) * 100, 2), '%') AS acceptance_rate
+    FROM `113-CodeAlchemy`.`answer record` AS ar
+    GROUP BY ar.problem_id
+) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
+
+    condition = ' WHERE '  # where前後的空格勿動
     if search != '':
         condition += f'p.title LIKE "%{search}%" AND '
     if onlinejudge != '*':
         condition += f'SUBSTRING_INDEX(p.problem_id, "-", 1) = "{onlinejudge}" AND '
     if difficulty != '*':
         condition += f'p.difficulty = "{difficulty}" AND '
+    if state == 'accept':
+        condition += f'state.result = "Accepted" AND '
+    elif state == 'error':
+        condition += f'state.result IS NOT NULL AND state.result != "Accepted" AND '
+    elif state == 'none':
+        condition += f'state.result IS NULL AND '
+
     if condition == ' WHERE ':
         condition = ''
     else:
         condition = condition[:condition.rfind(' AND ')]
-    
-    sql_problem_command = sql_problem_command + condition
+    sql_problem_command = sql_problem_command + condition + ' GROUP BY p.problem_id;'
+    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
-
+    # print(data)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -66,7 +84,6 @@ def index():
     start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
-
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 
