@@ -181,8 +181,22 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // 取得當前時間並格式化為 datetime-local 格式
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0'); // 月份從0開始
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+
+        // 設定 datetime-local 的最小值
+        const minDateTime = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+        document.getElementById('startTime').setAttribute('min', minDateTime);
+        document.getElementById('endTime').setAttribute('min', minDateTime);
+
+        //按下創建比賽後
         $(document).ready(function () {
-            const selectedProblems = []; // 存储已选择的题目ID
+            const selectedProblems = []; // 儲存已選擇的題目ID
 
             function simplifyContent(content, maxLength) {
                 if (content.length > maxLength) {
@@ -210,9 +224,9 @@
                             var title = problem[1]; 
                             var content = simplifyContent(problem[2], 100); 
                             var difficulty = problem[3]; 
-                            var isAdded = selectedProblems.includes(problem_id); // 检查当前题目是否已被添加
+                            var isAdded = selectedProblems.includes(problem_id); // 檢查當前題目是否已被添加
                             var addButtonClass = isAdded ? 'btn-success disabled' : 'btn-primary';
-                            var addButtonText = isAdded ? '<i class="fas fa-check"></i>' : 'Add'; // 如果已添加，显示勾选符号
+                            var addButtonText = isAdded ? '<i class="fas fa-check"></i>' : 'Add'; // 如果已新增，顯示勾選符號
                             var row = `<tr>
                                 <td>${problem_id}</td>
                                 <td>${title}</td>
@@ -261,8 +275,8 @@
                 var difficulty = $(this).data('difficulty');
                 var addButton = $(this);
 
-                if (!selectedProblems.includes(problemId)) { // 检查以避免重复添加
-                    selectedProblems.push(problemId); // 将当前题目ID添加到已选择题目数组
+                if (!selectedProblems.includes(problemId)) { // 檢查以避免重複添加
+                    selectedProblems.push(problemId); // 將目前題目ID新增至已選擇題目數組
 
                     var row = `<tr class="added-question" data-problem-id="${problemId}">
                          <td></td>                         
