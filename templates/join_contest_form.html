@@ -70,13 +70,13 @@
         <div class="row mt-4">
             <div class="col-3">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>狀態</option>
+                    <option selected>設定</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        public</option>
+                        value="?page={{ page }}&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        公開</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        private</option>
+                        value="?page={{ page }}&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        私人</option>
                 </select>
             </div>
             <div class="col-3">
@@ -101,26 +101,14 @@
                 </select>
             </div>
             <div class="col-3">
-                <select class="form-select" id="difficulty"
-                    onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>難度</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
-                        All</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
-                        Hard</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
-                        Middle</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
-                        Easy</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
-                        N/A</option>
+                <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
+                    <option selected>狀態</option>
+                    <option value="?page={{ page }}&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}">尚未開始</option>
+                    <option value="?page={{ page }}&state=ongoing&onlinejudge={{onlinejudge}}&search={{search}}">進行中</option>
+                    <option value="?page={{ page }}&state=finished&onlinejudge={{onlinejudge}}&search={{search}}">已結束</option>
                 </select>
             </div>
+            
             <div class="col-3">
                 <form class="d-flex"
                     action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
@@ -131,6 +119,13 @@
                     <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
                 </form>
             </div>
+            
+            {% if no_contest_message %}
+                <div class="text-center mt-3">
+                    <strong>{{ no_contest_message }}</strong>
+                </div>
+            {% endif %}
+            
         </div>
         <!-- ------- -->
         <!-- 題目列表 -->
@@ -139,7 +134,13 @@
             {% for contest in contests %}
             <div class="competition-box">
                 <div class="competition-info">
-                    <div class="title">{{ contest[1] }}</div>
+                    <div class="title">
+                        {% if contest[5] == 'private' %}
+                        <!-- 顯示黃色小鎖符號 -->
+                        <span style="color: yellow;">🔒</span>
+                        {% endif %}
+                        {{ contest[1] }}
+                    </div>
                     <div class="description">{{ contest[4] }}</div>
                     <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
@@ -165,8 +166,6 @@
                     <p style="margin-bottom: 10px;">結束時間：{{ contest[3] }}</p>
                     <!-- 顯示倒數天數、比賽進行中或已結束 -->
                     <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>  <!-- 這裡顯示 time_status -->
-
-                    <!--<p style="color: red; margin-bottom: 0;">比賽已結束</strong></p>-->
                 </div>
             </div>
             {% endfor %}

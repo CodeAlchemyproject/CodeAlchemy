@@ -15,17 +15,6 @@ contest_bp = Blueprint('contest_bp', __name__)
 # 在contest服務藍圖加入路由
 #--------------------------
 
-# 註冊一個全域模板變數來獲取當前時間
-#@contest_bp.context_processor
-#def inject_current_time():
-#    return dict(current_time=datetime.now())
-
-# 自定義 datetime 轉換過濾器
-#@contest_bp.template_filter('to_datetime')
-#def to_datetime(date_string, format='%Y-%m-%d %H:%M:%S'):
-#    return datetime.strptime(date_string, format)
-
-
 #contest create form
 @contest_bp.route('/create/form')
 def contest_create_form():
@@ -49,26 +38,59 @@ def contest_join():
     # 檢查使用者 ID 是否存在於 session 中
     user_id = session.get('User_id')
 
-    # 從請求中取得頁碼，預設為第一頁
-    page = request.args.get('page', 1, type=int)
+    # 獲取 URL 中的篩選條件
+    state = request.args.get('state', None)  # 獲取比賽狀態參數，默認為 None
+    page = request.args.get('page', 1, type=int)  # 獲取頁碼，默認為第 1 頁
     per_page = 10  # 每頁顯示的比賽數量
     offset = (page - 1) * per_page  # 計算目前頁的起始位置
 
-    # 獲取總比賽數
+    # 獲取總比賽數的查詢條件
     total_contests_query = "SELECT COUNT(*) FROM contest"
-    cursor.execute(total_contests_query)
+
+    # 用來篩選比賽狀態和類型的條件
+    where_clause = []
+    params = []  # 存放參數
+
+    if state == 'public':
+        where_clause.append("type = 'public'")
+    elif state == 'private':
+        where_clause.append("type = 'private'")
+    elif state == 'not_started':
+        where_clause.append("start_date > %s")
+        params.append(current_time)  # 將 current_time 加入參數
+    elif state == 'ongoing':
+        where_clause.append("start_date <= %s AND end_date > %s")
+        params.extend([current_time, current_time])  # 兩次使用 current_time
+    elif state == 'finished':
+        where_clause.append("end_date <= %s")
+        params.append(current_time)  # 將 current_time 加入參數
+
+
+    # 構建完整的 SQL 查詢
+    if where_clause:
+        total_contests_query += " WHERE " + " AND ".join(where_clause)
+
+    # 執行查詢，計算比賽數量
+    cursor.execute(total_contests_query, tuple(params))  # 只在有參數時傳入
     total_contests = cursor.fetchone()[0]
 
-    # 查詢比賽資料
-    query = """
-    SELECT contest_id, contest_name, start_date, end_date, description, type 
-    FROM contest 
-    ORDER BY contest_id DESC
-    LIMIT %s OFFSET %s
+    # 查詢比賽資料的查詢條件
+    contest_query = """
+    SELECT contest_id, contest_name, start_date, end_date, description, type
+    FROM contest
     """
-    
-    cursor.execute(query, (per_page, offset))
+
+    # 添加篩選條件
+    if where_clause:
+        contest_query += " WHERE " + " AND ".join(where_clause)
+
+    # 排序及分頁
+    contest_query += " ORDER BY contest_id DESC LIMIT %s OFFSET %s"
+
+    # 執行查詢比賽資料
+    cursor.execute(contest_query, tuple(params + [per_page, offset]))
     contests = cursor.fetchall()
+
 
     # 查詢每個比賽的參加人數
     contest_participants_query = """
@@ -108,8 +130,6 @@ def contest_join():
                     time_status = "即將開始"
         elif remaining_days > 0 or (remaining_days == 0 and remaining_seconds > 0):  # 比賽進行中
             if remaining_days == 0:  # 剩餘小於一天
-                current_hours = current_time.hour
-                end_hours = end_date.hour
                 remaining_hours = (end_date - current_time).seconds // 3600  # 計算剩餘小時數
                 time_status = f"比賽將在 {remaining_hours} 小時後結束"
             else:
@@ -126,11 +146,27 @@ def contest_join():
 
         contests_with_status.append((*contest, status, participant_count, time_status))
 
+    # 檢查是否有比賽資料並添加相應的訊息
+    no_contest_message = None
+    if not contests:
+        if state == 'ongoing':
+            no_contest_message = "沒有正在進行中的比賽"
+        elif state == 'not_started':
+            no_contest_message = "沒有尚未開始的比賽"
+        elif contest_type:
+            no_contest_message = "沒有符合條件的比賽"
+
     total_pages = (total_contests + per_page - 1) // per_page
 
     conn.close()
-    
-    return render_template('join_contest_form.html', contests=contests_with_status, page=page, total_pages=total_pages, current_time=current_time)
+
+    return render_template('join_contest_form.html', contests=contests_with_status, 
+                           page=page, total_pages=total_pages, 
+                           current_time=current_time, 
+                           no_contest_message=no_contest_message)
+
+
+
 
 
 
@@ -276,17 +312,17 @@ def create_contest():
         start_date = request.form.get('startTime')
         end_date = request.form.get('endTime')
         description = request.form.get('description')
-        type = request.form.get('description')
+        contest_type = request.form.get('state')  # 修改此行來獲取下拉選單的值
         
         # 列印接收到的資料以調試
         print("Received contest_name:", contest_name)
         print("Received start_date:", start_date)
         print("Received end_date:", end_date)
         print("Received description:", description)
-        print("Received type:", description)
+        print("Received type:", contest_type)  # 修改此行以匹配 contest_type
 
         # 確保所有必要的欄位都被正確接收
-        if not contest_name or not start_date or not end_date or not description or not type:
+        if not contest_name or not start_date or not end_date or not description or not contest_type:
             raise ValueError("All contest fields must be provided")
 
         # 從表單資料中解析題目ID
@@ -304,7 +340,7 @@ def create_contest():
         # 新增到contest資料表
         cursor = connection.cursor()
         cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
-                       (contest_name, start_date, end_date, description, type))
+                       (contest_name, start_date, end_date, description, contest_type))
         
         # 取得新建立的contest_id
         contest_id = cursor.lastrowid
@@ -324,6 +360,7 @@ def create_contest():
         # 確保關閉資料庫連接
         if connection:
             connection.close()
+
 
 # 輔助函數：將 contest_id 和 problem_id 關聯起來
 def connect_contest_and_problem(connection, contest_id, problem_id):
