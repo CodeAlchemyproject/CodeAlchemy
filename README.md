@@ -1,8 +1,8 @@
 # CodeAlchemy
 
 ## 1.首次安裝
-  執行setup.bat
-  在/CodeAlchemy下新增config.py
+### 執行setup.bat
+### 在/CodeAlchemy下新增config.py
   ```python
   GOOGLE_CELENT_ID=''
   GOOGLE_CELENT_SERRET=''
