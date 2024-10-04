@@ -1,5 +1,5 @@
 # CodeAlchemy
-<div align=center><img width="150" height="150" src="./static/imgs/icon.svg"></div>  
+![image](./static/img/icon.svg#w150h150)
 ## 說明
 希望能打造一個開放、包容、高效的程式設計學習平台，為所有程式設計學習者提供一個共同成長的空間，平台將提供各種程式語言和技術的高品質教材和練習題，讓學習者能夠提升程式能力，並透過Dolos系統來創新出更多不同的程式解法。
 ## 1.首次安裝
