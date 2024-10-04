@@ -35,12 +35,16 @@ def index():
     try:
         # 檢查使用者有沒有登入
         user_id=session['User_id']
-        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate, MAX(state.result) AS result
+        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate, state.result
 FROM `113-CodeAlchemy`.problem AS p"""
         sql_command=f""" LEFT JOIN (
-    SELECT problem_id, user_id, result
+    SELECT problem_id, user_id, CASE 
+            WHEN MAX(CASE WHEN result = 'Accepted' THEN 1 ELSE 0 END) = 1 
+            THEN 'Accepted'
+            ELSE MAX(result) -- 如果沒有 'Accepted'，返回其他最高的 result
+        END AS result
     FROM `113-CodeAlchemy`.`answer record` WHERE user_id = '{user_id}'
-GROUP BY problem_id, user_id, result"""
+GROUP BY problem_id, user_id"""
         sql_problem_command+=sql_command
         sql_problem_command+=""")AS state ON p.problem_id = state.problem_id"""
     except:
@@ -62,18 +66,22 @@ FROM `113-CodeAlchemy`.problem AS p"""
         condition += f'SUBSTRING_INDEX(p.problem_id, "-", 1) = "{onlinejudge}" AND '
     if difficulty != '*':
         condition += f'p.difficulty = "{difficulty}" AND '
-    if state == 'accept':
-        condition += f'state.result = "Accepted" AND '
-    elif state == 'error':
-        condition += f'state.result IS NOT NULL AND state.result != "Accepted" AND '
-    elif state == 'none':
-        condition += f'state.result IS NULL AND '
+    try:
+        user_id=session['User_id']
+        if state == 'accept':
+            condition += f'state.result = "Accepted" AND '
+        elif state == 'error':
+            condition += f'state.result IS NOT NULL AND state.result != "Accepted" AND '
+        elif state == 'none':
+            condition += f'state.result IS NULL AND '
+    except:
+        pass
 
     if condition == ' WHERE ':
         condition = ''
     else:
         condition = condition[:condition.rfind(' AND ')]
-    sql_problem_command = sql_problem_command + condition + ' GROUP BY p.problem_id;'
+    sql_problem_command = sql_problem_command + condition
     print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # print(data)
