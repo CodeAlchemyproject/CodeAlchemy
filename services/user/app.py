@@ -13,13 +13,13 @@ user_bp = Blueprint('user', __name__)
 # 在user服務藍圖加入路由
 #--------------------------
 
-# 获取当前脚本所在的目录路径
+# 獲取當前的目錄路徑
 current_directory = os.path.dirname(os.path.realpath(__file__))
-# 获取项目根目录路径
+# 獲取項目的跟目錄路徑
 root_directory = os.path.abspath(os.path.join(current_directory, '..', '..'))
-# 构建相对路径
+# 建立相對路徑
 UPLOAD_FOLDER = os.path.join(root_directory, 'static', 'user_icon')
-ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 # 定義函式來檢查文件擴展名
 def allowed_file(filename):
