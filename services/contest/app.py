@@ -153,7 +153,7 @@ def contest_join():
             no_contest_message = "沒有正在進行中的比賽"
         elif state == 'not_started':
             no_contest_message = "沒有尚未開始的比賽"
-        elif contest_type:
+        elif state == 'contest_type':
             no_contest_message = "沒有符合條件的比賽"
 
     total_pages = (total_contests + per_page - 1) // per_page
