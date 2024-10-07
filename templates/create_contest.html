@@ -59,6 +59,22 @@
                                     </div>
                                 </div>
 
+                                <!--當比賽類型為private時出現-->
+                                <div class="form-group row mb-3" id="passwordField" style="display: none;">
+                                    <label for="contest_password" class="col-sm-3 col-form-label">比賽密碼:</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="contest_password" name="contest_password">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group row mb-3" id="confirmPasswordField" style="display: none;">
+                                    <label for="confirm_password" class="col-sm-3 col-form-label">確認密碼:</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                    </div>
+                                </div>
+                                <!--當比賽類型為private時出現-->
+                                
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3 col-form-label">語言:</label>
                                     <div class="col-sm-9">
@@ -205,6 +221,30 @@
                 }
                 return content;
             }
+
+            /*****/
+            // 監聽比賽類型選擇框的變化
+            $('#state').change(function() {
+                var selectedValue = $(this).val();
+                if(selectedValue === "private") {
+                    $('#passwordField').show();
+                    $('#confirmPasswordField').show();
+                } else {
+                    $('#passwordField').hide();
+                    $('#confirmPasswordField').hide();
+                }
+            });
+
+            // 提交表單前進行密碼一致性檢查
+            //$('#competitionForm').submit(function (e) {
+            //    var password = $('#contest_password').val();
+            //    var confirmPassword = $('#confirm_password').val();
+            //    if($('#state').val() === "private" && password !== confirmPassword) {
+            //        alert("密碼和確認密碼不匹配");
+            //        e.preventDefault();  // 阻止表單提交
+            //    }
+            //});
+            /*****/
 
             // 載入並顯示問題清單和分頁控件
             function loadTable(page) {
