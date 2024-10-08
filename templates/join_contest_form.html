@@ -240,8 +240,7 @@
         if (contestType === 'private') {
             var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'), {});
             passwordModal.show();
-        } else {
-            // 这里假设您有一个函数可以处理公开比赛的加入逻辑
+        } else {            
             joinPublicContest(contestId);
         }
     }
@@ -273,7 +272,7 @@
             url: "/contest/join",
             data: {
                 contest_id: contestId
-                // 注意：此处不需要密码字段
+                // 此處不需要密碼
             },
             success: function(response) {
                 if(response.redirect_url){
@@ -281,7 +280,7 @@
                 }
             },
             error: function(xhr) {
-                // 展示错误信息
+                // 顯示錯誤訊息
                 console.error("Error joining public contest", xhr.responseText);
             }
         });

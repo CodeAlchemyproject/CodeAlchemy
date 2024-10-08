@@ -171,12 +171,9 @@ def problem():
     #    video_id = problem_data[0][9]
     #    like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
     #    return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like,video_id=video_id)
-'''
 
 
 
-####################
-'''
 # 確認使用者有登入
 @app.route('/get_user_id', methods=['GET'])
 def get_user_id():
@@ -196,24 +193,9 @@ def problem():
         code = data.get('code')
         source = data.get('source')
         contest_id = data.get('contest_id')
-        ###########################
-        # 獲取完整的 URL
-        # full_url = request.form.get('fullUrl')  # 使用 request.form 獲取資料
-        # print(f"POST request - Full URL: {full_url}")  # 僅打印一次
-
-        # # 解析 URL 以獲取查詢參數
-        # parsed_url = urlparse(full_url)
-        # query_params = parse_qs(parsed_url.query)
-
-        # # 獲取 source 和 contest_id
-        # source = query_params.get('source', [None])[0]  # 預設為 None
-        # contest_id = query_params.get('contest_id', [None])[0]  # 預設為 None
-
-        # 確認是否收到正確的參數
+                
         print(f"Source: {source}, Contest ID: {contest_id}")  # 確認 source 和 contest_id
-
-        ################################
-
+        
         # 定義語言對應的文件擴展名字典
         file_extensions = {
             'python': '.py',
@@ -295,7 +277,7 @@ def problem():
         like = db.get_data(f"SELECT IFNULL(COUNT(*), 0) FROM collection WHERE problem_id='{problem_id}'")[0][0]
 
         return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id)
-###################
+
 
 
 @app.route('/answer_record',methods=['GET'])
