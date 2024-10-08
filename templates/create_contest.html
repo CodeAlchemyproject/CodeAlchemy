@@ -235,15 +235,15 @@
                 }
             });
 
-            // 提交表單前進行密碼一致性檢查
-            //$('#competitionForm').submit(function (e) {
-            //    var password = $('#contest_password').val();
-            //    var confirmPassword = $('#confirm_password').val();
-            //    if($('#state').val() === "private" && password !== confirmPassword) {
-            //        alert("密碼和確認密碼不匹配");
-            //        e.preventDefault();  // 阻止表單提交
-            //    }
-            //});
+             //提交表單前進行密碼一致性檢查
+            $('#competitionForm').submit(function (e) {
+                var password = $('#contest_password').val();
+                var confirmPassword = $('#confirm_password').val();
+                if($('#state').val() === "private" && password !== confirmPassword) {
+                    alert("密碼和確認密碼不匹配");
+                    e.preventDefault();  // 阻止表單提交
+                }
+            });
             /*****/
 
             // 載入並顯示問題清單和分頁控件

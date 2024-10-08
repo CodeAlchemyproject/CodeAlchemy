@@ -8,8 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .competition-box {
@@ -142,34 +147,63 @@
                         {{ contest[1] }}
                     </div>
                     <div class="description">{{ contest[4] }}</div>
-                    <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
+        
+                    <!-- 顯示錯誤或成功訊息 -->
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <div class="alert alert-warning">
+                            {{ messages[0] }}  <!-- 可以擴展以顯示多個訊息 -->
+                        </div>
+                        {% endif %}
+                    {% endwith %}
+        
+                    <!-- 比賽列表的按鈕區域 -->
+                    <form id="contestForm-{{ contest[0] }}" action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
+                        <input type="hidden" name="contest_type" value="{{ contest[5] }}">  <!-- 用於傳遞比賽類型 -->
+                        <input type="hidden" id="passwordField-{{ contest[0] }}" name="contest_password" value="">   <!-- 密碼欄位 -->
+                
                         {% if contest[2] > current_time %}
-                        <!-- 如果比賽尚未開始，按鈕變成灰色背景，並顯示深灰色文字的"尚未開始" -->
                         <button type="button" class="join-button btn" style="background-color: #8d8d8d; color: #000000;" disabled>尚未開始</button>
                         {% elif current_time > contest[3] %}
-                        <!-- 如果比賽已結束，按鈕變成暗紅色背景，並顯示白色文字的"比賽已結束 觀看比賽結果"，按鈕可點擊並跳轉到比賽結果頁面 -->
-                        <button type="submit" class="join-button btn" style="background-color: #b60202; color: #FFFFFF;">觀看比賽結果</button>
+                        <button type="button" class="join-button btn" data-type="{{ contest[5] }}" style="background-color: #b60202; color: #FFFFFF;" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">觀看比賽結果</button>
                         {% elif contest[6] == "joined" %}
-                        <!-- 如果已經加入比賽，按鈕變紫色並且顯示"繼續完成比賽" -->
-                        <button type="submit" class="join-button btn btn-purple">繼續完成比賽</button>
+                        <button type="button" class="join-button btn btn-purple" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">繼續完成比賽</button>
                         {% else %}
-                        <!-- 否則顯示加入比賽按鈕 -->
-                        <button type="submit" class="join-button btn">加入比賽</button>
+                        <button type="button" class="join-button btn" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">加入比賽</button>
                         {% endif %}
                     </form>
                 </div>
                 <div class="competition-details">
-                    <!-- 顯示從資料庫查詢的參加人數 -->
                     <p style="margin-bottom: 10px;">參加人數：{{ contest[7] }}</p>
                     <p style="margin-bottom: 10px;">開始時間：{{ contest[2] }}</p>
                     <p style="margin-bottom: 10px;">結束時間：{{ contest[3] }}</p>
-                    <!-- 顯示倒數天數、比賽進行中或已結束 -->
-                    <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>  <!-- 這裡顯示 time_status -->
+                    <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>
+                </div>
+            </div>
+        
+            <!-- 密碼輸入的 Modal -->
+            <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="passwordModalLabel">輸入比賽密碼</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" class="form-control" id="contestPassword" placeholder="請輸入比賽密碼">
+                            <div id="passwordError" class="text-danger" style="display: none;">密碼輸入錯誤</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" onclick="submitPassword(window.currentContestId)">確認</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        
 
         <!-- 分頁按钮 -->
         <div class="d-flex justify-content-center mt-5">
@@ -199,5 +233,59 @@
     </div>
     <!--{% include "footer.html" %}-->
 </body>
+
+<script>
+    function handleContestClick(contestId, contestType) {
+        window.currentContestId = contestId;
+        if (contestType === 'private') {
+            var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'), {});
+            passwordModal.show();
+        } else {
+            // 这里假设您有一个函数可以处理公开比赛的加入逻辑
+            joinPublicContest(contestId);
+        }
+    }
+
+    function submitPassword() {
+        const password = document.getElementById('contestPassword').value;
+
+        $.ajax({
+            type: "POST",
+            url: "/contest/join",
+            data: {
+                contest_id: window.currentContestId,
+                contest_password: password
+            },
+            success: function(response) {
+                if(response.redirect_url){
+                    window.location.href = response.redirect_url;
+                }
+            },
+            error: function(xhr) {
+                $("#passwordError").show();
+            }
+        });
+    }
+
+    function joinPublicContest(contestId) {
+        $.ajax({
+            type: "POST",
+            url: "/contest/join",
+            data: {
+                contest_id: contestId
+                // 注意：此处不需要密码字段
+            },
+            success: function(response) {
+                if(response.redirect_url){
+                    window.location.href = response.redirect_url;
+                }
+            },
+            error: function(xhr) {
+                // 展示错误信息
+                console.error("Error joining public contest", xhr.responseText);
+            }
+        });
+    }
+</script>
 
 </html>
