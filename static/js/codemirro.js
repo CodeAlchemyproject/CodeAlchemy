@@ -89,7 +89,9 @@ document.getElementById("test_btn").addEventListener("click", function () {
         formData.append("language", language);
         formData.append("code", code);
         formData.append("source", source);
-
+        if (source === 'contest' && contestId) {
+            formData.append("contest_id", contestId);
+        }
         // 發送 POST 請求到伺服器
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/problem");
