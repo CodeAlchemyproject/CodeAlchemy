@@ -251,10 +251,9 @@ def problem():
         if score and score[2] == 'Accepted':
             result = True
             message = "測試成功"
-            run_time = score[3]
-            memory = score[4]
+            run_time = score[3].replace('ms','')
+            memory = score[4].replace('MB','')
             ensue = score[2]
-
         # 確認提交來源並插入到正確的資料表
         if source == 'contest':
             print(f"決策時的 Source 值: {source}")  # 確認 source 的值
