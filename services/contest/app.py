@@ -171,11 +171,11 @@ def join_contest():
     contest_id = request.form['contest_id']
     input_password = request.form.get('contest_password')
 
-    # 请确保 session 中正确设置了用户ID
+    # 請確保 session 中正確設定了使用者ID
     user_id = session.get('User_id')
     
     if not user_id:
-        return jsonify({"error": "请先登录"}), 401
+        return jsonify({"error": "請先登入"}), 401
     
     conn = db.connection()
     cursor = conn.cursor()
@@ -185,13 +185,13 @@ def join_contest():
     
     if not contest:
         conn.close()
-        return jsonify({"error": "比赛不存在"}), 404
+        return jsonify({"error": "比賽不存在"}), 404
     
     contest_type, contest_password = contest
 
     if contest_type == 'private':
         if not input_password or input_password != contest_password:
-            return jsonify({"error": "比赛密码错误"}), 403
+            return jsonify({"error": "比賽密碼錯誤"}), 403
 
     cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
     already_joined = cursor.fetchone()
