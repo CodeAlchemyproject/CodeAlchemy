@@ -166,10 +166,46 @@ def contest_join():
                            no_contest_message=no_contest_message)
 
 
+@contest_bp.route('/join', methods=["POST"])
+def join_contest():
+    contest_id = request.form['contest_id']
+    input_password = request.form.get('contest_password')
+
+    # 請確保 session 中正確設定了使用者ID
+    user_id = session.get('User_id')
+    
+    if not user_id:
+        return jsonify({"error": "請先登入"}), 401
+    
+    conn = db.connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT type, password FROM contest WHERE contest_id = %s", (contest_id,))
+    contest = cursor.fetchone()
+    
+    if not contest:
+        conn.close()
+        return jsonify({"error": "比賽不存在"}), 404
+    
+    contest_type, contest_password = contest
+
+    if contest_type == 'private':
+        if not input_password or input_password != contest_password:
+            return jsonify({"error": "比賽密碼錯誤"}), 403
+
+    cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
+    already_joined = cursor.fetchone()
+
+    if not already_joined:
+        cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
+        conn.commit()
+
+    conn.close()
+
+    return jsonify({"redirect_url": url_for('contest_bp.contest_info', contest_id=contest_id)})
 
 
-
-
+'''##no private password run##
 @contest_bp.route('/join', methods=["POST"])
 def join_contest():
     contest_id = request.form['contest_id']
@@ -179,7 +215,7 @@ def join_contest():
     
     # 如果使用者未登入，渲染 login.html
     if not user_id:
-        return render_template('login.html')
+        return render_template('./login.html')
 
     conn = db.connection()
     cursor = conn.cursor()
@@ -197,7 +233,7 @@ def join_contest():
     
     # 使用 redirect 重導向到顯示結果的 GET 路由
     return redirect(url_for('contest_bp.contest_info', contest_id=contest_id))
-
+'''
 
 @contest_bp.route('/contest/<contest_id>', methods=["GET"])
 def contest_info(contest_id):
@@ -313,6 +349,13 @@ def create_contest():
         end_date = request.form.get('endTime')
         description = request.form.get('description')
         contest_type = request.form.get('state')  # 修改此行來獲取下拉選單的值
+        contest_password = None  # 預設密碼為None
+
+        # 如果比賽類型為私人，則獲取密碼
+        if contest_type == "private":
+            contest_password = request.form.get('contest_password')
+            if not contest_password:
+                raise ValueError("私人比賽必須設定密碼")
         
         # 列印接收到的資料以調試
         print("Received contest_name:", contest_name)
@@ -339,8 +382,8 @@ def create_contest():
 
         # 新增到contest資料表
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type) VALUES (%s, %s, %s, %s, %s)",
-                       (contest_name, start_date, end_date, description, contest_type))
+        cursor.execute("INSERT INTO contest (contest_name, start_date, end_date, description, type, password) VALUES (%s, %s, %s, %s, %s, %s)",
+                       (contest_name, start_date, end_date, description, contest_type, contest_password))
         
         # 取得新建立的contest_id
         contest_id = cursor.lastrowid
