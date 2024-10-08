@@ -275,7 +275,7 @@ def problem():
         video_id = problem_data[0][9]
         like = db.get_data(f"SELECT IFNULL(COUNT(*), 0) FROM collection WHERE problem_id='{problem_id}'")[0][0]
 
-        return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id)
+        return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id, source=source)
 
 
 
