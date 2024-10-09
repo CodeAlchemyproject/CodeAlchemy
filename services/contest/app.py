@@ -175,7 +175,8 @@ def join_contest():
     user_id = session.get('User_id')
     
     if not user_id:
-        return jsonify({"error": "請先登入"}), 401
+        # 用戶未登錄，返回狀態碼和訊息
+        return jsonify({"error": "请先登录", "code": "not_logged_in"}), 403
     
     conn = db.connection()
     cursor = conn.cursor()

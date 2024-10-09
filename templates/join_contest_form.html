@@ -230,15 +230,34 @@
             </nav>
         </div>
 
+        <!-- 沒登入 -->
+        <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">請先登入</h5>
+                </div>
+                <div class="modal-body">
+                    您尚未登入，請先登入才能繼續操作。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!--{% include "footer.html" %}-->
+
+    </div>
+    
 </body>
 
 <script>
     function handleContestClick(contestId, contestType) {
         window.currentContestId = contestId;
         if (contestType === 'private') {
-            var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'), {});
+            var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
             passwordModal.show();
         } else {            
             joinPublicContest(contestId);
@@ -256,12 +275,15 @@
                 contest_password: password
             },
             success: function(response) {
-                if(response.redirect_url){
-                    window.location.href = response.redirect_url;
-                }
+                window.location.href = response.redirect_url;
             },
             error: function(xhr) {
-                $("#passwordError").show();
+                var response = JSON.parse(xhr.responseText);
+                if (response.code === "not_logged_in") {
+                    showLoginModal();
+                } else {
+                    $("#passwordError").show();
+                }
             }
         });
     }
@@ -272,18 +294,25 @@
             url: "/contest/join",
             data: {
                 contest_id: contestId
-                // 此處不需要密碼
             },
             success: function(response) {
-                if(response.redirect_url){
-                    window.location.href = response.redirect_url;
-                }
+                window.location.href = response.redirect_url;
             },
             error: function(xhr) {
-                // 顯示錯誤訊息
-                console.error("Error joining public contest", xhr.responseText);
+                var response = JSON.parse(xhr.responseText);
+                if (response.code === "not_logged_in") {
+                    showLoginModal();
+                } else {
+                    // 顯示其他錯誤訊息
+                    console.error("Error: ", xhr.responseText);
+                }
             }
         });
+    }
+    
+    function showLoginModal() {
+        var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
     }
 </script>
 
