@@ -82,9 +82,7 @@ FROM `113-CodeAlchemy`.problem AS p"""
     else:
         condition = condition[:condition.rfind(' AND ')]
     sql_problem_command = sql_problem_command + condition
-    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
-    # print(data)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -333,6 +331,12 @@ def rank():
     order by 正確答題數 desc;
                      ''')
     return render_template('./rank.html',data=data)
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html')
+@app.errorhandler(Exception)
+def page_not_found(error):
+    return render_template('page_not_found.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
