@@ -74,14 +74,23 @@
     <div class="container">
         <div class="row mt-4">
             <div class="col">
-                <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>設定</option>
-                    <option
-                        value="?page={{ page }}&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        公開</option>
-                    <option
-                        value="?page={{ page }}&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        私人</option>
+                <select class="form-select" id="settings" onchange="location.href=this.options[this.selectedIndex].value">
+                    <option value="?page=1&state=*&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
+                        {% if state is none or state == '*' %}selected disabled{% endif %}>
+                        設定
+                    </option>
+                    <option value="?page=1&state=*&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
+                        {% if state == '*' %}selected{% endif %}>
+                        全部
+                    </option>
+                    <option value="?page=1&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
+                        {% if state == 'public' %}selected{% endif %}>
+                        公開
+                    </option>
+                    <option value="?page=1&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
+                        {% if state == 'private' %}selected{% endif %}>
+                        私人
+                    </option>                    
                 </select>
             </div>
             <!--語言下拉式選單註解
@@ -109,21 +118,37 @@
             -->
             <div class="col">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>狀態</option>
-                    <option value="?page={{ page }}&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}">尚未開始</option>
-                    <option value="?page={{ page }}&state=ongoing&onlinejudge={{onlinejudge}}&search={{search}}">進行中</option>
-                    <option value="?page={{ page }}&state=finished&onlinejudge={{onlinejudge}}&search={{search}}">已結束</option>
+                    <option value="?page=1&state=*&onlinejudge={{onlinejudge}}&search={{search}}"
+                        {% if state is none or state == '*' %}selected disabled{% endif %}>
+                        狀態
+                    </option>
+                    <option value="?page=1&state=*&onlinejudge={{onlinejudge}}&search={{search}}"
+                        {% if state == '*' %}selected{% endif %}>
+                        全部
+                    </option>
+                    <option value="?page=1&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}"
+                        {% if state == 'not_started' %}selected{% endif %}>
+                        尚未開始
+                    </option>
+                    <option value="?page=1&state=ongoing&onlinejudge={{onlinejudge}}&search={{search}}"
+                        {% if state == 'ongoing' %}selected{% endif %}>
+                        進行中
+                    </option>
+                    <option value="?page=1&state=finished&onlinejudge={{onlinejudge}}&search={{search}}"
+                        {% if state == 'finished' %}selected{% endif %}>
+                        已結束
+                    </option>                    
                 </select>
             </div>
             
             <div class="col">
-                <form class="d-flex"
-                    action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
+                <form class="d-flex" method="get">
                     <input type="hidden" name="page" value="{{page}}">
                     <input type="hidden" name="state" value="{{state}}">
                     <input type="hidden" name="onlinejudge" value="{{onlinejudge}}">
                     <input type="hidden" name="difficulty" value="{{difficulty}}">
-                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
+                    <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search"
+                        value="{{ search }}">
                 </form>
             </div>
             
@@ -213,18 +238,18 @@
                 <ul class="pagination">
                     <!-- 第一頁按钮 -->
                     <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="First">
+                        <a class="page-link" href="?page=1&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" aria-label="First">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     {% for p in range(1, total_pages + 1) %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        <a class="page-link" href="?page={{ p }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">{{ p }}</a>
                     </li>
                     {% endfor %}
                     <!-- 最後一頁按钮 -->
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ total_pages }}" aria-label="Last">
+                        <a class="page-link" href="?page={{ total_pages }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" aria-label="Last">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -259,6 +284,9 @@
     function handleContestClick(contestId, contestType) {
         window.currentContestId = contestId;
         if (contestType === 'private') {
+            // 清空密碼欄位與錯誤訊息
+            document.getElementById('contestPassword').value = '';
+            document.getElementById('passwordError').style.display = 'none';
             var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
             passwordModal.show();
         } else {            
