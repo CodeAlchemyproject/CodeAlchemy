@@ -73,7 +73,7 @@
     {% include "nav_bar.html" %}
     <div class="container">
         <div class="row mt-4">
-            <div class="col-3">
+            <div class="col">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>設定</option>
                     <option
@@ -84,6 +84,7 @@
                         私人</option>
                 </select>
             </div>
+            <!--語言下拉式選單註解
             <div class="col-3">
                 <select class="form-select" id="onlinejudge"
                     onchange="location.href=this.options[this.selectedIndex].value">
@@ -105,7 +106,8 @@
                         python</option>
                 </select>
             </div>
-            <div class="col-3">
+            -->
+            <div class="col">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
                     <option selected>狀態</option>
                     <option value="?page={{ page }}&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}">尚未開始</option>
@@ -114,7 +116,7 @@
                 </select>
             </div>
             
-            <div class="col-3">
+            <div class="col">
                 <form class="d-flex"
                     action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
                     <input type="hidden" name="page" value="{{page}}">
