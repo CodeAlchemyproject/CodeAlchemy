@@ -38,14 +38,14 @@
                                 <div class="form-group row mb-3">
                                     <label for="contest_name" class="col-sm-3 col-form-label">比賽名稱:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="contest_name" placeholder="name" name="contest_name" required>
+                                        <input type="text" class="form-control" id="contest_name" placeholder="請輸入比賽名稱" name="contest_name" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group row mb-3">
                                     <label for="description" class="col-sm-3 col-form-label">比賽說明:</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="description" placeholder="description" name="description" style="width: 100%;" required>
+                                        <input type="text" class="form-control" id="description" placeholder="請輸入比賽說明" name="description" style="width: 100%;" required>
                                     </div>
                                 </div>
 
@@ -59,6 +59,23 @@
                                     </div>
                                 </div>
 
+                                <!--當比賽類型為private時出現-->
+                                <div class="form-group row mb-3" id="passwordField" style="display: none;">
+                                    <label for="contest_password" class="col-sm-3 col-form-label">比賽密碼:</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="contest_password" placeholder="請輸入比賽密碼" name="contest_password">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group row mb-3" id="confirmPasswordField" style="display: none;">
+                                    <label for="confirm_password" class="col-sm-3 col-form-label">確認密碼:</label>
+                                    <div class="col-sm-9">
+                                        <input type="password" class="form-control" id="confirm_password" placeholder="請輸入確認密碼" name="confirm_password">
+                                    </div>
+                                </div>
+                                <!--當比賽類型為private時出現-->
+
+                                <!--語言先註解掉
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3 col-form-label">語言:</label>
                                     <div class="col-sm-9">
@@ -81,7 +98,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="form-group row mb-3">
                                     <label for="startTime" class="col-sm-3 col-form-label">開始時間:</label>
@@ -181,8 +198,22 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // 取得當前時間並格式化為 datetime-local 格式
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0'); // 月份從0開始
+        const dd = String(now.getDate()).padStart(2, '0');
+        const hh = String(now.getHours()).padStart(2, '0');
+        const min = String(now.getMinutes()).padStart(2, '0');
+
+        // 設定 datetime-local 的最小值
+        const minDateTime = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+        document.getElementById('startTime').setAttribute('min', minDateTime);
+        document.getElementById('endTime').setAttribute('min', minDateTime);
+
+        //按下創建比賽後
         $(document).ready(function () {
-            const selectedProblems = []; // 存储已选择的题目ID
+            const selectedProblems = []; // 儲存已選擇的題目ID
 
             function simplifyContent(content, maxLength) {
                 if (content.length > maxLength) {
@@ -191,6 +222,30 @@
                 }
                 return content;
             }
+
+            /*****/
+            // 監聽比賽類型選擇框的變化
+            $('#state').change(function() {
+                var selectedValue = $(this).val();
+                if(selectedValue === "private") {
+                    $('#passwordField').show();
+                    $('#confirmPasswordField').show();
+                } else {
+                    $('#passwordField').hide();
+                    $('#confirmPasswordField').hide();
+                }
+            });
+
+             //提交表單前進行密碼一致性檢查
+            $('#competitionForm').submit(function (e) {
+                var password = $('#contest_password').val();
+                var confirmPassword = $('#confirm_password').val();
+                if($('#state').val() === "private" && password !== confirmPassword) {
+                    alert("密碼和確認密碼不匹配");
+                    e.preventDefault();  // 阻止表單提交
+                }
+            });
+            /*****/
 
             // 載入並顯示問題清單和分頁控件
             function loadTable(page) {
@@ -210,9 +265,9 @@
                             var title = problem[1]; 
                             var content = simplifyContent(problem[2], 100); 
                             var difficulty = problem[3]; 
-                            var isAdded = selectedProblems.includes(problem_id); // 检查当前题目是否已被添加
+                            var isAdded = selectedProblems.includes(problem_id); // 檢查當前題目是否已被添加
                             var addButtonClass = isAdded ? 'btn-success disabled' : 'btn-primary';
-                            var addButtonText = isAdded ? '<i class="fas fa-check"></i>' : 'Add'; // 如果已添加，显示勾选符号
+                            var addButtonText = isAdded ? '<i class="fas fa-check"></i>' : 'Add'; // 如果已新增，顯示勾選符號
                             var row = `<tr>
                                 <td>${problem_id}</td>
                                 <td>${title}</td>
@@ -261,8 +316,8 @@
                 var difficulty = $(this).data('difficulty');
                 var addButton = $(this);
 
-                if (!selectedProblems.includes(problemId)) { // 检查以避免重复添加
-                    selectedProblems.push(problemId); // 将当前题目ID添加到已选择题目数组
+                if (!selectedProblems.includes(problemId)) { // 檢查以避免重複添加
+                    selectedProblems.push(problemId); // 將目前題目ID新增至已選擇題目數組
 
                     var row = `<tr class="added-question" data-problem-id="${problemId}">
                          <td></td>                         

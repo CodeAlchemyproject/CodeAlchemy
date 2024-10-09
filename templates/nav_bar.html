@@ -23,8 +23,13 @@
             競賽
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/contest/create/form">創建比賽</a></li>
-            <li><a class="dropdown-item" href="/contest/join/form">加入比賽</a></li>
+            {% if (session['logged_in']==True) or (request.cookies.get('logged_in')=='True') %}
+              <li><a class="dropdown-item" href="/contest/create/form">創建比賽</a></li>
+              <li><a class="dropdown-item" href="/contest/join/form">加入比賽</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="/contest/join/form">加入比賽</a></li>
+              <li><a class="dropdown-item" href="/auth/login">創建比賽</a></li>
+            {% endif %}
           </ul>
         </li>
 

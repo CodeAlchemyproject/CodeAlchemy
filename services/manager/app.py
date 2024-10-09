@@ -11,6 +11,7 @@ manager_bp = Blueprint('manager', __name__)
 #--------------------------
 # 在user服務藍圖加入路由
 #--------------------------
+# 新增題目
 @manager_bp.route('add_problem',methods=["GET","POST"])
 def add_problem():
     try:
@@ -38,6 +39,7 @@ def add_problem():
                 return render_template('./add_problem.html')
     except:
         return redirect('/')
+# 修改題目
 @manager_bp.route('/problem',methods=['GET',"POST"])
 def problem():
     try:
@@ -75,6 +77,7 @@ def problem():
                 return render_template('./manager_problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,difficulty=difficulty,tag=tag,video_id=video_id)
     except:
         return redirect('/')
+# 管理使用者
 @manager_bp.route('/user', methods=['GET','POST'])
 def user():
     try:
@@ -97,6 +100,7 @@ def user():
                 return render_template('./manager_user.html',data=user_data)
     except:
         return redirect('/')
+# 刪除題目
 @manager_bp.route('/delete',methods=['GET'])
 def delete():
     try:

@@ -8,8 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         .competition-box {
@@ -68,17 +73,18 @@
     {% include "nav_bar.html" %}
     <div class="container">
         <div class="row mt-4">
-            <div class="col-3">
+            <div class="col">
                 <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>狀態</option>
+                    <option selected>設定</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        public</option>
+                        value="?page={{ page }}&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        公開</option>
                     <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
-                        private</option>
+                        value="?page={{ page }}&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}">
+                        私人</option>
                 </select>
             </div>
+            <!--語言下拉式選單註解
             <div class="col-3">
                 <select class="form-select" id="onlinejudge"
                     onchange="location.href=this.options[this.selectedIndex].value">
@@ -100,28 +106,17 @@
                         python</option>
                 </select>
             </div>
-            <div class="col-3">
-                <select class="form-select" id="difficulty"
-                    onchange="location.href=this.options[this.selectedIndex].value">
-                    <option selected>難度</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=*&search={{search}}">
-                        All</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Hard&search={{search}}">
-                        Hard</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Middle&search={{search}}">
-                        Middle</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=Easy&search={{search}}">
-                        Easy</option>
-                    <option
-                        value="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty=N/A&search={{search}}">
-                        N/A</option>
+            -->
+            <div class="col">
+                <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
+                    <option selected>狀態</option>
+                    <option value="?page={{ page }}&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}">尚未開始</option>
+                    <option value="?page={{ page }}&state=ongoing&onlinejudge={{onlinejudge}}&search={{search}}">進行中</option>
+                    <option value="?page={{ page }}&state=finished&onlinejudge={{onlinejudge}}&search={{search}}">已結束</option>
                 </select>
             </div>
-            <div class="col-3">
+            
+            <div class="col">
                 <form class="d-flex"
                     action="?page={{ page }}&state={{state}}&onlinejudge={{onlinejudge}}&difficulty={{difficulty}}">
                     <input type="hidden" name="page" value="{{page}}">
@@ -131,6 +126,13 @@
                     <input class="form-control me-2" name="search" placeholder="Search" aria-label="Search" id="search">
                 </form>
             </div>
+            
+            {% if no_contest_message %}
+                <div class="text-center mt-3">
+                    <strong>{{ no_contest_message }}</strong>
+                </div>
+            {% endif %}
+            
         </div>
         <!-- ------- -->
         <!-- 題目列表 -->
@@ -139,27 +141,71 @@
             {% for contest in contests %}
             <div class="competition-box">
                 <div class="competition-info">
-                    <div class="title">{{ contest[1] }}</div>
+                    <div class="title">
+                        {% if contest[5] == 'private' %}
+                        <!-- 顯示黃色小鎖符號 -->
+                        <span style="color: yellow;">🔒</span>
+                        {% endif %}
+                        {{ contest[1] }}
+                    </div>
                     <div class="description">{{ contest[4] }}</div>
-                    <form action="{{ url_for('contest_bp.join_contest') }}" method="POST">
+        
+                    <!-- 顯示錯誤或成功訊息 -->
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <div class="alert alert-warning">
+                            {{ messages[0] }}  <!-- 可以擴展以顯示多個訊息 -->
+                        </div>
+                        {% endif %}
+                    {% endwith %}
+        
+                    <!-- 比賽列表的按鈕區域 -->
+                    <form id="contestForm-{{ contest[0] }}" action="{{ url_for('contest_bp.join_contest') }}" method="POST">
                         <input type="hidden" name="contest_id" value="{{ contest[0] }}">
-                        {% if contest[6] == "joined" %}
-                        <!-- 如果已經加入比賽，按鈕變紫色並且顯示"繼續完成比賽" -->
-                        <button type="submit" class="join-button btn btn-purple">繼續完成比賽</button>
+                        <input type="hidden" name="contest_type" value="{{ contest[5] }}">  <!-- 用於傳遞比賽類型 -->
+                        <input type="hidden" id="passwordField-{{ contest[0] }}" name="contest_password" value="">   <!-- 密碼欄位 -->
+                
+                        {% if contest[2] > current_time %}
+                        <button type="button" class="join-button btn" style="background-color: #8d8d8d; color: #000000;" disabled>尚未開始</button>
+                        {% elif current_time > contest[3] %}
+                        <button type="button" class="join-button btn" data-type="{{ contest[5] }}" style="background-color: #b60202; color: #FFFFFF;" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">觀看比賽結果</button>
+                        {% elif contest[6] == "joined" %}
+                        <button type="button" class="join-button btn btn-purple" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">繼續完成比賽</button>
                         {% else %}
-                        <!-- 否則顯示加入比賽按鈕 -->
-                        <button type="submit" class="join-button btn">加入比賽</button>
+                        <button type="button" class="join-button btn" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">加入比賽</button>
                         {% endif %}
                     </form>
                 </div>
                 <div class="competition-details">
-                    <!-- 顯示從資料庫查詢的參加人數 -->
-                    <p>參加人數：{{ contest[7] }}</p>
-                    <p>開始時間：{{ contest[2] }}</p>
+                    <p style="margin-bottom: 10px;">參加人數：{{ contest[7] }}</p>
+                    <p style="margin-bottom: 10px;">開始時間：{{ contest[2] }}</p>
+                    <p style="margin-bottom: 10px;">結束時間：{{ contest[3] }}</p>
+                    <p style="color: red; margin-bottom: 0;"><strong>{{ contest[8] }}</strong></p>
+                </div>
+            </div>
+        
+            <!-- 密碼輸入的 Modal -->
+            <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="passwordModalLabel">輸入比賽密碼</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="password" class="form-control" id="contestPassword" placeholder="請輸入比賽密碼">
+                            <div id="passwordError" class="text-danger" style="display: none;">密碼輸入錯誤</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" onclick="submitPassword(window.currentContestId)">確認</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+        
 
         <!-- 分頁按钮 -->
         <div class="d-flex justify-content-center mt-5">
@@ -186,8 +232,90 @@
             </nav>
         </div>
 
+        <!-- 沒登入 -->
+        <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">請先登入</h5>
+                </div>
+                <div class="modal-body">
+                    您尚未登入，請先登入才能繼續操作。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!--{% include "footer.html" %}-->
+
+    </div>
+    
 </body>
+
+<script>
+    function handleContestClick(contestId, contestType) {
+        window.currentContestId = contestId;
+        if (contestType === 'private') {
+            var passwordModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+            passwordModal.show();
+        } else {            
+            joinPublicContest(contestId);
+        }
+    }
+
+    function submitPassword() {
+        const password = document.getElementById('contestPassword').value;
+
+        $.ajax({
+            type: "POST",
+            url: "/contest/join",
+            data: {
+                contest_id: window.currentContestId,
+                contest_password: password
+            },
+            success: function(response) {
+                window.location.href = response.redirect_url;
+            },
+            error: function(xhr) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.code === "not_logged_in") {
+                    showLoginModal();
+                } else {
+                    $("#passwordError").show();
+                }
+            }
+        });
+    }
+
+    function joinPublicContest(contestId) {
+        $.ajax({
+            type: "POST",
+            url: "/contest/join",
+            data: {
+                contest_id: contestId
+            },
+            success: function(response) {
+                window.location.href = response.redirect_url;
+            },
+            error: function(xhr) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.code === "not_logged_in") {
+                    showLoginModal();
+                } else {
+                    // 顯示其他錯誤訊息
+                    console.error("Error: ", xhr.responseText);
+                }
+            }
+        });
+    }
+    
+    function showLoginModal() {
+        var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+    }
+</script>
 
 </html>

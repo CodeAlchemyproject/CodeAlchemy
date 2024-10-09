@@ -31,34 +31,58 @@ def index():
     onlinejudge = request.args.get('onlinejudge', '*', type=str)
     difficulty = request.args.get('difficulty', '*', type=str)
     search = request.args.get('search', '', type=str)
-    
-    condition = ' WHERE '  # where前後的空格勿動
-    sql_problem_command = 'SELECT p.*, acceptance_data.acceptance_rate FROM `113-CodeAlchemy`.problem AS p '
-    sql_problem_command += 'LEFT JOIN ('
+
+    try:
+        # 檢查使用者有沒有登入
+        user_id=session['User_id']
+        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate, state.result
+FROM `113-CodeAlchemy`.problem AS p"""
+        sql_command=f""" LEFT JOIN (
+    SELECT problem_id, user_id, CASE 
+            WHEN MAX(CASE WHEN result = 'Accepted' THEN 1 ELSE 0 END) = 1 
+            THEN 'Accepted'
+            ELSE MAX(result) -- 如果沒有 'Accepted'，返回其他最高的 result
+        END AS result
+    FROM `113-CodeAlchemy`.`answer record` WHERE user_id = '{user_id}'
+GROUP BY problem_id, user_id"""
+        sql_problem_command+=sql_command
+        sql_problem_command+=""")AS state ON p.problem_id = state.problem_id"""
+    except:
+        sql_problem_command = """SELECT p.*, acceptance_data.acceptance_rate
+FROM `113-CodeAlchemy`.problem AS p"""
+
     sql_problem_command += """
-        SELECT 
-            ar.problem_id,
-            CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.result) * 100, 2), '%') AS acceptance_rate
-        FROM 
-            `113-CodeAlchemy`.`answer record` AS ar
-        GROUP BY 
-            ar.problem_id
-    ) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
-    
+        LEFT JOIN (
+    SELECT ar.problem_id,
+        CONCAT(ROUND(SUM(CASE WHEN ar.result = 'Accepted' THEN 1 ELSE 0 END) / COUNT(ar.result) * 100, 2), '%') AS acceptance_rate
+    FROM `113-CodeAlchemy`.`answer record` AS ar
+    GROUP BY ar.problem_id
+) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
+
+    condition = ' WHERE '  # where前後的空格勿動
     if search != '':
         condition += f'p.title LIKE "%{search}%" AND '
     if onlinejudge != '*':
         condition += f'SUBSTRING_INDEX(p.problem_id, "-", 1) = "{onlinejudge}" AND '
     if difficulty != '*':
         condition += f'p.difficulty = "{difficulty}" AND '
+    try:
+        user_id=session['User_id']
+        if state == 'accept':
+            condition += f'state.result = "Accepted" AND '
+        elif state == 'error':
+            condition += f'state.result IS NOT NULL AND state.result != "Accepted" AND '
+        elif state == 'none':
+            condition += f'state.result IS NULL AND '
+    except:
+        pass
+
     if condition == ' WHERE ':
         condition = ''
     else:
         condition = condition[:condition.rfind(' AND ')]
-    
     sql_problem_command = sql_problem_command + condition
     data=db.get_data(sql_problem_command)
-
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
     # 每頁顯示15列
@@ -66,10 +90,11 @@ def index():
     start_page = max(1, page - 1)
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
-
     #渲染網頁
     return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
 
+
+'''run ok
 #題目
 @app.route('/problem',methods=['GET','POST'])
 def problem():
@@ -129,48 +154,48 @@ def problem():
         if type == 'upload':
             # 執行 SQL 插入語句
             db.edit_data(f'''
-                INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
-                VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
-            ''')
+                #INSERT INTO `answer record` (user_id, problem_id, result, language,run_time,memory, update_time)
+                #VALUES ('{session['User_id']}','{problem_id}','{ensue}', '{language}','{run_time}','{memory}','{score[-1]}')
+            #''')
             
-        return jsonify({'result':result,
-            'message':message,
-            'run_time':run_time,
-            "memory":memory})
+        #return jsonify({'result':result,
+        #    'message':message,
+        #    'run_time':run_time,
+        #    "memory":memory})
+    #else:
+    #    problem_id = request.args.get('problem_id',type=str)
+    #    sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
+    #    problem_data=db.get_data(sql_problem_command)
+    #    example_inputs = problem_data[0][5].split('|||')
+    #    example_outputs = problem_data[0][6].split('|||')
+    #    video_id = problem_data[0][9]
+    #    like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
+    #    return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like,video_id=video_id)
+
+
+
+# 確認使用者有登入
+@app.route('/get_user_id', methods=['GET'])
+def get_user_id():
+    if 'User_id' in session:
+        return jsonify({'user_id': session['User_id']})
     else:
-        problem_id = request.args.get('problem_id',type=str)
-        sql_problem_command=f"SELECT * FROM problem where problem_id='{problem_id}'"
-        problem_data=db.get_data(sql_problem_command)
-        example_inputs = problem_data[0][5].split('|||')
-        example_outputs = problem_data[0][6].split('|||')
-        video_id = problem_data[0][9]
-        like = db.get_data(f"SELECT IFNULL(COUNT(*),0) FROM collection where problem_id='{problem_id}'")[0][0]
-        return render_template('./problem.html',data=problem_data,example_inputs=example_inputs,example_outputs=example_outputs,like=like,video_id=video_id)
-
-
-
-
-'''
+        return jsonify({'error': 'User not logged in'}), 401
+    
 # 題目
 @app.route('/problem', methods=['GET', 'POST'])
 def problem():
     if request.method == "POST":
         # 從傳入封包取得資料
         data = request.form
-        type = data.get('type')
         problem_id = data.get('problem_id')
         language = data.get('language')
         code = data.get('code')
-
-        # 使用 request.args 來獲取 URL 參數（source 和 contest_id）
-        source = request.args.get('source')  # URL 查詢參數
-        contest_id = request.args.get('contest_id')  # URL 查詢參數
-
-        # 確認是否收到正確的參數
-        print(f"POST request - Source: {source}, Contest ID: {contest_id}")
-        print(request.url)  # 打印完整的 URL，確認你是否得到了正確的地址
-        print(request.args)  # 打印出 URL 參數
-
+        source = data.get('source')
+        contest_id = data.get('contest_id')
+                
+        print(f"Source: {source}, Contest ID: {contest_id}")  # 確認 source 和 contest_id
+        
         # 定義語言對應的文件擴展名字典
         file_extensions = {
             'python': '.py',
@@ -193,7 +218,7 @@ def problem():
         # 寫入內容到文件中
         with open(file_path, 'w') as file:
             file.write(code)
-
+            
         if "ZJ" in file_name:
             score = ZeroJudge_submit(file_name, session['User_id'])
         elif "TIOJ" in file_name:
@@ -208,49 +233,49 @@ def problem():
         if score and score[2] == 'Accepted':
             result = True
             message = "測試成功"
-            run_time = score[3]
-            memory = score[4]
+            run_time = score[3].replace('ms','')
+            memory = score[4].replace('MB','')
             ensue = score[2]
-
-        # 如果是從比賽中提交
-        if source == 'contest' and contest_id:
+        # 確認提交來源並插入到正確的資料表
+        if source == 'contest':
+            print(f"決策時的 Source 值: {source}")  # 確認 source 的值
             # 插入記錄到 contest_submission 資料表
             db.edit_data(f'''
-                #INSERT INTO `contest submission` (contest_id, user_id, problem_id, language, run_time, memory, is_finish, finish_time)
-                #VALUES ('{contest_id}', '{session['User_id']}', '{problem_id}', '{language}', '{run_time}', '{memory}', '{ensue}', '{score[-1]}')
-            #''')
-       # else:
+                INSERT INTO `contest submission` (contest_id, user_id, problem_id, language, run_time, memory, is_finish, finish_time)
+                VALUES ('{contest_id}', '{session['User_id']}', '{problem_id}', '{language}', '{run_time}', '{memory}', '{ensue}', '{score[-1]}')
+            ''')
+            print("成功插入到 contest_submission 資料表")  # 用於確認的訊息
+        else:
+            print(f"決策時的 Source 值: {source}")  # 確認 source 的值
             # 插入記錄到 answer record 資料表
-            #db.edit_data(f'''
-                #INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
-                #VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
-            #''')
+            db.edit_data(f'''
+                INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
+                VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
+            ''')
+            print("成功插入到 answer record 資料表")  # 用於確認的訊息
 
-        #return jsonify({
-            #'result': result,
-            #'message': message,
-            #'run_time': run_time,
-            #'memory': memory
-        #})
-    #else:
+        return jsonify({
+            'result': result,
+            'message': message,
+            'run_time': run_time,
+            'memory': memory
+        })
+    else:
         # GET 請求處理邏輯
         
-        #problem_id = request.args.get('problem_id', type=str)
-        #source = request.args.get('source')
-        #contest_id = request.args.get('contest_id')
+        problem_id = request.args.get('problem_id', type=str)
+        source = request.args.get('source')
+        contest_id = request.args.get('contest_id')
 
-        #sql_problem_command = f"SELECT * FROM problem WHERE problem_id='{problem_id}'"
-        #problem_data = db.get_data(sql_problem_command)
+        sql_problem_command = f"SELECT * FROM problem WHERE problem_id='{problem_id}'"
+        problem_data = db.get_data(sql_problem_command)
 
-        #example_inputs = problem_data[0][5].split('|||')
-        #example_outputs = problem_data[0][6].split('|||')
-        #video_id = problem_data[0][9]
-        #like = db.get_data(f"SELECT IFNULL(COUNT(*), 0) FROM collection WHERE problem_id='{problem_id}'")[0][0]
+        example_inputs = problem_data[0][5].split('|||')
+        example_outputs = problem_data[0][6].split('|||')
+        video_id = problem_data[0][9]
+        like = db.get_data(f"SELECT IFNULL(COUNT(*), 0) FROM collection WHERE problem_id='{problem_id}'")[0][0]
 
-        #return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id)
-###################
-
-
+        return render_template('./problem.html', data=problem_data, example_inputs=example_inputs, example_outputs=example_outputs, like=like, video_id=video_id, source=source)
 
 
 
@@ -308,6 +333,12 @@ def rank():
     order by 正確答題數 desc;
                      ''')
     return render_template('./rank.html',data=data)
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html')
+@app.errorhandler(Exception)
+def page_not_found(error):
+    return render_template('page_not_found.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------
