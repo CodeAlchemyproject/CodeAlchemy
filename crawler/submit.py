@@ -202,10 +202,13 @@ def TIOJ_submit(file_name, number):
     except Exception as e:
         print("An error occurred:", e)
         traceback.print_exc()
+        if driver:
+            driver.quit()
     finally:
         if driver:
             driver.quit()
-
+        print(newResult)
+        print('----------------------------------------------------------')
         return newResult
 
 def ZeroJudge_submit(file_name, number):
