@@ -4,7 +4,7 @@ from flask import Flask, render_template, session, request,jsonify,redirect
 import math
 import uuid
 import re
-from crawler.submit import ZeroJudge_submit,TIOJ_submit
+from crawler.submit import ZeroJudge_submit,TIOJ_submit,CodeAlchemy_submit
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -188,14 +188,20 @@ def problem():
     if request.method == "POST":
         # 從傳入封包取得資料
         data = request.form
+        type=data.get('type')
         problem_id = data.get('problem_id')
         language = data.get('language')
         code = data.get('code')
         source = data.get('source')
         contest_id = data.get('contest_id')
+        
+        try:
+            title = data.get('title')
+        except:
+            title = None
                 
         print(f"Source: {source}, Contest ID: {contest_id}")  # 確認 source 和 contest_id
-        
+
         # 定義語言對應的文件擴展名字典
         file_extensions = {
             'python': '.py',
@@ -220,9 +226,11 @@ def problem():
             file.write(code)
             
         if "ZJ" in file_name:
-            score = ZeroJudge_submit(file_name, session['User_id'])
+            score = ZeroJudge_submit(file_name, str(session['User_id']))
         elif "TIOJ" in file_name:
             score = TIOJ_submit(file_name, str(session['User_id']))
+        elif "CAOJ" in file_name:
+            score = CodeAlchemy_submit(file_name, str(session['User_id']),title)
 
         result = False
         message = "測試失敗"

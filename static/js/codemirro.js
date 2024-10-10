@@ -145,6 +145,7 @@ document.getElementById("upload_btn").addEventListener("click", function () {
     var type = 'upload';
     var urlParams = new URLSearchParams(window.location.search);
     var problem_id = document.getElementById('problem_id').innerText;
+    var title = document.getElementsByClassName('display-6 mt-4')[0].innerText;
     var language = mode;  // mode 應該是你在代碼其他地方定義的變數
     var source = urlParams.get('source');
     var contestId = urlParams.get('contest_id');
@@ -154,6 +155,7 @@ document.getElementById("upload_btn").addEventListener("click", function () {
     var formData = new FormData();
     formData.append("type", type);
     formData.append("problem_id", problem_id);
+    formData.append("title", title);
     formData.append("language", language);
     formData.append("code", code);
     formData.append("source", source);
