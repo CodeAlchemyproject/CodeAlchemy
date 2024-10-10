@@ -5,6 +5,7 @@ import math
 import uuid
 import re
 from crawler.submit import ZeroJudge_submit,TIOJ_submit
+from flask_sqlalchemy import SQLAlchemy
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -30,6 +31,7 @@ def index():
     state = request.args.get('state', '*', type=str)
     onlinejudge = request.args.get('onlinejudge', '*', type=str)
     difficulty = request.args.get('difficulty', '*', type=str)
+    tag = request.args.get('tag', '', type=str)
     search = request.args.get('search', '', type=str)
 
     try:
@@ -60,6 +62,8 @@ FROM `113-CodeAlchemy`.problem AS p"""
 ) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
 
     condition = ' WHERE '  # where前後的空格勿動
+    if tag != '':
+        condition += f'p.tag LIKE "%{tag}%" AND '
     if search != '':
         condition += f'p.title LIKE "%{search}%" AND '
     if onlinejudge != '*':
@@ -82,6 +86,7 @@ FROM `113-CodeAlchemy`.problem AS p"""
     else:
         condition = condition[:condition.rfind(' AND ')]
     sql_problem_command = sql_problem_command + condition
+    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
@@ -91,7 +96,7 @@ FROM `113-CodeAlchemy`.problem AS p"""
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
     #渲染網頁
-    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,tag=tag,search=search)
 
 
 '''run ok
