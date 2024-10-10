@@ -257,7 +257,6 @@ def problem():
         else:
             print(f"決策時的 Source 值: {source}")  # 確認 source 的值
             # 插入記錄到 answer record 資料表
-            print('gawa')
             db.edit_data(f'''
                 INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
                 VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
