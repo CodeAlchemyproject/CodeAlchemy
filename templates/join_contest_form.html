@@ -74,23 +74,19 @@
     <div class="container">
         <div class="row mt-4">
             <div class="col">
-                <select class="form-select" id="settings" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option value="?page=1&state=*&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
-                        {% if state is none or state == '*' %}selected disabled{% endif %}>
+                <select class="form-select" id="typeSelect" onchange="updateFilters()">
+                    <option value="*" {% if contest_type is none or contest_type == '*' %}selected disabled{% endif %}>
                         設定
                     </option>
-                    <option value="?page=1&state=*&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
-                        {% if state == '*' %}selected{% endif %}>
+                    <option value="*" {% if contest_type == '*' %}selected{% endif %}>
                         全部
                     </option>
-                    <option value="?page=1&state=public&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
-                        {% if state == 'public' %}selected{% endif %}>
+                    <option value="public" {% if contest_type == 'public' %}selected{% endif %}>
                         公開
                     </option>
-                    <option value="?page=1&state=private&onlinejudge=*&difficulty={{difficulty}}&search={{search}}"
-                        {% if state == 'private' %}selected{% endif %}>
+                    <option value="private" {% if contest_type == 'private' %}selected{% endif %}>
                         私人
-                    </option>                    
+                    </option>
                 </select>
             </div>
             <!--語言下拉式選單註解
@@ -117,27 +113,22 @@
             </div>
             -->
             <div class="col">
-                <select class="form-select" id="state" onchange="location.href=this.options[this.selectedIndex].value">
-                    <option value="?page=1&state=*&onlinejudge={{onlinejudge}}&search={{search}}"
-                        {% if state is none or state == '*' %}selected disabled{% endif %}>
+                <select class="form-select" id="stateSelect" onchange="updateFilters()">
+                    <option value="*" {% if state is none or state == '*' %}selected disabled{% endif %}>
                         狀態
                     </option>
-                    <option value="?page=1&state=*&onlinejudge={{onlinejudge}}&search={{search}}"
-                        {% if state == '*' %}selected{% endif %}>
+                    <option value="*" {% if state == '*' %}selected{% endif %}>
                         全部
                     </option>
-                    <option value="?page=1&state=not_started&onlinejudge={{onlinejudge}}&search={{search}}"
-                        {% if state == 'not_started' %}selected{% endif %}>
+                    <option value="not_started" {% if state == 'not_started' %}selected{% endif %}>
                         尚未開始
                     </option>
-                    <option value="?page=1&state=ongoing&onlinejudge={{onlinejudge}}&search={{search}}"
-                        {% if state == 'ongoing' %}selected{% endif %}>
+                    <option value="ongoing" {% if state == 'ongoing' %}selected{% endif %}>
                         進行中
                     </option>
-                    <option value="?page=1&state=finished&onlinejudge={{onlinejudge}}&search={{search}}"
-                        {% if state == 'finished' %}selected{% endif %}>
+                    <option value="finished" {% if state == 'finished' %}selected{% endif %}>
                         已結束
-                    </option>                    
+                    </option>
                 </select>
             </div>
             
@@ -238,18 +229,18 @@
                 <ul class="pagination">
                     <!-- 第一頁按钮 -->
                     <li class="page-item">
-                        <a class="page-link" href="?page=1&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" aria-label="First">
+                        <a class="page-link" href="?page=1&state={{ state }}&onlinejudge={{ onlinejudge }}&contest_type={{ contest_type }}&search={{ search }}" aria-label="First">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     {% for p in range(1, total_pages + 1) %}
                     <li class="page-item {% if p == page %}active{% endif %}">
-                        <a class="page-link" href="?page={{ p }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}">{{ p }}</a>
+                        <a class="page-link" href="?page={{ p }}&state={{ state }}&onlinejudge={{ onlinejudge }}&contest_type={{ contest_type }}&search={{ search }}">{{ p }}</a>
                     </li>
                     {% endfor %}
                     <!-- 最後一頁按钮 -->
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ total_pages }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty={{ difficulty }}&search={{ search }}" aria-label="Last">
+                        <a class="page-link" href="?page={{ total_pages }}&state={{ state }}&onlinejudge={{ onlinejudge }}&contest_type={{ contest_type }}&search={{ search }}" aria-label="Last">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -281,6 +272,15 @@
 </body>
 
 <script>
+    function updateFilters() {
+        const typeSelect = document.getElementById('typeSelect').value;
+        const stateSelect = document.getElementById('stateSelect').value;
+
+        // 更新 URL 參數，將選中的類型和狀態都加入
+        const url = `?page=1&state=${stateSelect}&contest_type=${typeSelect}&search={{ search }}`;
+        window.location.href = url;
+    }
+
     function handleContestClick(contestId, contestType) {
         window.currentContestId = contestId;
         if (contestType === 'private') {

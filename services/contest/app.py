@@ -175,7 +175,8 @@ def contest_join():
     user_id = session.get('User_id')
 
     # 獲取 URL 中的篩選條件
-    state = request.args.get('state', None)
+    state = request.args.get('state', '*')
+    contest_type = request.args.get('contest_type', '*')
     search = request.args.get('search', '').strip()
     page = request.args.get('page', 1, type=int)
     per_page = 10
@@ -186,12 +187,13 @@ def contest_join():
     where_clause = []
     params = []
 
+    # 添加類型過濾條件
+    if contest_type != '*' and contest_type:
+        where_clause.append("type = %s")
+        params.append(contest_type)
+
     # 添加狀態過濾條件
-    if state == 'public':
-        where_clause.append("type = 'public'")
-    elif state == 'private':
-        where_clause.append("type = 'private'")
-    elif state == 'not_started':
+    if state == 'not_started':
         where_clause.append("start_date > %s")
         params.append(current_time)
     elif state == 'ongoing':
@@ -278,12 +280,7 @@ def contest_join():
 
     no_contest_message = None
     if not contests:
-        if state == 'ongoing':
-            no_contest_message = "沒有正在進行中的比賽"
-        elif state == 'not_started':
-            no_contest_message = "沒有尚未開始的比賽"
-        elif state == 'contest_type':
-            no_contest_message = "沒有符合條件的比賽"
+        no_contest_message = "沒有符合條件的比賽"
 
     total_pages = (total_contests + per_page - 1) // per_page
 
@@ -291,8 +288,10 @@ def contest_join():
 
     return render_template('join_contest_form.html', contests=contests_with_status, 
                            page=page, total_pages=total_pages, 
-                           state=state, search=search, current_time=current_time, 
+                           state=state, contest_type=contest_type, search=search, current_time=current_time, 
                            no_contest_message=no_contest_message)
+
+
 
 
 

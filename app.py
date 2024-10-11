@@ -4,7 +4,8 @@ from flask import Flask, render_template, session, request,jsonify,redirect
 import math
 import uuid
 import re
-from crawler.submit import ZeroJudge_submit,TIOJ_submit,CodeAlchemy_submit
+from crawler.submit import ZeroJudge_submit,TIOJ_submit
+from flask_sqlalchemy import SQLAlchemy
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -30,6 +31,7 @@ def index():
     state = request.args.get('state', '*', type=str)
     onlinejudge = request.args.get('onlinejudge', '*', type=str)
     difficulty = request.args.get('difficulty', '*', type=str)
+    tag = request.args.get('tag', '', type=str)
     search = request.args.get('search', '', type=str)
 
     try:
@@ -60,6 +62,8 @@ FROM `113-CodeAlchemy`.problem AS p"""
 ) AS acceptance_data ON p.problem_id = acceptance_data.problem_id"""
 
     condition = ' WHERE '  # where前後的空格勿動
+    if tag != '':
+        condition += f'p.tag LIKE "%{tag}%" AND '
     if search != '':
         condition += f'p.title LIKE "%{search}%" AND '
     if onlinejudge != '*':
@@ -82,6 +86,7 @@ FROM `113-CodeAlchemy`.problem AS p"""
     else:
         condition = condition[:condition.rfind(' AND ')]
     sql_problem_command = sql_problem_command + condition
+    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
@@ -91,7 +96,7 @@ FROM `113-CodeAlchemy`.problem AS p"""
     end_page = min(page+3,math.ceil(paginate(data,page, per_page)[1]/per_page)+1)
     paginated_data = paginate(data,page, per_page)[0]
     #渲染網頁
-    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,search=search)
+    return render_template('problem_list.html',data=paginated_data,page=page,start_page=start_page,end_page=end_page,state=state,onlinejudge=onlinejudge,difficulty=difficulty,tag=tag,search=search)
 
 
 '''run ok
@@ -237,7 +242,14 @@ def problem():
         run_time = 0
         memory = 0
         ensue = "Rejected"
-
+        mime_to_language = {
+            "text/x-c++src": "C++",
+            "python": "Python",
+            "text/x-csrc": "C",
+            "text/x-java": "Java",
+            # 可以根據需要繼續添加其他對應項
+        }
+        language = mime_to_language.get(language, "Unknown")
         if score and score[2] == 'Accepted':
             result = True
             message = "測試成功"
@@ -245,6 +257,10 @@ def problem():
             memory = score[4].replace('MB','')
             ensue = score[2]
         # 確認提交來源並插入到正確的資料表
+        print(f'''
+                INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
+                VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
+            ''')
         if source == 'contest':
             print(f"決策時的 Source 值: {source}")  # 確認 source 的值
             # 插入記錄到 contest_submission 資料表
@@ -260,8 +276,9 @@ def problem():
                 INSERT INTO `answer record` (user_id, problem_id, result, language, run_time, memory, update_time)
                 VALUES ('{session['User_id']}', '{problem_id}', '{ensue}', '{language}', '{run_time}', '{memory}', '{score[-1]}')
             ''')
+            
             print("成功插入到 answer record 資料表")  # 用於確認的訊息
-
+        
         return jsonify({
             'result': result,
             'message': message,

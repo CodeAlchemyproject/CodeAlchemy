@@ -59,6 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 // 監聽按鈕點擊事件
 document.getElementById("test_btn").addEventListener("click", function () {
+    // 隱藏之前的結果
+    document.getElementById("passed").style.display = "none";
+    document.getElementById("failed").style.display = "none";
     var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
     var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
@@ -128,6 +131,9 @@ document.getElementById("test_btn").addEventListener("click", function () {
 //上傳
 // 監聽按鈕點擊事件
 document.getElementById("upload_btn").addEventListener("click", function () {
+    // 隱藏之前的結果
+    document.getElementById("passed").style.display = "none";
+    document.getElementById("failed").style.display = "none";
     // 初始化模態視窗
     var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
     var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
