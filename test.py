@@ -14,17 +14,12 @@
 # response = requests.post(url, headers=headers, json=data)
 # print(f"response status_code: {response.status_code}")
 # print(json.dumps(response.json(), indent=4, ensure_ascii=False))
-# from crawler.submit import CodeAlchemy_submit
+from crawler import CAOJ_add_problem
 # CodeAlchemy_submit('da2b80_CA-a001.py','17','哈囉')
+CAOJ_add_problem('數字排序器'
+                 ,"給定一串整數序列，請設計一個程式能將這些數字依從小到大的順序排序，並且輸出排序後的結果。"
+                 ,'輸入的第一行包含一個正整數 N，代表序列中有 N 個數字（1 ≤ N ≤ 100）。接著，第二行包含 N 個用空格分隔的整數，這些整數的範圍為 -1000 到 1000。'
+                 ,'輸出排序後的整數序列，所有數字須以空格分隔。'   
+                 ,'''5 
+                 3 -1 0 99 -100''')
 
-# 讀取第一行的數字，代表有多少個數字需要排序
-n = int(input().strip())
-
-# 讀取第二行，並將數字分割成陣列
-numbers = list(map(int, input().strip().split()))
-
-# 排序數字
-sorted_numbers = sorted(numbers)
-
-# 將排序後的數字輸出，數字之間用空格分隔
-print(" ".join(map(str, sorted_numbers)))
