@@ -143,9 +143,9 @@
                     <tr onclick="window.location='./problem?problem_id={{item[0]}}&source=main'">
                         <td class="text-success">
                             {% if item[14]=='Accepted' %}
-                            <span style="color: #198754;"><strong>✔ 已完成</strong></span>
+                            <span style="color: #198754;"><strong class="text-nowrap">✔ 已完成</strong></span>
                             {% elif (item[14]=='Rejected') or (item[14]=='Not Accept') or (item[14]=='Wrong Answer')%}
-                            <span style="color: #ffc107;"><strong>❕ 未通過</strong></span>
+                            <span style="color: #ffc107;"><strong class="text-nowrap">❕ 未通過</strong></span>
                             {% endif %}
                         </td>
                         <td>
