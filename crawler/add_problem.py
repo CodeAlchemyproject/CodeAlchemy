@@ -1,4 +1,7 @@
 # 引入所需的模組和套件
+from datetime import datetime
+import re
+from flask import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -7,24 +10,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys  # 匯入 Keys 模組來模擬按鍵動作
-import pandas as pd
 from time import sleep
 import os
-import glob
 import traceback
-
-def CodeAlchemy_add_problem(title, content, enter_description, output_description, example_input, example_output,):
-    # crawler setting
+def CodeAlchemy_add_problem(problem_id, title, content, enter_description, output_description, example_input, example_output):
     main_url = 'http://123.192.165.145:8081/Login'
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     driver = None  # 初始化 driver 變數
     try:
+        s = Service(ChromeDriverManager().install())
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option('prefs', prefs)
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         chrome_options.add_argument("disable-infobars")
         os.environ["WDM_ARCH"] = "64" 
-        driver = webdriver.Chrome(options=chrome_options)
+        driver = webdriver.Chrome(service=s, options=chrome_options)
         driver.maximize_window()
         wait_max = 10
 
@@ -66,30 +66,68 @@ def CodeAlchemy_add_problem(title, content, enter_description, output_descriptio
             if driver.current_url != 'http://123.192.165.145:8081/':
                 raise BaseException
             else:
-                 print("登入成功")
+                print("登入成功")
             driver.get('http://123.192.165.145:8081/InsertProblem')
 
-            title_input = WebDriverWait(login_area, wait_max).until(
+            # 等待標題輸入框出現
+            title_input = WebDriverWait(driver, wait_max).until(
                 EC.presence_of_element_located((By.NAME, 'title')))
-            # 清空該輸入框的值
             title_input.clear()
             title_input.send_keys(title)
+
             # 切換到 iframe
-            WebDriverWait(login_area, wait_max).until(
+            WebDriverWait(driver, wait_max).until(
                 EC.presence_of_element_located((By.ID, 'mce_0_ifr'))
             )
-            login_area.switch_to.frame('mce_0_ifr')
+            driver.switch_to.frame('mce_0_ifr')
 
             # 在 iframe 中找到編輯器內容區域並輸入內容
-            content_area = WebDriverWait(login_area, wait_max).until(
+            content_area = WebDriverWait(driver, wait_max).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, 'body'))  # 通常編輯器的內容區域會是 <body> 標籤
             )
             content_area.send_keys(content)  # 輸入內容
+            # 切換到 iframe
+            WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.ID, 'mce_13_ifr'))
+            )
+            driver.switch_to.frame('mce_13_ifr')
+
+            # 在 iframe 中找到編輯器內容區域並輸入內容
+            theinput = WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'body'))  # 通常編輯器的內容區域會是 <body> 標籤
+            )
+            theinput.send_keys(enter_description)  # 輸入內容
+
+            # 切換到 iframe
+            WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.ID, 'mce_14_ifr'))
+            )
+            driver.switch_to.frame('mce_14_ifr')
+
+            # 在 iframe 中找到編輯器內容區域並輸入內容
+            theinput = WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'body'))  # 通常編輯器的內容區域會是 <body> 標籤
+            )
+            theinput.send_keys(output_description)  # 輸入內容
+            sleep(10)
 
             # 切換回主頁面
-            login_area.switch_to.default_content()
+            driver.switch_to.default_content()
 
-        except BaseException as e:
+            sampleinput = WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.NAME, 'sampleinput')))
+            sampleinput.send_keys(example_output)
+            sampleoutput = WebDriverWait(driver, wait_max).until(
+                EC.presence_of_element_located((By.NAME, 'sampleoutput')))
+            sampleoutput.send_keys(example_output)
+
+            # 等待並定位按鈕，然後點擊
+            update_button = WebDriverWait(driver, wait_max).until(
+                EC.element_to_be_clickable((By.NAME, 'updateProblem'))
+            )
+            update_button.click()
+
+        except Exception as e:
             print(e)
             return []  # 返回空列表，表示登錄失敗
     except Exception as e:
@@ -98,4 +136,4 @@ def CodeAlchemy_add_problem(title, content, enter_description, output_descriptio
     finally:
         if driver:
             driver.quit()
-        return None
+        return None 
