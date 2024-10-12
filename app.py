@@ -5,7 +5,7 @@ import math
 import uuid
 import re
 from crawler.submit import ZeroJudge_submit,TIOJ_submit
-from flask_sqlalchemy import SQLAlchemy
+#from flask_sqlalchemy import SQLAlchemy # type: ignore
 #-----------------------
 
 # 匯入各個服務藍圖

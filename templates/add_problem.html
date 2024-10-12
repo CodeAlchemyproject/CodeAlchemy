@@ -44,16 +44,20 @@
             <div class="mb-3">
                 <textarea class="form-control" name="example_output" id="" rows="3"></textarea>
             </div>
-            <h3 class="mt-4">測試資料輸入:</h3>
+            <h3 class="mt-4">測試資料 輸入#1:</h3>
             <div class="mb-3">
-                <input type="text" class="form-control" name="test_input" id="" aria-describedby="basic-addon2"
-                        placeholder="" />
+                <textarea  class="form-control" name="test_input[]" id="" aria-describedby="basic-addon2"
+                        placeholder="輸入#1" ></textarea>
             </div>
-            <h3 class="mt-4">測試資料輸出:</h3>
+            <h3 class="mt-4">測試資料 輸出#1:</h3>
             <div class="mb-3">
-                <input type="text" class="form-control" name="test_input" id="" aria-describedby="basic-addon2"
-                        placeholder="" />
+                <textarea  class="form-control" name="test_output[]" id="" aria-describedby="basic-addon2"
+                        placeholder="輸出#1" ></textarea>
             </div>
+            <div id="additional-rows"></div>
+
+            <button class="btn btn-primary mt-4" id="add-row-btn" type="button">新增一筆</button>
+
             <h3 class="mt-4">難度<br></h3>
             <div class="mb-3">
                 <select class="form-select form-select-lg" name="difficulty" id="">
@@ -97,9 +101,31 @@
         </div>
     </div>
     <script>
+        let count = 1;
+
+        document.getElementById("add-row-btn").addEventListener("click", function () {
+            count++;
+            
+            // 創建新的輸入/輸出行
+            const newInputGroup = `
+                <h3 class="mt-4">測試資料 輸入#${count}:</h3>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="test_input[]" placeholder="輸入#${count}" />
+                </div>
+                <h3 class="mt-4">測試資料 輸出#${count}:</h3>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="test_output[]" placeholder="輸出#${count}" />
+                </div>
+            `;
+
+            // 將新行加入到頁面中
+            document.getElementById("additional-rows").insertAdjacentHTML('beforeend', newInputGroup);
+        });
+
         document.getElementById('confirm_save').addEventListener('click', function () {
             document.querySelector('form').submit();
         });
+
     </script>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"

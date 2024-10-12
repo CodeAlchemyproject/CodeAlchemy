@@ -274,7 +274,8 @@ def TIOJ_submit(file_name, number):
                 
                 language_dict = {
                     "python": "9",
-                    "cpp": "12"
+                    "cpp": "12",
+                    "c":'7'
                 }
                 value = language_dict.get(language)
                 for prob_id in list(submit_program_dict.keys()):
