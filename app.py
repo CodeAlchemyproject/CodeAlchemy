@@ -86,7 +86,6 @@ FROM `113-CodeAlchemy`.problem AS p"""
     else:
         condition = condition[:condition.rfind(' AND ')]
     sql_problem_command = sql_problem_command + condition
-    print(sql_problem_command)
     data=db.get_data(sql_problem_command)
     # 預設第一頁
     page = request.args.get('page', 1, type=int)
