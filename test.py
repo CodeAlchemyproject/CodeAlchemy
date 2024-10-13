@@ -14,6 +14,7 @@
 # response = requests.post(url, headers=headers, json=data)
 # print(f"response status_code: {response.status_code}")
 # print(json.dumps(response.json(), indent=4, ensure_ascii=False))
+# from flask import current_app
 from crawler.add_problem import CodeAlchemy_add_problem
 
 CodeAlchemy_add_problem('1002'
@@ -28,3 +29,5 @@ CodeAlchemy_add_problem('1002'
                 )
 # from crawler import submit
 # submit.CodeAlchemy_submit('da2b80_CA-a001.py','17','哈囉')
+
+
