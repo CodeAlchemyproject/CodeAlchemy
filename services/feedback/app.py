@@ -6,15 +6,15 @@ from datetime import datetime
 
 from utils import db
 
-# 產生反饋服務藍圖
+# 產生回饋服務藍圖
 feedback_bp = Blueprint('feedback_bp', __name__)
 
-#新增反饋表單
+#新增回饋表單
 @feedback_bp.route('/create/form')
 def feedback_create_form():
     return render_template('feedback_create_form.html') 
 
-#新增反饋
+#新增回饋
 @feedback_bp.route('/create', methods=['POST'])
 def submit_feedback():
     feedback_content = request.form['feedback_content']
@@ -26,7 +26,7 @@ def submit_feedback():
         # 取得目前時間
         created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # 將反饋資料存入資料庫
+        # 將回饋資料存入資料庫
         cursor = connection.cursor()
         cursor.execute("INSERT INTO feedback (user_id, content, created_at) VALUES (%s, %s, %s)",
                         (user_id, feedback_content, created_at))
@@ -53,7 +53,7 @@ def submit_feedback():
             </script>
         '''
         
-#反饋紀錄
+#回饋紀錄
 @feedback_bp.route('/feedback_history')
 def feedback_history(): 
     #取得資料庫連線 
@@ -73,7 +73,7 @@ def feedback_history():
     #渲染網頁
     return render_template('feedback_history.html', feedback_history=feedback_history) 
 
-#管理者反饋紀錄
+#管理者回饋紀錄
 @feedback_bp.route('/admin_dashboard')
 def admin_dashboard():
     # 取得當前頁碼，默認為 1
@@ -86,7 +86,7 @@ def admin_dashboard():
     #產生執行sql命令的物件, 再執行sql   
     cursor = connection.cursor() 
 
-    # 查詢所有反饋的總數量
+    # 查詢所有回饋的總數量
     cursor.execute('SELECT COUNT(*) FROM feedback')
     total_feedback = cursor.fetchone()[0]
 
@@ -96,7 +96,7 @@ def admin_dashboard():
     # 計算分頁所需的偏移量
     offset = (page - 1) * per_page
 
-    # 查詢特定頁面的反饋資料，按提交時間降序排列，並進行表連接
+    # 查詢特定頁面的回饋資料，按提交時間降序排列，並進行表連接
     query = '''
     SELECT feedback.feedback_id, user.user_name, feedback.content, feedback.created_at, feedback.reply 
     FROM feedback 
@@ -115,7 +115,7 @@ def admin_dashboard():
 
     return render_template('admin_dashboard.html', feedback=feedback, page=page, total_pages=total_pages)
 
-#回覆反饋表單
+#回覆回饋表單
 @feedback_bp.route('/reply_feedback/form', methods=['GET'])
 def reply_feedback_form():
     #取得資料庫連線 
@@ -137,7 +137,7 @@ def reply_feedback_form():
     #渲染網頁
     return render_template('reply_feedback_form.html', feedback=feedback) 
 
-#回覆反饋
+#回覆回饋
 @feedback_bp.route('/reply_feedback', methods=['POST'])
 def reply_feedback():
     #取得資料庫連線 
