@@ -12,7 +12,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理者反饋紀錄</title>
+    <title>管理者回饋紀錄</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,7 +89,7 @@
                 {% for feedback in feedback %}
                 <div class="feedback-item card border-0 shadow">
                     <p><strong>使用者名稱:</strong> {{ feedback[1] }}</p>
-                    <p><strong>反饋內容:</strong> {{ feedback[2] }}</p>
+                    <p><strong>回饋內容:</strong> {{ feedback[2] }}</p>
                     <p><strong>提交時間:</strong> {{ feedback[3] }}</p>
                     <p><strong>回覆內容:</strong> {{ feedback[4] }}</p>
                     <button class="reply-button"
