@@ -164,7 +164,6 @@ def CodeAlchemy_add_problem(problem_id, title, content, enter_description, outpu
             uploadFiles = WebDriverWait(driver, wait_max).until(
                 EC.element_to_be_clickable((By.ID, 'uploadFiles')))
             uploadFiles.click()    
-            sleep(10)
         except Exception as e:
             print(e)
             return []  # 返回空列表，表示登錄失敗
