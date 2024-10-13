@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提交反饋</title>
+    <title>提交回饋</title>
 
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
@@ -67,12 +67,12 @@
     <div class="container">
         <div class="card border-0 shadow rounded-3 my-5">
             <div class="card-body p-4 p-sm-5">
-                <h2>請提供您的反饋:</h2>
+                <h2>請提供您的回饋:</h2>
                 <form action="/feedback/create" method="post">
-                    <textarea class="form-control" name="feedback_content" rows="5" placeholder="在此輸入您的反饋"></textarea>
+                    <textarea class="form-control" name="feedback_content" rows="5" placeholder="在此輸入您的回饋"></textarea>
                     <div class="btn-row">
-                        <button type="submit" class="btn btn-primary">提交反饋</button>
-                        <a href="/feedback/feedback_history" class="btn btn-primary">反饋紀錄</a>
+                        <button type="submit" class="btn btn-primary">提交回饋</button>
+                        <a href="/feedback/feedback_history" class="btn btn-primary">回饋紀錄</a>
                     </div>
                 </form>
             </div>

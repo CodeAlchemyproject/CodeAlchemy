@@ -26,146 +26,6 @@ def contest_create_form():
         return render_template('login.html')  # 直接渲染登入頁面
     return render_template('create_contest.html') 
 
-
-'''
-@contest_bp.route('/join/form')
-def contest_join():
-    conn = db.connection()  # 獲取資料庫連接
-    cursor = conn.cursor()
-
-    current_time = datetime.now()  # 獲取當前時間
-
-    # 檢查使用者 ID 是否存在於 session 中
-    user_id = session.get('User_id')
-
-    # 獲取 URL 中的篩選條件
-    state = request.args.get('state', None)  # 獲取比賽狀態參數，默認為 None
-    page = request.args.get('page', 1, type=int)  # 獲取頁碼，默認為第 1 頁
-    per_page = 10  # 每頁顯示的比賽數量
-    offset = (page - 1) * per_page  # 計算目前頁的起始位置
-
-    # 獲取總比賽數的查詢條件
-    total_contests_query = "SELECT COUNT(*) FROM contest"
-
-    # 用來篩選比賽狀態和類型的條件
-    where_clause = []
-    params = []  # 存放參數
-
-    if state == 'public':
-        where_clause.append("type = 'public'")
-    elif state == 'private':
-        where_clause.append("type = 'private'")
-    elif state == 'not_started':
-        where_clause.append("start_date > %s")
-        params.append(current_time)  # 將 current_time 加入參數
-    elif state == 'ongoing':
-        where_clause.append("start_date <= %s AND end_date > %s")
-        params.extend([current_time, current_time])  # 兩次使用 current_time
-    elif state == 'finished':
-        where_clause.append("end_date <= %s")
-        params.append(current_time)  # 將 current_time 加入參數
-
-
-    # 構建完整的 SQL 查詢
-    if where_clause:
-        total_contests_query += " WHERE " + " AND ".join(where_clause)
-
-    # 執行查詢，計算比賽數量
-    cursor.execute(total_contests_query, tuple(params))  # 只在有參數時傳入
-    total_contests = cursor.fetchone()[0]
-
-    # 查詢比賽資料的查詢條件
-    contest_query = """
-    SELECT contest_id, contest_name, start_date, end_date, description, type
-    FROM contest
-    """
-
-    # 添加篩選條件
-    if where_clause:
-        contest_query += " WHERE " + " AND ".join(where_clause)
-
-    # 排序及分頁
-    contest_query += " ORDER BY contest_id DESC LIMIT %s OFFSET %s"
-
-    # 執行查詢比賽資料
-    cursor.execute(contest_query, tuple(params + [per_page, offset]))
-    contests = cursor.fetchall()
-
-
-    # 查詢每個比賽的參加人數
-    contest_participants_query = """
-    SELECT contest_id, COUNT(user_id) 
-    FROM `contest participant` 
-    GROUP BY contest_id
-    """
-    cursor.execute(contest_participants_query)
-    contest_participants = cursor.fetchall()
-
-    # 將比賽ID對應到參加人數
-    contest_participants_dict = {row[0]: row[1] for row in contest_participants}
-
-    # 添加參加狀態到 contests 中
-    contests_with_status = []
-    for contest in contests:
-        contest_id = contest[0]
-        participant_count = contest_participants_dict.get(contest_id, 0)
-
-        # 使用從資料庫讀取的 start_date 和 end_date，這已經是 datetime 物件
-        start_date = contest[2]  # 假設這是 datetime 物件
-        end_date = contest[3]    # 假設這是 datetime 物件
-        
-        # 計算剩餘天數
-        remaining_days = (end_date - current_time).days
-        remaining_seconds = (end_date - current_time).seconds  # 剩餘的秒數
-
-        if start_date > current_time:  # 比賽尚未開始
-            countdown_days = (start_date - current_time).days
-            countdown_hours = (start_date - current_time).seconds // 3600
-            if countdown_days >= 1:
-                time_status = f"倒數 {countdown_days} 天開始"
-            elif countdown_days < 1:
-                if countdown_hours >= 1:
-                    time_status = f"倒數 {countdown_hours} 小時開始"
-                else:
-                    time_status = "即將開始"
-        elif remaining_days > 0 or (remaining_days == 0 and remaining_seconds > 0):  # 比賽進行中
-            if remaining_days == 0:  # 剩餘小於一天
-                remaining_hours = (end_date - current_time).seconds // 3600  # 計算剩餘小時數
-                time_status = f"比賽將在 {remaining_hours} 小時後結束"
-            else:
-                time_status = f"剩餘天數: {remaining_days} 天"
-        else:  # 比賽已結束
-            time_status = "比賽已結束"
-
-        if user_id:
-            cursor.execute("SELECT contest_id FROM `contest participant` WHERE user_id = %s", (user_id,))
-            joined_contests = set([row[0] for row in cursor.fetchall()])
-            status = "joined" if contest_id in joined_contests else "not_joined"
-        else:
-            status = "not_joined"
-
-        contests_with_status.append((*contest, status, participant_count, time_status))
-
-    # 檢查是否有比賽資料並添加相應的訊息
-    no_contest_message = None
-    if not contests:
-        if state == 'ongoing':
-            no_contest_message = "沒有正在進行中的比賽"
-        elif state == 'not_started':
-            no_contest_message = "沒有尚未開始的比賽"
-        elif state == 'contest_type':
-            no_contest_message = "沒有符合條件的比賽"
-
-    total_pages = (total_contests + per_page - 1) // per_page
-
-    conn.close()
-
-    return render_template('join_contest_form.html', contests=contests_with_status, 
-                           page=page, total_pages=total_pages, 
-                           current_time=current_time, 
-                           no_contest_message=no_contest_message)
-'''
-
 @contest_bp.route('/join/form')
 def contest_join():
     conn = db.connection()
@@ -291,12 +151,6 @@ def contest_join():
                            state=state, contest_type=contest_type, search=search, current_time=current_time, 
                            no_contest_message=no_contest_message)
 
-
-
-
-
-
-
 @contest_bp.route('/join', methods=["POST"])
 def join_contest():
     contest_id = request.form['contest_id']
@@ -335,37 +189,6 @@ def join_contest():
     conn.close()
 
     return jsonify({"redirect_url": url_for('contest_bp.contest_info', contest_id=contest_id)})
-
-
-'''##no private password run##
-@contest_bp.route('/join', methods=["POST"])
-def join_contest():
-    contest_id = request.form['contest_id']
-    
-    # 檢查使用者 ID 是否存在於 session 中
-    user_id = session.get('User_id')
-    
-    # 如果使用者未登入，渲染 login.html
-    if not user_id:
-        return render_template('./login.html')
-
-    conn = db.connection()
-    cursor = conn.cursor()
-
-    # 檢查該使用者是否已經參加過該比賽
-    cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
-    already_joined = cursor.fetchone()
-
-    # 如果尚未參加過該比賽，則寫入 contest participant 資料表
-    if not already_joined:
-        cursor.execute("INSERT INTO `contest participant` (contest_id, user_id) VALUES (%s, %s)", (contest_id, user_id))
-        conn.commit()
-
-    conn.close()
-    
-    # 使用 redirect 重導向到顯示結果的 GET 路由
-    return redirect(url_for('contest_bp.contest_info', contest_id=contest_id))
-'''
 
 @contest_bp.route('/contest/<contest_id>', methods=["GET"])
 def contest_info(contest_id):
@@ -548,4 +371,3 @@ def connect_contest_and_problem(connection, contest_id, problem_id):
     )
 
     cursor.close()
-
