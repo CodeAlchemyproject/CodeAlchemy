@@ -4,8 +4,9 @@ import os
 import uuid
 import glob
 
-def create_zip(problem_id):
-    pattern = f'*_{problem_id}*'
+def create_zip(problem_id,code):
+    pattern = f'*_{problem_id}.{code}'
+    print(pattern)
     files = glob.glob(os.path.join('source', pattern))
     
     # 指定輸出 Zip 檔案的路徑

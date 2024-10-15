@@ -199,7 +199,7 @@
                     {% if source=='main' %}
                     <p></p>
                     <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
-                        aria-disabled="true">程式碼分析</a>
+                        aria-disabled="true" id="analyze_code_btn">程式碼分析</a>
                     <p></p>
                     <a href='./answer_record?problem_id={{data[0][0]}}' class="btn btn-primary w-70" role="button"
                         aria-disabled="true">作答情況</a>
@@ -224,13 +224,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Language Selection Modal -->
+    <div class="modal fade" id="languageSelectionModal" tabindex="-1" aria-labelledby="languageSelectionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="languageSelectionLabel">選擇語言類型</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="languageSelect" class="form-select">
+                        <option value="py">Python</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmLanguageBtn">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
+    <!-- codemirror+測試+上傳的js -->
+    <script src="../static/js/codemirro.js"></script>
+    <!-- 進度條動畫 -->
+    <!-- <script src="../static/js/progress.js"></script> -->
+
+    <script>
+        document.getElementById("analyze_code_btn").addEventListener("click", function (e) {
+            e.preventDefault();
+            var languageSelectionModal = new bootstrap.Modal(document.getElementById('languageSelectionModal'));
+            languageSelectionModal.show();
+        });
+
+        document.getElementById("confirmLanguageBtn").addEventListener("click", function () {
+            var selectedLanguage = document.getElementById("languageSelect").value;
+            var problemId = document.getElementById("problem_id").textContent;
+            // console.log(selectedLanguage)
+            window.location.href = "/dolos?problem_id=" + problemId + "&language=" + selectedLanguage;
+        });
+    </script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
-    crossorigin="anonymous"></script>
-<!-- codemirror+測試+上傳的js -->
-<script src="../static/js/codemirro.js"></script>
-<!-- 進度條動畫 -->
-<!-- <script src="../static/js/progress.js"></script> -->
 
 </html>
