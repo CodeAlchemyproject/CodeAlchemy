@@ -5,7 +5,6 @@ import math
 import uuid
 import re
 from crawler.submit import ZeroJudge_submit,TIOJ_submit
-#from flask_sqlalchemy import SQLAlchemy # type: ignore
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -252,7 +251,8 @@ def add_to_collection():
 @app.route('/dolos', methods=['GET'])
 def problem_dolos():
     problem_id=request.args.get('problem_id',type=str)
-    zip=dolos.create_zip(problem_id)
+    code=request.args.get('language',type=str)
+    zip=dolos.create_zip(problem_id,code)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
 

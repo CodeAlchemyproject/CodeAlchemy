@@ -140,7 +140,7 @@
                 </thead>
                 <tbody>
                     {% for item in data %}
-                    <tr onclick="window.location='./problem?problem_id={{item[0]}}&source=main'">
+                    <tr style="cursor: pointer;" onclick="window.location='./problem?problem_id={{item[0]}}&source=main'">
                         <td class="text-success">
                             {% if item[14]=='Accepted' %}
                             <span style="color: #198754;"><strong class="text-nowrap">✔ 已完成</strong></span>
