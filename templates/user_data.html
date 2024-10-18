@@ -125,7 +125,7 @@
             </div>
             <div class="tab-pane fade" id="menu2">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th scope="col">題號</th>
@@ -138,7 +138,7 @@
                         </thead>
                         <tbody>
                             {% for each_answer_record in answer_record %}
-                            <tr class="">
+                            <tr onclick="window.location='../problem?problem_id={{each_answer_record[2]}}'" style="cursor: pointer;">
                                 <td>{{each_answer_record[2]}}</td>
                                 <td>{{each_answer_record[4]}}</td>
                                 <td>{{each_answer_record[5]}}</td>
@@ -168,7 +168,7 @@
                         </thead>
                         <tbody>
                             {% for data in collection %}
-                            <tr onclick="window.location='../problem?problem_id={{data[1]}}'">
+                            <tr onclick="window.location='../problem?problem_id={{data[1]}}'" style="cursor: pointer;">
                                 <td>{{data[1]}}</td>
                                 <td>{{data[2]}}</td>
                                 <td>{{data[3]}}</td>
