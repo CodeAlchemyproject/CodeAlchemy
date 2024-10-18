@@ -18,7 +18,7 @@
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+
 
 </head>
 
@@ -28,54 +28,58 @@
         <div class="row">
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
                 <!--<div class="card border-0 shadow rounded-3 my-5">-->
-                    <div class="card-body p-4 p-sm-5">
-                        <form id="competitionForm" action="/contest/create" method="post">
-                            <h1><b>創建比賽</b></h1>
+                <div class="card-body p-4 p-sm-5">
+                    <form id="competitionForm" action="/contest/create" method="post">
+                        <h1><b>創建比賽</b></h1>
 
-                            <hr class="my-4">
+                        <hr class="my-4">
 
-                            <div class="form">
-                                <div class="form-group row mb-3">
-                                    <label for="contest_name" class="col-sm-3 col-form-label">比賽名稱:</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="contest_name" placeholder="請輸入比賽名稱" name="contest_name" required>
-                                    </div>
+                        <div class="form">
+                            <div class="form-group row mb-3">
+                                <label for="contest_name" class="col-sm-3 col-form-label">比賽名稱:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="contest_name" placeholder="請輸入比賽名稱"
+                                        name="contest_name" required>
                                 </div>
+                            </div>
 
-                                <div class="form-group row mb-3">
-                                    <label for="description" class="col-sm-3 col-form-label">比賽說明:</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="description" placeholder="請輸入比賽說明" name="description" style="width: 100%;" required>
-                                    </div>
+                            <div class="form-group row mb-3">
+                                <label for="description" class="col-sm-3 col-form-label">比賽說明:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="description" placeholder="請輸入比賽說明"
+                                        name="description" style="width: 100%;" required>
                                 </div>
+                            </div>
 
-                                <div class="form-group row mb-3">
-                                    <label for="state" class="col-sm-3 col-form-label">比賽類型:</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-select" id="state" name="state">
-                                            <option value="public">公開</option>
-                                            <option value="private">私人</option>
-                                        </select>
-                                    </div>
+                            <div class="form-group row mb-3">
+                                <label for="state" class="col-sm-3 col-form-label">比賽類型:</label>
+                                <div class="col-sm-9">
+                                    <select class="form-select" id="state" name="state">
+                                        <option value="public">公開</option>
+                                        <option value="private">私人</option>
+                                    </select>
                                 </div>
+                            </div>
 
-                                <!--當比賽類型為private時出現-->
-                                <div class="form-group row mb-3" id="passwordField" style="display: none;">
-                                    <label for="contest_password" class="col-sm-3 col-form-label">比賽密碼:</label>
-                                    <div class="col-sm-9">
-                                        <input type="password" class="form-control" id="contest_password" placeholder="請輸入比賽密碼" name="contest_password">
-                                    </div>
+                            <!--當比賽類型為private時出現-->
+                            <div class="form-group row mb-3" id="passwordField" style="display: none;">
+                                <label for="contest_password" class="col-sm-3 col-form-label">比賽密碼:</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="contest_password"
+                                        placeholder="請輸入比賽密碼" name="contest_password">
                                 </div>
-                                
-                                <div class="form-group row mb-3" id="confirmPasswordField" style="display: none;">
-                                    <label for="confirm_password" class="col-sm-3 col-form-label">確認密碼:</label>
-                                    <div class="col-sm-9">
-                                        <input type="password" class="form-control" id="confirm_password" placeholder="請輸入確認密碼" name="confirm_password">
-                                    </div>
-                                </div>
-                                <!--當比賽類型為private時出現-->
+                            </div>
 
-                                <!--語言先註解掉
+                            <div class="form-group row mb-3" id="confirmPasswordField" style="display: none;">
+                                <label for="confirm_password" class="col-sm-3 col-form-label">確認密碼:</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" id="confirm_password"
+                                        placeholder="請輸入確認密碼" name="confirm_password">
+                                </div>
+                            </div>
+                            <!--當比賽類型為private時出現-->
+
+                            <!--語言先註解掉
                                 <div class="form-group row mb-3">
                                     <label class="col-sm-3 col-form-label">語言:</label>
                                     <div class="col-sm-9">
@@ -100,100 +104,119 @@
                                     </div>
                                 </div>-->
 
-                                <div class="form-group row mb-3">
-                                    <label for="startTime" class="col-sm-3 col-form-label">開始時間:</label>
-                                    <div class="col-sm-9">
-                                        <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
-                                    </div>
+                            <div class="form-group row mb-3">
+                                <label for="startTime" class="col-sm-3 col-form-label">開始時間:</label>
+                                <div class="col-sm-9">
+                                    <input type="datetime-local" class="form-control" id="startTime" name="startTime"
+                                        required>
                                 </div>
+                            </div>
 
-                                <div class="form-group row mb-3">
-                                    <label for="endTime" class="col-sm-3 col-form-label">結束時間:</label>
-                                    <div class="col-sm-9">
-                                        <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
-                                    </div>
+                            <div class="form-group row mb-3">
+                                <label for="endTime" class="col-sm-3 col-form-label">結束時間:</label>
+                                <div class="col-sm-9">
+                                    <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+                                        required>
                                 </div>
+                            </div>
 
-                                <hr class="my-4">
+                            <hr class="my-4">
 
 
-                                <!-- 新增題目表格 -->
-                                <div class="mb-3">
-                                    <label class="form-label">題目列表:</label>
-                                    <div>
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>                                                    
-                                                    <th>Name</th>
-                                                    <th>Difficulty</th>
-                                                    <th>Remove</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="questionTableBody">
-                                                <!-- 這裡會動態添加所選擇的題目 -->
-                                            </tbody>
-                                        </table>
-                                        <input href="#" class="btn btn-success w-100" type="button" value="+ 新增題目"
-                                            data-bs-toggle="modal" data-bs-target="#loginModal"></span>
-                                    </div>
+                            <!-- 新增題目表格 -->
+                            <div class="mb-3">
+                                <label class="form-label">題目列表:</label>
+                                <div>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Difficulty</th>
+                                                <th>Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="questionTableBody">
+                                            <!-- 這裡會動態添加所選擇的題目 -->
+                                        </tbody>
+                                    </table>
+                                    <input href="#" class="btn btn-success w-100" type="button" value="+ 新增題目"
+                                        data-bs-toggle="modal" data-bs-target="#loginModal"></span>
                                 </div>
+                            </div>
 
-                                <!-- 跳出視窗內容 -->
-                                <div class="modal fade" id="loginModal">
-                                    <div class="modal-dialog modal-xl">
-                                        <div class="modal-content">
-                                            <!-- Header -->
-                                            <div class="modal-header">
-                                                <h3>題目列表</h3>
-                                                <button type="button" class="btn-close"
-                                                    data-bs-dismiss="modal"></button>
+                            <!-- 跳出視窗內容 -->
+                            <div class="modal fade" id="loginModal">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <!-- Header -->
+                                        <div class="modal-header">
+                                            <h3>題目列表</h3>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+
+                                        <!-- Body -->
+                                        <div class="modal-body">
+                                            <!-- 篩選器區域 -->
+                                            <div class="mb-3 row">
+                                                <div class="col-md-6">
+                                                    <select id="filterProblemSource" class="form-select">
+                                                        <option value="">選擇題目來源</option>
+                                                        <option value="TIOJ">TIOJ</option>
+                                                        <option value="ZJ">Zerojudge</option>
+                                                        <option value="CAOJ">CAOJ</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" id="filterProblemTitle" class="form-control"
+                                                        placeholder="篩選題目名稱">
+                                                </div>
                                             </div>
-                                            
-                                            <!-- Body -->
-                                            <div class="modal-body">
-                                                <form>
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col">題目編號</th>
-                                                                <th scope="col">題目名稱</th>
-                                                                <th scope="col">題目說明</th>
-                                                                <th scope="col">難易度</th>
-                                                                <th scope="col">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="contestTableBody">
-                                                            <!-- 表格內容將在這裡使用javascript動態添加 -->
-                                                        </tbody>
-                                                    </table>
-                                                    <!-- 分頁導航 -->
-                                                    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                                                        <ul class="pagination" id="pagination">
+                                            <form>
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">題目編號</th>
+                                                            <th scope="col">題目名稱</th>
+                                                            <th scope="col">題目說明</th>
+                                                            <th scope="col">難易度</th>
+                                                            <th scope="col">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="contestTableBody">
+                                                        <!-- 表格內容將在這裡使用javascript動態添加 -->
+                                                    </tbody>
+                                                </table>
+                                                <!-- 分頁導航 -->
+                                                <nav aria-label="Page navigation example"
+                                                    class="d-flex justify-content-center">
+                                                    <ul class="pagination" id="pagination">
                                                         <!-- 分頁按鈕將動態插入到這裡 -->
-                                                        </ul>
-                                                    </nav>
-                                                </form>
-                                            </div>
+                                                    </ul>
+                                                </nav>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <hr class="my-4">
+                            <hr class="my-4">
 
-                                <div class="mb-3 text-center">
-                                    <span class="value">
-                                        <!-- 取消按鈕 -->
-                                        <button class="btn btn-outline-secondary text-uppercase fw-bold me-2" type="button" onclick="window.location.href='/'">取消</button>
-                                        <!-- 創建比賽按鈕 -->
-                                        <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit" value="create">創建比賽</button>
-                                    </span>
-                                </div>
-                        </form>
-                    </div>
+                            <div class="mb-3 text-center">
+                                <span class="value">
+                                    <!-- 取消按鈕 -->
+                                    <button class="btn btn-outline-secondary text-uppercase fw-bold me-2" type="button"
+                                        onclick="window.location.href='/'">取消</button>
+                                    <!-- 創建比賽按鈕 -->
+                                    <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit"
+                                        value="create">創建比賽</button>
+                                </span>
+                            </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -217,64 +240,51 @@
 
             function simplifyContent(content, maxLength) {
                 if (content.length > maxLength) {
-                    return content.substring(0, maxLength) + 
+                    return content.substring(0, maxLength) +
                         '<a href="#" class="more-link" data-content="' + encodeURIComponent(content) + '">...more</a>';
                 }
                 return content;
             }
 
-            /*****/
-            // 監聽比賽類型選擇框的變化
-            $('#state').change(function() {
-                var selectedValue = $(this).val();
-                if(selectedValue === "private") {
-                    $('#passwordField').show();
-                    $('#confirmPasswordField').show();
-                } else {
-                    $('#passwordField').hide();
-                    $('#confirmPasswordField').hide();
-                }
+            // 監聽篩選器的變化
+            $('#filterProblemSource, #filterProblemTitle').on('change keyup', function () {
+                loadTable(1); // 當篩選條件改變時，重新載入表格
             });
-
-             //提交表單前進行密碼一致性檢查
-            $('#competitionForm').submit(function (e) {
-                var password = $('#contest_password').val();
-                var confirmPassword = $('#confirm_password').val();
-                if($('#state').val() === "private" && password !== confirmPassword) {
-                    alert("密碼和確認密碼不匹配");
-                    e.preventDefault();  // 阻止表單提交
-                }
-            });
-            /*****/
 
             // 載入並顯示問題清單和分頁控件
             function loadTable(page) {
+                // 獲取當前的篩選條件
+                const filterSource = $('#filterProblemSource').val();
+                const filterTitle = $('#filterProblemTitle').val();
+
                 $.ajax({
                     url: '/contest/get_problems',
                     type: 'GET',
                     data: {
                         page: page,
-                        per_page: 10
+                        per_page: 10,
+                        source: filterSource,
+                        title: filterTitle
                     },
                     success: function (response) {
                         var contestTableBody = $("#contestTableBody");
                         contestTableBody.empty();
 
                         response.data.forEach(function (problem, index) {
-                            var problem_id = problem[0]; 
-                            var title = problem[1]; 
-                            var content = simplifyContent(problem[2], 100); 
-                            var difficulty = problem[3]; 
+                            var problem_id = problem[0];
+                            var title = problem[1];
+                            var content = simplifyContent(problem[2], 100);
+                            var difficulty = problem[3];
                             var isAdded = selectedProblems.includes(problem_id); // 檢查當前題目是否已被添加
                             var addButtonClass = isAdded ? 'btn-success disabled' : 'btn-primary';
                             var addButtonText = isAdded ? '<i class="fas fa-check"></i>' : 'Add'; // 如果已新增，顯示勾選符號
                             var row = `<tr>
-                                <td>${problem_id}</td>
-                                <td>${title}</td>
-                                <td>${content}</td>
-                                <td>${difficulty}</td>
-                                <td><button class="btn ${addButtonClass} add-btn" type="button" data-title="${title}" data-problem-id="${problem_id}" data-difficulty="${difficulty}">${addButtonText}</button></td>
-                             </tr>`;
+                        <td>${problem_id}</td>
+                        <td>${title}</td>
+                        <td>${content}</td>
+                        <td>${difficulty}</td>
+                        <td><button class="btn ${addButtonClass} add-btn" type="button" data-title="${title}" data-problem-id="${problem_id}" data-difficulty="${difficulty}">${addButtonText}</button></td>
+                    </tr>`;
 
                             contestTableBody.append(row);
                         });
@@ -285,13 +295,13 @@
                         var total_pages = response.total_pages;
                         var page = response.page;
 
-                        var startPage = Math.max(page - 2, 1); 
+                        var startPage = Math.max(page - 2, 1);
                         var endPage = Math.min(page + 2, total_pages);
 
                         pagination.append('<li class="page-item ' + (page === 1 ? 'disabled' : '') + '" data-page="1"><a class="page-link" href="#"><<</a></li>');
 
                         for (let i = startPage; i <= endPage; i++) {
-                            var activeClass = page === i ? 'active' : ''; 
+                            var activeClass = page === i ? 'active' : '';
                             var pageItem = '<li class="page-item ' + activeClass + '" data-page="' + i + '"><a class="page-link" href="#">' + i + '</a></li>';
                             pagination.append(pageItem);
                         }
@@ -325,13 +335,13 @@
                          <td>${difficulty}</td>
                          <td class="text-center"><button class="btn btn-danger remove-btn" data-problem-id="${problemId}"><i class="fas fa-trash-alt"></i></button></td>
                        </tr>`;
-                        $("#questionTableBody").append(row);
+                    $("#questionTableBody").append(row);
 
                     // Change the button to a check mark and disable it
                     $(this).removeClass('btn-primary').addClass('btn-success disabled').html('<i class="fas fa-check"></i>');
-                    }
+                }
 
-                    //$('#loginModal').modal('hide');
+                //$('#loginModal').modal('hide');
             });
 
             $('#pagination').on('click', 'li', function (e) {

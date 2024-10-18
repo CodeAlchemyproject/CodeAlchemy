@@ -262,22 +262,54 @@ def get_problems():
     # 取得URL參數中的page和per_page變量，如果沒有則分別預設為1和10
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 10))
+    
+    # 取得篩選器參數
+    source = request.args.get('source', None)  # 題目來源
+    title = request.args.get('title', None)    # 題目名稱
 
     # 建立到資料庫的連接
     conn = db.connection()
     cur = conn.cursor()
     
-    # 計算應該跳過的記錄數
-    offset = (page - 1) * per_page
-    # 执行分页查询
-    cur.execute("SELECT problem_id, title, content, difficulty FROM problem LIMIT %s OFFSET %s;", (per_page, offset))
+    # 構建 SQL 查詢語句
+    base_query = "SELECT problem_id, title, content, difficulty FROM problem WHERE 1=1"
+    params = []
+
+    # 如果有來源篩選，添加到查詢中
+    if source:
+        base_query += ' AND SUBSTRING_INDEX(problem_id, "-", 1) = %s'
+        params.append(source)
+    
+    # 如果有題目名稱篩選，添加到查詢中，使用 LIKE 模糊匹配
+    if title:
+        base_query += " AND title LIKE %s"
+        params.append(f"%{title}%")
+    # 添加分頁查詢
+    base_query += " LIMIT %s OFFSET %s"
+    params.extend([per_page, (page - 1) * per_page])
+    print(base_query,source)
+    # 執行查詢
+    cur.execute(base_query, tuple(params))
     problems_data = cur.fetchall()
-    
-    # 取得資料庫中題目的總數以計算頁數
-    cur.execute("SELECT COUNT(*) FROM problem;")
+
+    # 取得符合篩選條件的題目總數以計算頁數
+    count_query = "SELECT COUNT(*) FROM problem WHERE 1=1"
+    count_params = []
+
+    # 根據篩選條件更新查詢語句
+    if source:
+        count_query += ' AND SUBSTRING_INDEX(problem_id, "-", 1) = %s'
+        count_params.append(source)
+
+    if title:
+        count_query += " AND title LIKE %s"
+        count_params.append(f"%{title}%")
+
+    cur.execute(count_query, tuple(count_params))
     total_problems = cur.fetchone()[0]
+    print(total_problems)
     total_pages = (total_problems + per_page - 1) // per_page  # 計算總分頁數
-    
+
     # 關閉連接
     cur.close()
     conn.close()
@@ -290,8 +322,6 @@ def get_problems():
         'total_pages': total_pages,
         'per_page': per_page
     })
-
-
 
 # 路由：處理創建比賽的POST請求
 @contest_bp.route('/create', methods=['POST'])
