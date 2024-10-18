@@ -233,7 +233,29 @@
         const minDateTime = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
         document.getElementById('startTime').setAttribute('min', minDateTime);
         document.getElementById('endTime').setAttribute('min', minDateTime);
+        /*****/
+        // 監聽比賽類型選擇框的變化
+        $('#state').change(function () {
+            var selectedValue = $(this).val();
+            if (selectedValue === "private") {
+                $('#passwordField').show();
+                $('#confirmPasswordField').show();
+            } else {
+                $('#passwordField').hide();
+                $('#confirmPasswordField').hide();
+            }
+        });
 
+        //提交表單前進行密碼一致性檢查
+        $('#competitionForm').submit(function (e) {
+            var password = $('#contest_password').val();
+            var confirmPassword = $('#confirm_password').val();
+            if ($('#state').val() === "private" && password !== confirmPassword) {
+                alert("密碼和確認密碼不匹配");
+                e.preventDefault();  // 阻止表單提交
+            }
+        });
+        /*****/
         //按下創建比賽後
         $(document).ready(function () {
             const selectedProblems = []; // 儲存已選擇的題目ID
@@ -241,7 +263,7 @@
             function simplifyContent(content, maxLength) {
                 if (content.length > maxLength) {
                     return content.substring(0, maxLength) +
-                        '<a href="#" class="more-link" data-content="' + encodeURIComponent(content) + '">...more</a>';
+                        '<a href="/problem?problem_id=' + problem_id + '" target="_blank" class="more-link" data-content="' + encodeURIComponent(content) + '">...more</a>';
                 }
                 return content;
             }
@@ -273,7 +295,7 @@
                         response.data.forEach(function (problem, index) {
                             var problem_id = problem[0];
                             var title = problem[1];
-                            var content = simplifyContent(problem[2], 100);
+                            var content = simplifyContent(problem[0], problem[2], 100);
                             var difficulty = problem[3];
                             var isAdded = selectedProblems.includes(problem_id); // 檢查當前題目是否已被添加
                             var addButtonClass = isAdded ? 'btn-success disabled' : 'btn-primary';

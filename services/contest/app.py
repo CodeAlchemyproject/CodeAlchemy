@@ -287,7 +287,6 @@ def get_problems():
     # 添加分頁查詢
     base_query += " LIMIT %s OFFSET %s"
     params.extend([per_page, (page - 1) * per_page])
-    print(base_query,source)
     # 執行查詢
     cur.execute(base_query, tuple(params))
     problems_data = cur.fetchall()
@@ -307,7 +306,6 @@ def get_problems():
 
     cur.execute(count_query, tuple(count_params))
     total_problems = cur.fetchone()[0]
-    print(total_problems)
     total_pages = (total_problems + per_page - 1) // per_page  # 計算總分頁數
 
     # 關閉連接
