@@ -67,8 +67,8 @@ def add_problem():
                         print(f"Error writing file {input_filename} or {output_filename}: {file_error}")
                 
                 # 此處的 SQL 操作暫時被註解掉，如果需要，可以取消註解
-                # sql_command = f"INSERT INTO `113-CodeAlchemy`.`problem` (`problem_id`, `title`, `content`, `enter_description`, `output_description`, `example_input`, `example_output`, `difficulty`, `tag`, `video_id`, `solved`, `submission`, `update_time`) VALUES ('CAOJ-{new_no}', '{title}', '{content}', '{enter_description}', '{output_description}', '{example_input}' , '{example_output}', '{difficulty}', '{tag}', '{video_id}', '0', '0', '{datetime.now()}');"
-                # db.edit_data(sql_command)
+                sql_command = f"INSERT INTO `113-CodeAlchemy`.`problem` (`problem_id`, `title`, `content`, `enter_description`, `output_description`, `example_input`, `example_output`, `difficulty`, `tag`, `video_id`, `solved`, `submission`, `update_time`) VALUES ('CAOJ-{new_no}', '{title}', '{content}', '{enter_description}', '{output_description}', '{example_input}' , '{example_output}', '{difficulty}', '{tag}', '{video_id}', '0', '0', '{datetime.now()}');"
+                db.edit_data(sql_command)
                 
                 return redirect('/')
             else:
