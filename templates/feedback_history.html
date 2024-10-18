@@ -54,7 +54,7 @@
                 <tbody>
                     {% for feedback in feedback_history %}
                     <tr data-bs-toggle="modal" data-bs-target="#feedbackModal" style="cursor: pointer;"
-                        onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}')">
+                        onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}','{{ feedback[4] }}')">
                         <td>{{ feedback[2] }}</td>
                         <td>{{ feedback[3] }}</td>
                     </tr>
