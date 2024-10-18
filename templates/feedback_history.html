@@ -7,10 +7,6 @@
     <title>回饋紀錄</title>
 
     {% include "_site_header.html" %}
-    <!-- Bootstrap CSS -->
-    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
-        crossorigin="anonymous"></script>-->
 
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -30,6 +26,11 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body {
+            word-wrap: break-word; /* 让长单词或链接自动换行 */
+            white-space: pre-wrap; /* 保持空格和换行 */
         }
     </style>
 </head>
@@ -53,9 +54,16 @@
                 </thead>
                 <tbody>
                     {% for feedback in feedback_history %}
-                    <tr data-bs-toggle="modal" data-bs-target="#feedbackModal" style="cursor: pointer;"
-                        onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}','{{ feedback[4] }}')">
-                        <td>{{ feedback[2] }}</td>
+                    <tr style="cursor: pointer;" 
+                        onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}', '{{ feedback[4] }}')">
+                        <td>
+                            {% if feedback[2]|length > 10 %}
+                                {{ feedback[2][:10] }}... 
+                                <a href="javascript:void(0);" onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}', '{{ feedback[4] }}')">more</a>
+                            {% else %}
+                                {{ feedback[2] }}
+                            {% endif %}
+                        </td>
                         <td>{{ feedback[3] }}</td>
                     </tr>
                     {% endfor %}
@@ -69,7 +77,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg"> <!-- 设置模态框大小 -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="feedbackModalLabel">回饋詳情</h5>
@@ -86,17 +94,22 @@
             </div>
         </div>
     </div>
+
     <script>
         function showFeedback(content, time, reply) {
-            // 將點擊的回饋詳情顯示在模態框中
+            // 将点击的回饋詳情显示在模态框中
             $('#feedbackContent').text(content);
             $('#feedbackTime').text(time);
             $('#feedbackReply').text(reply);
+            // 显示模态框
+            var feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+            feedbackModal.show();
         }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
-    crossorigin="anonymous"></script>
 
 </html>
