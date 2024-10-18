@@ -121,8 +121,8 @@
                 <div class="row d-flex justify-content-center">
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <button id="languageButton" type="button" class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-code-square" viewBox="0 0 16 16">
                                     <path
@@ -133,11 +133,30 @@
                                 語言
                             </button>
                             <ul class="dropdown-menu" id="select_language_button">
-                                <li><a class="dropdown-item" data-mode="python" value="python">Python</a></li>
-                                <li><a class="dropdown-item" data-mode="text/x-csrc" value="c">C</a></li>
-                                <li><a class="dropdown-item" data-mode="text/x-c++src" value="cpp">C++</a></li>
-                                <li><a class="dropdown-item" data-mode="text/x-java" value="java">Java</a></li>
+                                <li><a class="dropdown-item" data-mode="python"
+                                        onclick="setLanguage('Python')">Python</a></li>
+                                <li><a class="dropdown-item" data-mode="text/x-csrc" onclick="setLanguage('C')">C</a>
+                                </li>
+                                <li><a class="dropdown-item" data-mode="text/x-c++src"
+                                        onclick="setLanguage('C++')">C++</a></li>
+                                <li><a class="dropdown-item" data-mode="text/x-java"
+                                        onclick="setLanguage('Java')">Java</a></li>
                             </ul>
+                            <script>
+                                function setLanguage(language) {
+                                    // 取得按鈕元素
+                                    var languageButton = document.getElementById('languageButton');
+                                    // 更新按鈕的顯示文字
+                                    languageButton.innerHTML = `
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                            class="bi bi-code-square" viewBox="0 0 16 16">
+                                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                            <path d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0m2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 1 0-.708l-3-3a.5.5 0 0 0-.708 0" />
+                                        </svg>
+                                        ${language}
+                                    `;
+                                }
+                            </script>
                         </div>
                         <button type="button" class="btn btn-outline-primary" id="test_btn" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop">
@@ -164,7 +183,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                            id="stop_btn">停止</button>
+                                            id="stop_btn">隱藏</button>
                                     </div>
                                 </div>
                             </div>
@@ -226,7 +245,8 @@
     </div>
 
     <!-- Language Selection Modal -->
-    <div class="modal fade" id="languageSelectionModal" tabindex="-1" aria-labelledby="languageSelectionLabel" aria-hidden="true">
+    <div class="modal fade" id="languageSelectionModal" tabindex="-1" aria-labelledby="languageSelectionLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
