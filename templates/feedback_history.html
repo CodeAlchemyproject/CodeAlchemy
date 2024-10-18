@@ -13,14 +13,14 @@
         crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f2f2;
         }
 
-        .container{
+        .container {
             width: 70%;
             margin: 0 auto;
             margin-top: 30px;
@@ -30,20 +30,18 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: center;
             border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: #f5f5f5;
         }
 
         p {
@@ -52,9 +50,9 @@
             font-weight: bold;
             margin: 20%;
         }
-
     </style>
 </head>
+
 <body>
     <!-- ------- -->
     <!-- nav-bar -->
@@ -64,23 +62,30 @@
 
     <div class="container">
         {% if feedback_history %}
-            <table>
-                <tr>
-                    <th>回饋內容</th>
-                    <th>提交時間</th>
-                    <th>回覆</th>
-                </tr>
-                {% for feedback in feedback_history %}
+        <div class="table-responsive">
+            <table class="table table-hover justify-content-center mt-4">
+                <thead>
                     <tr>
+                        <th>回饋內容</th>
+                        <th>提交時間</th>
+                        <th>回覆</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedback_history %}
+                    <tr style="cursor: pointer;">
                         <td>{{ feedback[2] }}</td>
                         <td>{{ feedback[3] }}</td>
                         <td>{{ feedback[4] }}</td>
                     </tr>
-                {% endfor %}
+                    {% endfor %}
+                </tbody>
             </table>
+        </div>
         {% else %}
-            <p>沒有回饋紀錄</p>
+        <p>沒有回饋紀錄</p>
         {% endif %}
     </div>
 </body>
+
 </html>
