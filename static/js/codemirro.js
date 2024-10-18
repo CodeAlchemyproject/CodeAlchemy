@@ -1,13 +1,127 @@
 //C:text/x-csrc C++:text/x-c++src Python:python Java:text/x-java
 // 載入 CodeMirror 編輯器
 
+// 初始化 CodeMirror 編輯器
 var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-    // 設定行號
     lineNumbers: true,
-    // 設定縮排單位
     indentUnit: 4,
-    // 初始模式（默認為 C）
-    mode: 'python'
+    mode: 'python',
+    extraKeys: { "Ctrl-Space": "autocomplete" },
+});
+
+// 註冊自定義提示詞
+CodeMirror.registerHelper('hint', 'customHint', function (editor) {
+    var cursor = editor.getCursor();
+    var token = editor.getTokenAt(cursor);
+    var currentWord = token.string;
+
+    // 自定義的提示詞列表
+    var keywords = [];
+    switch (editor.getOption("mode")) {
+        case 'python':
+            keywords = [
+                'def', 'class', 'import', 'from', 'for', 'while', 'if', 'elif', 'else', 'try', 'except', 'finally',
+                'with', 'as', 'lambda', 'return', 'yield', 'global', 'nonlocal', 'assert', 'break', 'continue',
+                'del', 'pass', 'raise', 'True', 'False', 'None', 'and', 'or', 'not', 'is', 'in', 'print', 'input',
+                'len', 'open', 'range', 'int', 'float', 'str', 'list', 'dict', 'set', 'tuple', 'super', '__init__',
+                'property', 'staticmethod', 'classmethod', 'abs', 'all', 'any', 'bin', 'bool', 'bytearray', 'bytes',
+                'callable', 'chr', 'complex', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'format', 'frozenset',
+                'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'isinstance', 'issubclass', 'iter',
+                'len', 'locals', 'map', 'max', 'min', 'next', 'oct', 'ord', 'pow', 'repr', 'reversed', 'round',
+                'setattr', 'slice', 'sorted', 'sum', 'type', 'vars', 'zip', 'math', 'sys', 'os', 'random', 'time',
+                're', 'subprocess', 'shutil', 'itertools', 'functools', 'collections', 'asyncio', 'threading',
+                'multiprocessing', 'pandas', 'numpy', 'scipy', 'matplotlib', 'seaborn', 'flask', 'django', 'bool',
+                'bytes', 'complex', 'memoryview', 'frozenset', 'range', 'bytearray', 'Exception', 'BaseException',
+                'FileNotFoundError', 'IndexError','KeyError', 'KeyboardInterrupt', 'ValueError', 'AttributeError',
+                'TypeError', 'IOError', 'OSError','ArithmeticError', 'ImportError', 'NameError', 'OverflowError',
+                'ZeroDivisionError', 'StopIteration','GeneratorExit', 'MemoryError', 'NotImplemented', 'super',
+                'self', '__name__', '__main__', '__file__'
+            ];
+            break;
+        case 'text/x-csrc':
+        case 'text/x-c++src':
+            keywords = [
+                'int', 'float', 'double', 'char', 'void', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default',
+                'return', 'break', 'continue', 'struct', 'union', 'typedef', 'enum', 'const', 'volatile', 'static', 'extern',
+                'register', 'signed', 'unsigned', 'short', 'long', 'goto', 'sizeof', '#include', '#define', '#ifdef', '#ifndef',
+                '#endif', '#pragma', 'printf', 'scanf', 'fgets', 'fputs', 'fopen', 'fclose', 'malloc', 'free', 'NULL',
+                'fwrite', 'fread', 'stderr', 'stdin', 'stdout', 'time', 'clock', 'exit', 'system', 'memcmp', 'memcpy', 'memmove',
+                'strcat', 'strcmp', 'strcpy', 'strlen', 'strncmp', 'strncpy', 'strstr', 'fseek', 'ftell', 'rewind', 'fgetc',
+                'fputc', 'feof', 'rand', 'srand', 'perror', 'abort', 'qsort', 'bsearch', 'va_list', 'va_start', 'va_end',
+                'inline', 'restrict', 'complex', '_Bool', '_Complex', '_Imaginary', 'offsetof', 'static_assert', 'aligned_alloc',
+                'calloc', 'realloc', 'free', 'memset', 'memchr', 'sprintf', 'sscanf', 'vprintf', 'vfprintf', 'vsprintf'
+            ];
+            break;
+        case 'text/x-java':
+            keywords = [
+                'public', 'private', 'protected', 'class', 'interface', 'abstract', 'implements', 'extends', 'static',
+                'final', 'void', 'int', 'float', 'double', 'char', 'boolean', 'String', 'new', 'return', 'if', 'else', 'switch',
+                'case', 'default', 'for', 'while', 'do', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'throws',
+                'import', 'package', 'super', 'this', 'null', 'true', 'false', 'instanceof', 'enum', 'synchronized',
+                'volatile', 'transient', 'native', 'strictfp', 'assert', 'System.out.println', 'Scanner', 'List', 'ArrayList',
+                'HashMap', 'LinkedList', 'Set', 'Map', 'Iterator', 'Comparable', 'Comparator', 'Thread', 'Runnable',
+                'Callable', 'Executor', 'Executors', 'try-with-resources', 'File', 'InputStream', 'OutputStream',
+                'FileInputStream', 'FileOutputStream', 'BufferedReader', 'BufferedWriter', 'StringBuilder', 'StringBuffer',
+                'TreeMap', 'TreeSet', 'PriorityQueue', 'Deque', 'Arrays', 'Collections', 'Math', 'Random', 'Optional',
+                'Stream', 'Collectors', 'Files', 'Paths', 'Path', 'Charset', 'FileReader', 'FileWriter', 'ObjectInputStream',
+                'ObjectOutputStream', 'Serializable', 'URLConnection', 'HttpURLConnection', 'Socket', 'ServerSocket',
+                'AtomicInteger', 'AtomicLong', 'ReentrantLock', 'Lock', 'Semaphore', 'CyclicBarrier', 'CountDownLatch',
+                'CompletableFuture', 'Future', 'ExecutorService', 'ScheduledExecutorService', 'ForkJoinPool', 'Phaser',
+                'Annotation', 'Override', 'Deprecated', 'SuppressWarnings', 'FunctionalInterface', 'Predicate', 'Consumer',
+                'Supplier', 'BiFunction', 'UnaryOperator', 'BinaryOperator'
+            ];
+            break;
+        default:
+            keywords = [
+                'function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue',
+                'return', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'typeof', 'instanceof', 'in', 'of', 'null',
+                'undefined', 'true', 'false', 'class', 'extends', 'constructor', 'static', 'import', 'export', 'default',
+                'async', 'await', 'yield', 'Promise', 'console.log', 'JSON.parse', 'JSON.stringify', 'Math', 'Date', 'setTimeout',
+                'setInterval', 'clearTimeout', 'clearInterval', 'fetch', 'window', 'document', 'getElementById',
+                'querySelector', 'addEventListener', 'removeEventListener', 'Object', 'Array', 'Map', 'Set', 'WeakMap',
+                'WeakSet', 'reduce', 'filter', 'forEach', 'includes', 'push', 'pop', 'shift', 'unshift', 'slice', 'splice',
+                'Promise.all', 'Promise.race', 'Promise.resolve', 'Promise.reject', 'localStorage', 'sessionStorage',
+                'history', 'location', 'navigator', 'screen', 'alert', 'confirm', 'prompt', 'RegExp', 'Error', 'TypeError',
+                'fetch', 'async function', 'await', 'Symbol', 'Proxy', 'Reflect', 'Intl', 'atob', 'btoa', 'encodeURIComponent',
+                'decodeURIComponent', 'performance', 'WebSocket', 'XMLHttpRequest', 'Promise.any', 'Promise.allSettled',
+                'BigInt', 'WeakRef', 'FinalizationRegistry', 'AbortController', 'AbortSignal', 'structuredClone',
+                'queueMicrotask', 'DataView', 'ArrayBuffer', 'SharedArrayBuffer', 'Atomics', 'import.meta', 'globalThis'
+            ];
+    }
+
+
+
+    // 顯示符合條件的提示
+    var list = keywords.filter(function (keyword) {
+        return keyword.startsWith(currentWord);
+    });
+
+    console.log("Filtered list:", list);
+    console.log("Token start:", token.start, "Token end:", token.end);
+    console.log("Cursor position:", cursor);
+    // 構建 from 和 to 的位置對象
+    var from = CodeMirror.Pos(cursor.line, token.start);
+    var to = CodeMirror.Pos(cursor.line, token.end);
+
+    // 打印 from 和 to 確保它們是有效位置
+    console.log("From position:", from);
+    console.log("To position:", to);
+
+    return {
+        list: list,
+        from: from,
+        to: to
+    };
+});
+
+// 自動顯示提示詞的邏輯
+editor.on('changes', function (cm, changeObj) {
+    // 使用 "changes" 而不是 "inputRead" 來監聽編輯器變更
+    cm.showHint({
+        hint: CodeMirror.hint.customHint,
+        completeSingle: false  // 不自動選擇第一個提示詞，讓用戶自行選擇
+    });
+
 });
 
 // 顯示和隱藏 loading 視窗的函數
@@ -26,16 +140,22 @@ function hideLoading() {
 // 取得下拉選單
 var selectLanguageButton = document.getElementById('select_language_button');
 var mode = 'python';
-// 監聽點擊事件
 selectLanguageButton.addEventListener('click', function (event) {
-    // 確保點擊的是 a 標籤
     if (event.target.tagName === 'A') {
         // 取得選項中的 data-mode 屬性值
         mode = event.target.getAttribute('data-mode');
         // 設定編輯器模式
         editor.setOption('mode', mode);
+        // 自動完成提示可能會根據語言模式有所變化
+        console.log("Mode changed to:", mode); // 調試輸出
+        editor.setOption('extraKeys', {
+            "Ctrl-Space": function (cm) {
+                cm.showHint({ hint: CodeMirror.hint.customHint });
+            }
+        });
     }
 });
+
 
 // 定義變數以保存使用者 ID
 var userId = null;
