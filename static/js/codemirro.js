@@ -96,16 +96,9 @@ CodeMirror.registerHelper('hint', 'customHint', function (editor) {
         return keyword.startsWith(currentWord);
     });
 
-    console.log("Filtered list:", list);
-    console.log("Token start:", token.start, "Token end:", token.end);
-    console.log("Cursor position:", cursor);
     // 構建 from 和 to 的位置對象
     var from = CodeMirror.Pos(cursor.line, token.start);
     var to = CodeMirror.Pos(cursor.line, token.end);
-
-    // 打印 from 和 to 確保它們是有效位置
-    console.log("From position:", from);
-    console.log("To position:", to);
 
     return {
         list: list,
