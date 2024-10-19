@@ -200,7 +200,7 @@ def register():
         else:
             token=str(uuid.uuid4())
             # 在數據庫中插入新用戶資料
-            sql_user_command=f"INSERT INTO user(user_name,password,email,permission,uuid) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','Default user','{token}')"
+            sql_user_command=f"INSERT INTO user(user_name,password,email,permission,uuid,register_time) VALUES ('{user_name}','{generate_password_hash(Password)}','{Email}','Default user','{token}',NOW())"
             db.edit_data(sql_user_command)
             html=f'http://140.131.114.141/auth/verify_register?uuid={token}'
             msg_title = 'Welcome to CodeAlchemy'
