@@ -277,21 +277,44 @@
 
             let formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
             document.getElementById('startTime').value = formattedDate;
+
+            // 取得目前時間並格式化為 datetime-local 格式
+            const nowForMin = new Date();
+            const yyyy = nowForMin.getFullYear();
+            const mm = String(nowForMin.getMonth() + 1).padStart(2, '0');
+            const dd = String(nowForMin.getDate()).padStart(2, '0');
+            const hh = String(nowForMin.getHours()).padStart(2, '0');
+            const min = String(nowForMin.getMinutes()).padStart(2, '0');
+
+            // 設定 datetime-local 的最小值
+            const minDateTime = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+            document.getElementById('startTime').setAttribute('min', minDateTime);
+            document.getElementById('endTime').setAttribute('min', minDateTime);
+
+            // 確保結束時間在開始時間之后
+            document.getElementById('startTime').addEventListener('change', function() {
+                const startTime = document.getElementById('startTime').value;
+                document.getElementById('endTime').setAttribute('min', startTime);
+
+                // 如果當前結束時間小於新的開始時間，則將結束時間設為開始時間
+                if (document.getElementById('endTime').value < startTime) {
+                    document.getElementById('endTime').value = startTime;
+                }
+            });
+
+            // 檢查結束時間是否小於開始時間
+            document.getElementById('endTime').addEventListener('change', function() {
+                const startTime = document.getElementById('startTime').value;
+                const endTime = document.getElementById('endTime').value;
+
+                if (endTime < startTime) {
+                    alert("結束時間不能小於開始時間");
+                    document.getElementById('endTime').value = startTime; // 將結束時間重設為開始時間
+                }
+            });
         };
-
-        // 取得當前時間並格式化為 datetime-local 格式
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0'); // 月份從0開始
-        const dd = String(now.getDate()).padStart(2, '0');
-        const hh = String(now.getHours()).padStart(2, '0');
-        const min = String(now.getMinutes()).padStart(2, '0');
-
-        // 設定 datetime-local 的最小值
-        const minDateTime = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
-        document.getElementById('startTime').setAttribute('min', minDateTime);
-        document.getElementById('endTime').setAttribute('min', minDateTime);
         /*****/
+
         // 監聽比賽類型選擇框的變化
         $('#state').change(function () {
             var selectedValue = $(this).val();
