@@ -1,5 +1,6 @@
 # 引入所需的模組和套件
 from datetime import datetime
+from utils import db
 import re
 from flask import json
 from selenium import webdriver
@@ -17,7 +18,7 @@ import glob
 import traceback
 
 from utils.common import ZJ_translated_return_abbreviation
-def CodeAlchemy_submit(file_name,number,title):
+def CodeAlchemy_submit(file_name,number,problem_id):
     # crawler setting
     main_url = 'http://123.192.165.145:8081/Login'
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
@@ -98,7 +99,7 @@ def CodeAlchemy_submit(file_name,number,title):
         except BaseException as e:
             print(e)
             return []  # 返回空列表，表示登錄失敗
-
+        title=db.get_data(f'''SELECT title FROM `113-CodeAlchemy`.problem where problem_id ='{problem_id}';''')[0]
         results = []
         language_upper = language.upper()
         for prob_id in list(submit_program_dict.keys()):
@@ -115,24 +116,13 @@ def CodeAlchemy_submit(file_name,number,title):
             # 等待結果頁面載入完成（根據實際情況調整等待條件）
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'table')))  # 假設結果會以表格形式呈現
 
-            # 尋找所有的 <td> 標籤
-            td_elements = driver.find_elements(By.TAG_NAME, 'a')
-
-            # 檢查是否有任何 <td> 標籤的文字內容為 '1'
-            found = False
-            for td in td_elements:
-                if td.text == title:
-                    print(f"找到 {title}")
-                    
-                    # 點擊該 <td>1</td> 欄位
-                    td.click()
-                    print(f"成功點擊 {title}")
-                    found = True
-                    sleep(5)
-                    break
-
-            if not found:
-                print(f"未找到 {title}")
+            # 等待 a 標籤出現並符合 title="[]" 的條件
+            link = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//a[@title="[]"]'))
+            )
+            
+            # 點擊找到的 <a> 標籤
+            link.click()
 
             btn_code = WebDriverWait(driver, wait_max).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "btn.btn-success")))
@@ -200,7 +190,7 @@ def CodeAlchemy_submit(file_name,number,title):
     finally:
         if driver:
             driver.quit()
-        return newResult
+    return newResult
 
 
 def TIOJ_submit(file_name, number):
