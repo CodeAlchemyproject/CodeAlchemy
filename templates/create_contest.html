@@ -355,7 +355,6 @@
                                 competition_name: competitionName // 從前端發送比賽名稱
                             },
                             success: function (response) {
-                                console.log(response)
                                 const competitionTableBody = $("#competitionTableBody");
                                 competitionTableBody.empty();
                                 response.forEach(function (problem) {
