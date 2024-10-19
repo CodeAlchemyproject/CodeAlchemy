@@ -322,6 +322,65 @@ def get_problems():
         'per_page': per_page
     })
 
+@contest_bp.route('/get_competition_problems')
+def get_competition_problems():
+    # 取得 URL 參數中的比賽名稱或比賽 ID
+    competition_name = request.args.get('competition_name', None)
+    competition_id = request.args.get('competition_id', None)
+
+    # 如果沒有提供比賽名稱或 ID，返回錯誤
+    if not competition_name and not competition_id:
+        return jsonify({'error': '必須提供比賽名稱或比賽 ID'}), 400
+
+    # 建立到資料庫的連接
+    conn = db.connection()
+    cur = conn.cursor()
+
+    contest_details_list = []
+
+    # 構建 SQL 查詢語句來獲取比賽 ID（如果僅提供了比賽名稱）
+    if competition_name and not competition_id:
+        cur.execute("SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest WHERE contest_name LIKE %s", (f"%{competition_name}%",))
+        results = cur.fetchall()
+        if results:
+            for result in results:
+                contest_details_list.append(result[0])
+        else:
+            return jsonify({'error': '找不到對應的比賽'}), 404
+
+    problems_list = []
+
+    # 構建 SQL 查詢語句來獲取該比賽的題目
+    query = """
+        SELECT p.problem_id,p.title, p.content, p.difficulty
+        FROM `113-CodeAlchemy`.`contest problem` as cp
+        LEFT JOIN `113-CodeAlchemy`.`problem` as p ON cp.problem_id = p.problem_id
+        WHERE cp.contest_id = %s;
+    """
+
+    # 對於每個比賽，獲取它的題目，並使用集合去除重複的題目
+    unique_problems = set()
+    for contest_id in contest_details_list:
+        cur.execute(query, (contest_id,))
+        problems_data = cur.fetchall()
+
+        for problem in problems_data:
+            if problem[0] not in unique_problems:
+                unique_problems.add(problem[0])
+                problems_list.append({
+                    'problem_id':problem[0],
+                    'title': problem[1],
+                    'content': problem[2],
+                    'difficulty': problem[3]
+                })
+    # 關閉連接
+    cur.close()
+    conn.close()
+    problems_list=problems_list[:-1]
+    # 返回簡化後的 JSON 響應
+    return jsonify(problems_list)
+
+
 # 路由：處理創建比賽的POST請求
 @contest_bp.route('/create', methods=['POST'])
 def create_contest():

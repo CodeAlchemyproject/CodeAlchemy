@@ -107,13 +107,15 @@
                             <div class="form-group row mb-3">
                                 <label for="startTime" class="col-sm-3 col-form-label">開始時間:</label>
                                 <div class="col-sm-9">
-                                    <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+                                    <input type="datetime-local" class="form-control" id="startTime" name="startTime"
+                                        required>
                                 </div>
                             </div>
                             <div class="form-group row mb-3">
                                 <label for="endTime" class="col-sm-3 col-form-label">結束時間:</label>
                                 <div class="col-sm-9">
-                                    <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
+                                    <input type="datetime-local" class="form-control" id="endTime" name="endTime"
+                                        required>
                                 </div>
                             </div>
 
@@ -154,44 +156,88 @@
 
                                         <!-- Body -->
                                         <div class="modal-body">
-                                            <!-- 篩選器區域 -->
-                                            <div class="mb-3 row">
-                                                <div class="col-md-6">
-                                                    <select id="filterProblemSource" class="form-select">
-                                                        <option value="">選擇題目來源</option>
-                                                        <option value="TIOJ">TIOJ</option>
-                                                        <option value="ZJ">Zerojudge</option>
-                                                        <option value="CAOJ">CAOJ</option>
-                                                    </select>
+                                            <!-- Tabs for categories -->
+                                            <ul class="nav nav-tabs" id="problemTabs" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="all-problems-tab"
+                                                        data-bs-toggle="tab" data-bs-target="#all-problems"
+                                                        type="button" role="tab" aria-controls="all-problems"
+                                                        aria-selected="true">所有題目</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="competition-problems-tab"
+                                                        data-bs-toggle="tab" data-bs-target="#competition-problems"
+                                                        type="button" role="tab" aria-controls="competition-problems"
+                                                        aria-selected="false">其他比賽題目</button>
+                                                </li>
+                                            </ul>
+
+                                            <!-- Tab content -->
+                                            <div class="tab-content" id="problemTabsContent">
+                                                <!-- All Problems Tab -->
+                                                <div class="tab-pane fade show active" id="all-problems" role="tabpanel"
+                                                    aria-labelledby="all-problems-tab">
+                                                    <!-- 篩選器區域和問題表格，這部分可以是所有問題的默認顯示 -->
+                                                    <div class="mb-3 row">
+                                                        <div class="col-md-6">
+                                                            <select id="filterProblemSource" class="form-select">
+                                                                <option value="">選擇題目來源</option>
+                                                                <option value="TIOJ">TIOJ</option>
+                                                                <option value="ZJ">Zerojudge</option>
+                                                                <option value="CAOJ">CAOJ</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="text" id="filterProblemTitle"
+                                                                class="form-control" placeholder="篩選題目名稱">
+                                                        </div>
+                                                    </div>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">題目編號</th>
+                                                                <th scope="col">題目名稱</th>
+                                                                <th scope="col">題目說明</th>
+                                                                <th scope="col">難易度</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="contestTableBody">
+                                                            <!-- 表格內容將在這裡使用javascript動態添加 -->
+                                                        </tbody>
+                                                    </table>
+                                                    <nav aria-label="Page navigation example"
+                                                        class="d-flex justify-content-center">
+                                                        <ul class="pagination" id="pagination">
+                                                            <!-- 分頁按鈕將動態插入到這裡 -->
+                                                        </ul>
+                                                    </nav>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <input type="text" id="filterProblemTitle" class="form-control"
-                                                        placeholder="篩選題目名稱">
+
+                                                <!-- Competition Problems Tab -->
+                                                <div class="tab-pane fade" id="competition-problems" role="tabpanel"
+                                                    aria-labelledby="competition-problems-tab">
+                                                    <!-- 從其他比賽中選取題目的內容 -->
+                                                    <div class="mb-3 row">
+                                                        <input type="text" id="competitionNameInput"
+                                                            class="form-control" placeholder="輸入比賽名稱查找題目">
+                                                    </div>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">題目編號</th>
+                                                                <th scope="col">題目名稱</th>
+                                                                <th scope="col">題目說明</th>
+                                                                <th scope="col">難易度</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="competitionTableBody">
+                                                            <!-- 這裡會動態添加所選比賽中的題目 -->
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
-                                            <form>
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">題目編號</th>
-                                                            <th scope="col">題目名稱</th>
-                                                            <th scope="col">題目說明</th>
-                                                            <th scope="col">難易度</th>
-                                                            <th scope="col">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="contestTableBody">
-                                                        <!-- 表格內容將在這裡使用javascript動態添加 -->
-                                                    </tbody>
-                                                </table>
-                                                <!-- 分頁導航 -->
-                                                <nav aria-label="Page navigation example"
-                                                    class="d-flex justify-content-center">
-                                                    <ul class="pagination" id="pagination">
-                                                        <!-- 分頁按鈕將動態插入到這裡 -->
-                                                    </ul>
-                                                </nav>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -219,7 +265,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // 設定開始時間的選擇器顯示現在時間 + 4 小時
-        window.onload = function() {
+        window.onload = function () {
             let now = new Date();
             now.setHours(now.getHours() + 4);
 
@@ -268,12 +314,95 @@
             }
         });
         /*****/
-        
+
         //按下創建比賽後
         $(document).ready(function () {
             const selectedProblems = []; // 儲存已選擇的題目ID
 
-            function simplifyContent(problem_id,content, maxLength) {
+            // 當選擇 "其他比賽題目" 標籤時，載入其他比賽中的題目
+            $('#competition-problems-tab').on('shown.bs.tab', function () {
+                // 根據比賽名稱查找題目
+                $('#competitionNameInput').on('keyup', function () {
+                    const competitionName = $(this).val();
+                    if (competitionName) {
+                        $.ajax({
+                            url: '/contest/get_competition_problems', // 請確保後端路由正確
+                            type: 'GET',
+                            data: {
+                                competition_name: competitionName // 從前端發送比賽名稱
+                            },
+                            success: function (response) {
+                                console.log(response)
+                                const competitionTableBody = $("#competitionTableBody");
+                                competitionTableBody.empty();
+                                response.forEach(function (problem) {
+                                    const problemId = problem.problem_id;
+                                    const title = problem.title;
+                                    const content = problem.content;
+                                    const difficulty = problem.difficulty;
+
+                                    const row = `<tr>
+                <td>${problemId}</td>
+                <td>${title}</td>
+                <td>${content}</td>
+                <td>${difficulty}</td>
+                <td><button class="btn btn-primary add-btn" type="button" data-title="${title}" data-problem-id="${problemId}" data-difficulty="${difficulty}">Add</button></td>
+            </tr>`;
+                                    competitionTableBody.append(row);
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+            $('#competitionTableBody').on('click', '.add-btn', function () {
+                console.log("Add button clicked");
+                const problemTitle = $(this).data('title');
+                const problemId = $(this).data('problem-id');
+                const difficulty = $(this).data('difficulty');
+
+                // 檢查是否已添加該題目，防止重複
+                if (!selectedProblems.includes(problemId)) {
+                    selectedProblems.push(problemId);
+
+                    const row = `<tr class="added-question" data-problem-id="${problemId}">
+            <td>${selectedProblems.length}</td>
+            <td>${problemTitle}</td>
+            <td>${difficulty}</td>
+            
+            <td class="text-center"><button class="btn btn-danger remove-btn" data-problem-id="${problemId}"><i class="fas fa-trash-alt"></i></button></td>
+        </tr>`;
+
+                    $("#questionTableBody").append(row);
+
+                    // 更新按鈕狀態
+                    $(this).removeClass('btn-primary').addClass('btn-success disabled').html('<i class="fas fa-check"></i>');
+                }
+            });
+            // 刪除表格中的問題
+            $('#questionTableBody').on('click', '.remove-btn', function () {
+                const row = $(this).closest('tr');
+                const problemId = $(this).data('problem-id');
+
+                // 刪除選定的問題並移除該行
+                const index = selectedProblems.indexOf(problemId);
+                if (index !== -1) {
+                    selectedProblems.splice(index, 1);
+                }
+
+                row.remove();
+
+                // 更新行號
+                $('#questionTableBody tr').each(function (i) {
+                    $(this).find('td:first').text(i + 1);
+                });
+
+                // 恢復互動視窗中的按鈕狀態
+                $('#competitionTableBody button[data-problem-id="' + problemId + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
+            });
+
+
+            function simplifyContent(problem_id, content, maxLength) {
                 if (content.length > maxLength) {
                     return content.substring(0, maxLength) +
                         '<a href="/problem?problem_id=' + problem_id + '" target="_blank" class="more-link" data-content="' + encodeURIComponent(content) + '">...more</a>';
