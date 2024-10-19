@@ -42,7 +42,12 @@
         }
 
         .btn-purple {
-            background-color: purple;
+            background-color:mediumpurple;
+            font-weight: bolder;
+            color: white;
+        }
+        .btn-purple:hover {
+            background-color:rgb(123, 80, 210);
             font-weight: bolder;
             color: white;
         }
@@ -147,7 +152,7 @@
                         {% elif current_time > contest[3] %}
                         <button type="button" class="btn btn-danger" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">觀看比賽結果</button>
                         {% elif contest[6] == "joined" %}
-                        <button type="button" class="btn btn-info" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">繼續完成比賽</button>
+                        <button type="button" class="btn btn-purple" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">繼續完成比賽</button>
                         {% else %}
                         <button type="button" class="btn btn-success" data-type="{{ contest[5] }}" onclick="handleContestClick('{{ contest[0] }}', '{{ contest[5] }}')">加入比賽</button>
                         {% endif %}
