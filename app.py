@@ -193,13 +193,13 @@ def problem():
             
             print("成功插入到 answer record 資料表")  # 用於確認的訊息
         
-        import shutil
-        if result=='Accepted':
-            ans_rec=db.get_data('''SELECT * FROM `113-CodeAlchemy`.`answer record` 
-            order by record_id desc limit 1;''')
+        # import shutil
+        # if result=='Accepted':
+        #     ans_rec=db.get_data('''SELECT * FROM `113-CodeAlchemy`.`answer record` 
+        #     order by record_id desc limit 1;''')
 
-        # 複製檔案並保留所有的元數據（如權限、時間戳等）
-        shutil.copy2(f'./sourse/{file_name}',f'./sourse/accept/{ans_rec[0]+'_'+problem_id}')
+        # # 複製檔案並保留所有的元數據（如權限、時間戳等）
+        # shutil.copy2(f'./sourse/{file_name}',f'./sourse/accept/{ans_rec[0]+'_'+problem_id}')
         return jsonify({
             'result': result,
             'message': message,
