@@ -164,7 +164,7 @@
                         <td>
                             {{ item[13] }}<!--通過率-->
                         </td>
-                        <td>{{ item[12].strftime('%Y-%m-%d') }}</td>
+                        <td class="text-nowrap">{{ item[12].strftime('%Y-%m-%d') }}</td>
                         {% if (session['Permission']=='Manager') %}
                         <!-- 修改 -->
                         <td><a class="btn btn-success" href="/manager/problem?problem_id={{item[0]}}" role="button"><svg
