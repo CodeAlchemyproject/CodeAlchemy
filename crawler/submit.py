@@ -17,10 +17,12 @@ import os
 import glob
 import traceback
 
+from config import JUDGE_HOST,JUDGE_PORT
+
 from utils.common import ZJ_translated_return_abbreviation
 def CodeAlchemy_submit(file_name,number,problem_id):
     # crawler setting
-    main_url = 'http://123.192.165.145:8081/Login'
+    main_url = f'http://{JUDGE_HOST}:{JUDGE_PORT}/Login'
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     driver = None  # 初始化 driver 變數
     results = []  # 初始化 results 變數
@@ -91,7 +93,7 @@ def CodeAlchemy_submit(file_name,number,problem_id):
 
             sleep(5)
 
-            if driver.current_url != 'http://123.192.165.145:8081/':
+            if driver.current_url != F'http://{JUDGE_HOST}:{JUDGE_PORT}/':
                 raise BaseException
             else:
                  print("登入成功")

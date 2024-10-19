@@ -1,11 +1,7 @@
 import pymysql
 from pymysql.err import OperationalError
-
+from config import DB_HOST,DB_USER,DB_PASS,DB_NAME
 # 定義資料庫連接參數
-DB_HOST = '140.131.114.242'
-DB_USER = '10956CodeAlchemy'
-DB_PASS = 'C0d3@lch3mY_#2024!'
-DB_NAME = '113-CodeAlchemy'
 
 # 建立資料庫連接
 def connection():
