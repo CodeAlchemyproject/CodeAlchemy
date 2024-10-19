@@ -3,7 +3,7 @@ from flask import request, render_template, jsonify, json, redirect, session, ur
 import sqlite3
 from flask import Blueprint
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from utils import db
 from utils.common import paginate
@@ -176,7 +176,8 @@ def join_contest():
     contest_type, contest_password = contest
 
     if contest_type == 'private':
-        if not input_password or input_password != contest_password:
+        # 假設 contest_password 是儲存在資料庫中的已雜湊的密碼
+        if not input_password or not check_password_hash(contest_password, input_password):
             return jsonify({"error": "比賽密碼錯誤"}), 403
 
     cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
@@ -337,6 +338,8 @@ def create_contest():
         # 如果比賽類型為私人，則獲取密碼
         if contest_type == "private":
             contest_password = request.form.get('contest_password')
+            contest_password=generate_password_hash(contest_password)
+            print(contest_password)
             if not contest_password:
                 raise ValueError("私人比賽必須設定密碼")
         
