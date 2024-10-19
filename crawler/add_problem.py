@@ -10,9 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import os
 import traceback
-
+from config import JUDGE_HOST,JUDGE_PORT
 def CodeAlchemy_add_problem(problem_id, title, content, enter_description, output_description, example_input, example_output):
-    main_url = 'http://123.192.165.145:8081/Login'
+    main_url = f'http://{JUDGE_HOST}:{JUDGE_PORT}/Login'
     prefs = {'profile.default_content_setting_values': {'notifications': 2}}
     driver = None  # 初始化 driver 變數
     try:
@@ -61,11 +61,11 @@ def CodeAlchemy_add_problem(problem_id, title, content, enter_description, outpu
 
             sleep(5)
 
-            if driver.current_url != 'http://123.192.165.145:8081/':
+            if driver.current_url != f'http://{JUDGE_HOST}:{JUDGE_PORT}/':
                 raise BaseException
             else:
                 print("登入成功")
-            driver.get('http://123.192.165.145:8081/InsertProblem')
+            driver.get(f'http://{JUDGE_HOST}:{JUDGE_PORT}/InsertProblem')
 
             # 等待標題輸入框出現
             title_input = WebDriverWait(driver, wait_max).until(
