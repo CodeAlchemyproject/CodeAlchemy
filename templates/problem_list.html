@@ -63,7 +63,7 @@
                     </option>
                     <option
                         value="?page=1&state={{ state }}&onlinejudge=CAOJ&difficulty={{ difficulty }}&tag={{ tag }}&search={{ search }}"
-                        {% if ( onlinejudge=='LeetCode' ) %}selected{% endif %}>
+                        {% if ( onlinejudge=='CAOJ' ) %}selected{% endif %}>
                         CodeAlchemy
                     </option>
                 </select>
@@ -82,9 +82,9 @@
                         Hard
                     </option>
                     <option
-                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Normal&tag={{ tag }}&search={{ search }}"
-                        {% if ( difficulty=='Normal' ) %}selected{% endif %}>
-                        Middle
+                        value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Medium&tag={{ tag }}&search={{ search }}"
+                        {% if ( difficulty=='Medium' ) %}selected{% endif %}>
+                        Medium
                     </option>
                     <option
                         value="?page={{ page }}&state={{ state }}&onlinejudge={{ onlinejudge }}&difficulty=Easy&tag={{ tag }}&search={{ search }}"
