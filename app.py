@@ -280,12 +280,12 @@ def rank():
     order by 正確答題數 desc;
                      ''')
     return render_template('./rank.html',data=data)
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template('page_not_found.html')
-@app.errorhandler(Exception)
-def page_not_found(error):
-    return render_template('page_not_found.html')
+# @app.errorhandler(404)
+# def page_not_found(error):
+#     return render_template('page_not_found.html')
+# @app.errorhandler(Exception)
+# def page_not_found(error):
+#     return render_template('page_not_found.html')
 #-------------------------
 # 在主程式註冊各個服務
 #-------------------------

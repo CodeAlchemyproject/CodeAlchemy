@@ -35,28 +35,26 @@ google = oauth.register(
     client_kwargs= {"scope": "openid email profile"},
     server_metadata_url= 'https://accounts.google.com/.well-known/openid-configuration')
 
-# 查詢電子郵件有沒有註冊過
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # 如果是 POST 請求，表示用戶提交了表單
     if request.method == "POST":
-        # 從表單中獲取電子郵件
         Email = request.form['Email']
-        # 構建 SQL 查詢命令，查詢使用者資料庫中是否存在這個電子郵件
-        sql_user_command = f"SELECT * FROM user where email='{Email}'"
-        # 執行 SQL 查詢，獲取使用者資料
+        # 查詢使用者資料庫中是否存在這個電子郵件
+        sql_user_command = f"SELECT * FROM user WHERE email='{Email}'"
         user_data = db.get_data(sql_user_command)
         # 如果查詢結果有一條記錄，表示用戶已經註冊過
         if len(user_data) == 1:
-            # 將電子郵件存入 session
+            # 檢查帳號是否被封禁
+            if user_data[0][6]=='Banner':
+                result = '您的帳號已被封禁，無法登入。請聯絡codealchemyproject@gmail.com了解更多信息。'
+                return render_template('login.html', result=result)
+            
+            # 如果帳號未被封禁，繼續執行登入流程
             session['Email'] = Email
-            # 重定向到輸入密碼頁面
             return redirect('/auth/login_password')
-        # 如果用戶尚未註冊，將用戶重定向到註冊頁面
         else:
             return redirect('/auth/register')
     else:
-        # 如果是 GET 請求，即用戶訪問該路由時，返回登入表單模板
         return render_template('login.html')
 
 # Google 登入路由
@@ -84,20 +82,24 @@ def authorize():
         user_data = db.get_data(sql_user_command)
         # 如果郵箱已註冊
         if len(user_data) == 1:
-            # 將用戶資訊存入 session
-            session['User_id']=user_data[0][0]
-            session['Email'] = Email
-            session['logged_in'] = True
-            session['User_name'] = user_data[0][1]
-            session['Permission']=user_data[0][6]
-            session['google_id'] = Goole_ID
-            session['imgs'] = imgs
-            # 如果數據庫中的 Google ID 與 Google 返回的 ID 一致，則重定向到首頁
-            if user_data[0][3] == Goole_ID:
-                return redirect('/')
-            # 否則，重定向到連結 Google 賬戶頁面
+            if user_data[0][6]=='Banner':
+                result = '您的帳號已被封禁，無法登入。請聯絡codealchemyproject@gmail.com了解更多信息。'
+                return render_template('login.html', result=result)
             else:
-                return redirect('/auth/connect_google')
+                # 將用戶資訊存入 session
+                session['User_id']=user_data[0][0]
+                session['Email'] = Email
+                session['logged_in'] = True
+                session['User_name'] = user_data[0][1]
+                session['Permission']=user_data[0][6]
+                session['google_id'] = Goole_ID
+                session['imgs'] = imgs
+                # 如果數據庫中的 Google ID 與 Google 返回的 ID 一致，則重定向到首頁
+                if user_data[0][3] == Goole_ID:
+                    return redirect('/')
+                # 否則，重定向到連結 Google 賬戶頁面
+                else:
+                    return redirect('/auth/connect_google')
         # 如果郵箱尚未註冊，則重定向到註冊頁面
         else:
             return redirect('/auth/register')
