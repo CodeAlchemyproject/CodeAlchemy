@@ -99,3 +99,9 @@ def random_string():
 
     return random_string
 
+def remove_chars(s):
+    # 確保字串長度至少為3，否則返回原字串
+    if len(s) > 2:
+        return s[1:-2]  # 去掉第一個字和最後兩個字
+    else:
+        return s  # 如果字串長度不足，返回原字串

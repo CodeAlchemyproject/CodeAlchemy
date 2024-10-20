@@ -12,7 +12,7 @@ from config import MAIL_PASSWORD,MAIL_USERNAME
 # 匯入其他藍圖
 from utils import db
 from crawler import registration
-from utils.common import  random_string
+from utils.common import  random_string, remove_chars
 
 app=Flask(__name__)
 auth_bp = Blueprint('auth', __name__)
@@ -227,8 +227,8 @@ def verify_register():
     # 查詢是否存在該 uuid
     sql_command=f"SELECT * FROM user where uuid='{uuid}'"
     data=db.get_data(sql_command)
-
-    number=random_string()+str(data[0])
+    user_id=db.get_data("SELECT user_id FROM user where uuid='{uuid}'")
+    number=random_string()+remove_chars(str(user_id[0]))
     if len(data)==1:
         # 更新註冊時間
         sql_command = f"UPDATE user SET register_time = NOW() WHERE uuid='{uuid}'"

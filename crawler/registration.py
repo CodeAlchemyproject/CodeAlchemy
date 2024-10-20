@@ -204,7 +204,7 @@ def TIOJ_registration(number):
 
         sleep(5)
         driver.quit()
-
+    
     except Exception as e:
         print("An error occurred:", e)
         traceback.print_exc()

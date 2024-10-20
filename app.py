@@ -16,7 +16,7 @@ from services.feedback.app import feedback_bp
 from services.user.app import user_bp
 from services.manager.app import manager_bp
 from utils import db
-from utils.common import ZJ_translated_return_abbreviation, paginate
+from utils.common import ZJ_translated_return_abbreviation, paginate, remove_chars
 from utils import dolos
 
 # 產生主程式,加入主畫面
@@ -196,10 +196,22 @@ def problem():
         
         
         if result==True:
-            ans_rec=db.get_data('''SELECT * FROM `113-CodeAlchemy`.`answer record` 
-            order by record_id desc limit 1;''')
-            # 複製檔案並保留所有的元數據（如權限、時間戳等）
-            shutil.copy2(f'./sourse/{file_name}',f'./sourse/accept/{ans_rec[0]+'_'+problem_id}')
+            ans_rec = db.get_data('''SELECT record_id FROM `113-CodeAlchemy`.`answer record` 
+            ORDER BY record_id DESC LIMIT 1;''')[0]
+            # 檔案路徑
+            src_file = f'./source/{file_name}'
+            dst_file = f'./source/accept/{remove_chars(str(ans_rec))}_{str(problem_id)}.py'
+
+            # 檢查檔案是否存在
+            if os.path.exists(src_file):
+                # 確保目錄存在
+                os.makedirs('./sourse/accept', exist_ok=True)
+
+                # 複製檔案
+                shutil.copy2(src_file, dst_file)
+                print(f"檔案已成功複製到 {dst_file}")
+            else:
+                print(f"檔案 {src_file} 不存在，無法複製。")
         return jsonify({
             'result': result,
             'message': message,
