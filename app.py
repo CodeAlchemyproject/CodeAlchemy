@@ -5,7 +5,12 @@ import math
 import uuid
 import re
 import shutil
+
+import markdown
 from crawler.submit import CodeAlchemy_submit, ZeroJudge_submit,TIOJ_submit
+from utils.analyse import find_best_code, gemini_api_analyse
+
+
 #-----------------------
 
 # 匯入各個服務藍圖
@@ -271,6 +276,22 @@ def problem_dolos():
     zip=dolos.create_zip(problem_id,code)
     url=dolos.submit_to_dolos(zip[0],zip[1])
     return (redirect(url))
+
+@app.route('/code_analyse', methods=['GET'])
+def code_analyse():
+    problem_id = request.args.get('problem_id')
+    user_id = session['User_id']
+
+    if not problem_id or not user_id:
+        return render_template('./code_analyse.html', error="Missing problem_id or user_id.")
+    try:
+        best_code = find_best_code(problem_id, user_id)
+        gemini_output = gemini_api_analyse(best_code)
+        gemini_output=gemini_output[1:-3]
+        html_output = markdown.markdown(gemini_output)
+        return render_template('./code_analyse.html', data=html_output)
+    except Exception as e:
+        return render_template('./code_analyse.html', error=str(e))
 
 @app.route("/rank")
 def rank():

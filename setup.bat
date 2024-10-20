@@ -16,6 +16,7 @@ pip install psutil
 pip install requests
 pip install lxml
 pip install html5lib
+pip install markdown
 echo 安裝成功
 pause
 exit

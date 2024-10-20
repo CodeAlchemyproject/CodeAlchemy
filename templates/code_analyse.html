@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include "_site_header.html" %}
+    <!-- Google Code Prettify -->
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    
+    <!-- LATAX -->
+    <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- markdown-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.10/marked.min.js"></script>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+
+    <title>程式碼分析</title>
+</head>
+
+<body>
+    <!-- ------- -->
+    <!-- nav-bar -->
+    <!-- ------- -->
+    {% include "nav_bar.html" %}
+    <!-- html container -->
+    <div class="container-md">
+        <div id="markdown-content" >
+            {{ data|safe }}  <!-- 顯示分析結果 -->
+        </div>
+    </div>
+    <script>
+        const markdownText = document.getElementById("markdown-content").innerText;
+        const htmlOutput = marked(markdownText);
+        document.getElementById("html-output").innerHTML = htmlOutput;
+    </script>
+</body>
+
+</html>

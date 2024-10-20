@@ -219,7 +219,10 @@
                     {% if source=='main' %}
                     <p></p>
                     <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
-                        aria-disabled="true" id="analyze_code_btn">程式碼分析</a>
+                        aria-disabled="true" id="analyze_code_btn">程式碼相似度分析</a>
+                    <p></p>
+                    <a href="/code_analyse?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
+                    aria-disabled="true" id="analyze_code_btn">程式碼效能分析</a>
                     <p></p>
                     <a href='./answer_record?problem_id={{data[0][0]}}' class="btn btn-primary w-70" role="button"
                         aria-disabled="true">作答情況</a>
