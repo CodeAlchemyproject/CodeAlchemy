@@ -29,8 +29,10 @@
         }
 
         .modal-body {
-            word-wrap: break-word; /* 让长单词或链接自动换行 */
-            white-space: pre-wrap; /* 保持空格和换行 */
+            word-wrap: break-word;
+            /* 让长单词或链接自动换行 */
+            white-space: pre-wrap;
+            /* 保持空格和换行 */
         }
     </style>
 </head>
@@ -54,19 +56,21 @@
                 </thead>
                 <tbody>
                     {% for feedback in feedback_history %}
-                    <tr style="cursor: pointer;" 
-                        onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}', '{{ feedback[4] }}')">
+                    <tr style="cursor: pointer;" data-content="{{ feedback[2]|escape }}" data-time="{{ feedback[3] }}"
+                        data-reply="{{ feedback[4] }}" onclick="showFeedbackFromData(this)">
                         <td>
-                            {% if feedback[2]|length > 10 %}
-                                {{ feedback[2][:10] }}... 
-                                <a href="javascript:void(0);" onclick="showFeedback('{{ feedback[2] }}', '{{ feedback[3] }}', '{{ feedback[4] }}')">more</a>
+                            {% if feedback[2]|length > 20 %}
+                            {{ feedback[2][:20] }}
+                            <a href="javascript:void(0);"
+                                onclick="event.stopPropagation(); showFeedbackFromData(this.parentElement.parentElement)">...more</a>
                             {% else %}
-                                {{ feedback[2] }}
+                            {{ feedback[2] }}
                             {% endif %}
                         </td>
                         <td>{{ feedback[3] }}</td>
                     </tr>
                     {% endfor %}
+
                 </tbody>
             </table>
         </div>
@@ -96,15 +100,22 @@
     </div>
 
     <script>
-        function showFeedback(content, time, reply) {
-            // 将点击的回饋詳情显示在模态框中
-            $('#feedbackContent').text(content);
+        function showFeedbackFromData(row) {
+            // 从 data-* 属性获取内容
+            const content = $(row).data('content').replace(/\n/g, '<br>');
+            const time = $(row).data('time');
+            const reply = $(row).data('reply');
+
+            // 显示在模态框中
+            $('#feedbackContent').html(content);
             $('#feedbackTime').text(time);
             $('#feedbackReply').text(reply);
+
             // 显示模态框
             var feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
             feedbackModal.show();
         }
+
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"

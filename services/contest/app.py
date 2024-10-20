@@ -3,7 +3,7 @@ from flask import request, render_template, jsonify, json, redirect, session, ur
 import sqlite3
 from flask import Blueprint
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from utils import db
 from utils.common import paginate
@@ -176,7 +176,8 @@ def join_contest():
     contest_type, contest_password = contest
 
     if contest_type == 'private':
-        if not input_password or input_password != contest_password:
+        # 假設 contest_password 是儲存在資料庫中的已雜湊的密碼
+        if not input_password or not check_password_hash(contest_password, input_password):
             return jsonify({"error": "比賽密碼錯誤"}), 403
 
     cursor.execute("SELECT 1 FROM `contest participant` WHERE contest_id = %s AND user_id = %s", (contest_id, user_id))
@@ -321,6 +322,65 @@ def get_problems():
         'per_page': per_page
     })
 
+@contest_bp.route('/get_competition_problems')
+def get_competition_problems():
+    # 取得 URL 參數中的比賽名稱或比賽 ID
+    competition_name = request.args.get('competition_name', None)
+    competition_id = request.args.get('competition_id', None)
+
+    # 如果沒有提供比賽名稱或 ID，返回錯誤
+    if not competition_name and not competition_id:
+        return jsonify({'error': '必須提供比賽名稱或比賽 ID'}), 400
+
+    # 建立到資料庫的連接
+    conn = db.connection()
+    cur = conn.cursor()
+
+    contest_details_list = []
+
+    # 構建 SQL 查詢語句來獲取比賽 ID（如果僅提供了比賽名稱）
+    if competition_name and not competition_id:
+        cur.execute("SELECT contest_id, contest_name, start_date, end_date, description, type FROM contest WHERE contest_name LIKE %s", (f"%{competition_name}%",))
+        results = cur.fetchall()
+        if results:
+            for result in results:
+                contest_details_list.append(result[0])
+        else:
+            return jsonify({'error': '找不到對應的比賽'}), 404
+
+    problems_list = []
+
+    # 構建 SQL 查詢語句來獲取該比賽的題目
+    query = """
+        SELECT p.problem_id,p.title, p.content, p.difficulty
+        FROM `113-CodeAlchemy`.`contest problem` as cp
+        LEFT JOIN `113-CodeAlchemy`.`problem` as p ON cp.problem_id = p.problem_id
+        WHERE cp.contest_id = %s;
+    """
+
+    # 對於每個比賽，獲取它的題目，並使用集合去除重複的題目
+    unique_problems = set()
+    for contest_id in contest_details_list:
+        cur.execute(query, (contest_id,))
+        problems_data = cur.fetchall()
+
+        for problem in problems_data:
+            if problem[0] not in unique_problems:
+                unique_problems.add(problem[0])
+                problems_list.append({
+                    'problem_id':problem[0],
+                    'title': problem[1],
+                    'content': problem[2],
+                    'difficulty': problem[3]
+                })
+    # 關閉連接
+    cur.close()
+    conn.close()
+    problems_list=problems_list[:-1]
+    # 返回簡化後的 JSON 響應
+    return jsonify(problems_list)
+
+
 # 路由：處理創建比賽的POST請求
 @contest_bp.route('/create', methods=['POST'])
 def create_contest():
@@ -337,6 +397,8 @@ def create_contest():
         # 如果比賽類型為私人，則獲取密碼
         if contest_type == "private":
             contest_password = request.form.get('contest_password')
+            contest_password=generate_password_hash(contest_password)
+            print(contest_password)
             if not contest_password:
                 raise ValueError("私人比賽必須設定密碼")
         
