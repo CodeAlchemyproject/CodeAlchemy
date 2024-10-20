@@ -23,6 +23,7 @@ def clean_string(s: str) -> str:
         s = s[:-3]
 
     return s.strip()  # 去掉首尾空白字元
+
 def find_best_code(problem_id,user_id):
     MyBestRecord=db.get_data(f'''SELECT record_id, run_time, memory, update_time
     FROM `answer record`
@@ -36,7 +37,7 @@ def find_best_code(problem_id,user_id):
     ORDER BY run_time ASC, memory ASC, update_time ASC
     LIMIT 1;
     ''')
-    import os
+   
 
     # 根據最佳紀錄找到檔案路徑
     def find_best_record_file(record_id, problem_id):
@@ -63,7 +64,9 @@ def find_best_code(problem_id,user_id):
     else:
         current_user_filepath = find_best_record_file(current_user_best_record[0], problem_id)
         all_users_filepath = find_best_record_file(all_users_best_record[0], problem_id)
+
         return [current_user_filepath,all_users_filepath,pre]
+    
 # 讀取檔案內容
 def read_file_content(filepath):
     if os.path.exists(filepath):
@@ -79,7 +82,7 @@ def gemini_api_analyse(file_list):
     headers = {'Content-Type': 'application/json'}
     a_code=read_file_content(file_list[0])
     b_code=read_file_content(file_list[1])
-    text=f"對比{a_code}和{b_code} 的資料結構使用，並分析為何{file_list[2]}。"
+    text=f"對比A程式碼{a_code}和B程式碼{b_code} 的資料結構使用，並分析為何{file_list[2]}，要能淺顯易懂。"
     data = {
         "contents": [
             {

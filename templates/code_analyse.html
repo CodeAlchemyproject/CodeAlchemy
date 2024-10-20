@@ -9,9 +9,6 @@
     <!-- LATAX -->
     <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- markdown-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.10/marked.min.js"></script>
-
     <script>
         window.MathJax = {
             tex: {
@@ -26,9 +23,35 @@
                 processHtmlClass: 'tex2jax_process'
             }
         };
+        window.onload = function() {
+            // 將 O(n^2) 自動轉換為 LaTeX 語法
+            document.body.innerHTML = document.body.innerHTML.replace(/O\(n\^2\)/g, '\\( O(n^2) \\)');
+            
+            // 將 O(n log n) 自動轉換為 LaTeX 語法
+            document.body.innerHTML = document.body.innerHTML.replace(/O\(n log n\)/g, '\\( O(n \\log n) \\)');
+
+            // 重新渲染頁面上的數學公式
+            MathJax.typeset();
+        };
     </script>
 
     <title>程式碼分析</title>
+    <style>
+        pre {
+            background-color: #f7f7f7; /* 程式碼背景色 */
+            border: 1px solid #ddd; /* 邊框 */
+            border-radius: 5px; /* 邊角圓滑 */
+            padding: 10px; /* 內部邊距 */
+            overflow-x: auto; /* 超出寬度時顯示滾動條 */
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace; /* 等寬字體 */
+            color: #d63384; /* 程式碼字體顏色 */
+        }
+        h2 {
+            margin-top: 20px; /* 標題上邊距 */
+        }
+    </style>
 </head>
 
 <body>
@@ -38,15 +61,19 @@
     {% include "nav_bar.html" %}
     <!-- html container -->
     <div class="container-md">
-        <div id="markdown-content" >
+        <h2>A 程式碼</h2>
+        <pre><code>{{ a_code|safe }}</code></pre>
+        
+        <h2>B 程式碼</h2>
+        <pre><code>{{ b_code|safe }}</code></pre>
+        
+        <h2>分析結果</h2>
+        <div id="markdown-content">
             {{ data|safe }}  <!-- 顯示分析結果 -->
         </div>
     </div>
-    <script>
-        const markdownText = document.getElementById("markdown-content").innerText;
-        const htmlOutput = marked(markdownText);
-        document.getElementById("html-output").innerHTML = htmlOutput;
-    </script>
+    
+
 </body>
 
 </html>

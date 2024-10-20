@@ -8,7 +8,7 @@ import shutil
 
 import markdown
 from crawler.submit import CodeAlchemy_submit, ZeroJudge_submit,TIOJ_submit
-from utils.analyse import find_best_code, gemini_api_analyse
+from utils.analyse import find_best_code, gemini_api_analyse, read_file_content
 
 
 #-----------------------
@@ -286,10 +286,17 @@ def code_analyse():
         return render_template('./code_analyse.html', error="Missing problem_id or user_id.")
     try:
         best_code = find_best_code(problem_id, user_id)
+
+        a_code=read_file_content(best_code[0])
+        print(a_code)
+        b_code=read_file_content(best_code[1])
         gemini_output = gemini_api_analyse(best_code)
         gemini_output=gemini_output[1:-3]
+        # 將 "\n" 替換為 "<br>" 以實現換行
+        gemini_output = gemini_output.replace('\\n', "<br>")
         html_output = markdown.markdown(gemini_output)
-        return render_template('./code_analyse.html', data=html_output)
+
+        return render_template('./code_analyse.html', data=html_output,a_code=a_code,b_code=b_code)
     except Exception as e:
         return render_template('./code_analyse.html', error=str(e))
 
