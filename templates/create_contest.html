@@ -292,7 +292,7 @@
             document.getElementById('endTime').setAttribute('min', minDateTime);
 
             // 確保結束時間在開始時間之后
-            document.getElementById('startTime').addEventListener('change', function() {
+            document.getElementById('startTime').addEventListener('change', function () {
                 const startTime = document.getElementById('startTime').value;
                 document.getElementById('endTime').setAttribute('min', startTime);
 
@@ -303,7 +303,7 @@
             });
 
             // 檢查結束時間是否小於開始時間
-            document.getElementById('endTime').addEventListener('change', function() {
+            document.getElementById('endTime').addEventListener('change', function () {
                 const startTime = document.getElementById('startTime').value;
                 const endTime = document.getElementById('endTime').value;
 
@@ -378,7 +378,6 @@
                 });
             });
             $('#competitionTableBody').on('click', '.add-btn', function () {
-                console.log("Add button clicked");
                 const problemTitle = $(this).data('title');
                 const problemId = $(this).data('problem-id');
                 const difficulty = $(this).data('difficulty');
@@ -401,28 +400,6 @@
                     $(this).removeClass('btn-primary').addClass('btn-success disabled').html('<i class="fas fa-check"></i>');
                 }
             });
-            // 刪除表格中的問題
-            $('#questionTableBody').on('click', '.remove-btn', function () {
-                const row = $(this).closest('tr');
-                const problemId = $(this).data('problem-id');
-
-                // 刪除選定的問題並移除該行
-                const index = selectedProblems.indexOf(problemId);
-                if (index !== -1) {
-                    selectedProblems.splice(index, 1);
-                }
-
-                row.remove();
-
-                // 更新行號
-                $('#questionTableBody tr').each(function (i) {
-                    $(this).find('td:first').text(i + 1);
-                });
-
-                // 恢復互動視窗中的按鈕狀態
-                $('#competitionTableBody button[data-problem-id="' + problemId + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
-            });
-
 
             function simplifyContent(problem_id, content, maxLength) {
                 if (content.length > maxLength) {
@@ -572,8 +549,31 @@
 
                 // 恢復互動視窗中的按鈕狀態
                 $('#contestTableBody button[data-problem-id="' + problem_id + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
+                // $('#competitionTableBody button[data-problem-id="' + problemId + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
+            });
+            // // 刪除表格中的問題
+            $('#questionTableBody').on('click', '.remove-btn', function () {
+                const row = $(this).closest('tr');
+                const problemId = $(this).data('problem-id');
+
+                // 刪除選定的問題並移除該行
+                const index = selectedProblems.indexOf(problemId);
+                if (index !== -1) {
+                    selectedProblems.splice(index, 1);
+                }
+
+                row.remove();
+
+                // 更新行號
+                $('#questionTableBody tr').each(function (i) {
+                    $(this).find('td:first').text(i + 1);
+                });
+
+                // 恢復互動視窗中的按鈕狀態
+                $('#competitionTableBody button[data-problem-id="' + problemId + '"]').removeClass('btn-success disabled').addClass('btn-primary').text('Add');
             });
         });
+
     </script>
 </body>
 
