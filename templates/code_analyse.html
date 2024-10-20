@@ -43,13 +43,20 @@
             border-radius: 5px; /* 邊角圓滑 */
             padding: 10px; /* 內部邊距 */
             overflow-x: auto; /* 超出寬度時顯示滾動條 */
+            line-height: 0.5; /* 行距縮小 */
         }
         code {
             font-family: 'Courier New', Courier, monospace; /* 等寬字體 */
-            color: #d63384; /* 程式碼字體顏色 */
+            line-height: 0.5; /* 行距縮小 */
         }
         h2 {
             margin-top: 20px; /* 標題上邊距 */
+        .result {
+        background-color: #e8f5e9; /* 分析結果背景色 */
+        padding: 10px;
+        border: 1px solid #4caf50; /* 分析結果邊框 */
+        border-radius: 5px;
+        }
         }
     </style>
 </head>
@@ -61,14 +68,15 @@
     {% include "nav_bar.html" %}
     <!-- html container -->
     <div class="container-md">
-        <h2>A 程式碼</h2>
-        <pre><code>{{ a_code|safe }}</code></pre>
-        
-        <h2>B 程式碼</h2>
-        <pre><code>{{ b_code|safe }}</code></pre>
-        
+        <div style="max-width: 400px;">
+            <h2>A 程式碼</h2>
+            <pre><code>{{ a_code|safe }}</code></pre>
+            
+            <h2>B 程式碼</h2>
+            <pre><code>{{ b_code|safe }}</code></pre>
+        </div>
         <h2>分析結果</h2>
-        <div id="markdown-content">
+        <div id="markdown-content" class="result">
             {{ data|safe }}  <!-- 顯示分析結果 -->
         </div>
     </div>
