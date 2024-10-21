@@ -8,9 +8,9 @@
 
     {% include "_site_header.html" %}
     <!-- Bootstrap CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -18,23 +18,28 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         .container {
             width: 70%;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
         }
+
         .card {
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         .card-body {
             padding: 30px;
         }
+
         .form-control {
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
         .btn-primary {
             background-color: #007bff;
             border: none;
@@ -42,15 +47,18 @@
             border-radius: 5px;
             margin-left: 10px;
         }
+
         .btn-primary:hover {
             background-color: #0056b3;
         }
+
         .btn-row {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 5px;
         }
+
         h2 {
             margin-bottom: 20px;
         }
@@ -63,12 +71,12 @@
     <!-- ------- -->
     {% include "nav_bar.html" %}
     {{data}}
-    
+
     <div class="container">
         <div class="card border-0 shadow rounded-3 my-5">
             <div class="card-body p-4 p-sm-5">
                 <h2>請提供您的回饋:</h2>
-                <form action="/feedback/create" method="post">
+                <form id="feedbackForm">
                     <textarea class="form-control" name="feedback_content" rows="5" placeholder="在此輸入您的回饋"></textarea>
                     <div class="btn-row">
                         <button type="submit" class="btn btn-primary">提交回饋</button>
@@ -77,6 +85,65 @@
                 </form>
             </div>
         </div>
-    </div>  
+    </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">訊息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalMessage">
+                    <!-- 動態插入訊息 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 綁定表單提交事件
+        document.getElementById('feedbackForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 防止表單的預設提交行為
+
+            const formData = new FormData(this);
+
+            // 使用 fetch 發送 POST 請求
+            fetch('/feedback/create', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json()) // 解析 JSON 回應
+                .then(data => {
+                    // 根據回應顯示 Bootstrap Modal
+                    const modalMessage = document.getElementById('modalMessage');
+                    if (data.status === 'success') {
+                        modalMessage.innerHTML = data.message;
+                    } else {
+                        modalMessage.innerHTML = data.message;
+                    }
+
+                    // 顯示 Modal
+                    const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+                    feedbackModal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // 顯示錯誤訊息到 Modal
+                    const modalMessage = document.getElementById('modalMessage');
+                    modalMessage.innerHTML = '提交失敗，請稍後再試！';
+                    const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+                    feedbackModal.show();
+                });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

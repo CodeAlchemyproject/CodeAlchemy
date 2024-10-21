@@ -1,5 +1,5 @@
 # 匯入模組
-from flask import request, render_template,redirect, session
+from flask import request, render_template,redirect, session, jsonify
 from flask_login import login_required
 from flask import Blueprint
 from datetime import datetime
@@ -14,44 +14,38 @@ feedback_bp = Blueprint('feedback_bp', __name__)
 def feedback_create_form():
     return render_template('feedback_create_form.html') 
 
-#新增回饋
+# 新增回饋
 @feedback_bp.route('/create', methods=['POST'])
 def submit_feedback():
     feedback_content = request.form['feedback_content']
-    user_id = session['User_id']
-    if feedback_content:
-        #取得資料庫連線 
-        connection = db.connection() 
-        
-        # 取得目前時間
-        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    user_id = session.get('User_id')  # 避免直接索引，使用 get 方法會安全些
 
-        # 將回饋資料存入資料庫
-        cursor = connection.cursor()
-        cursor.execute("INSERT INTO feedback (user_id, content, created_at) VALUES (%s, %s, %s)",
-                        (user_id, feedback_content, created_at))
+    if feedback_content and user_id:
+        try:
+            # 取得資料庫連線 
+            connection = db.connection() 
+            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # 將回饋資料存入資料庫
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO feedback (user_id, content, created_at) VALUES (%s, %s, %s)",
+                            (user_id, feedback_content, created_at))
+            
+            # 提交變更並關閉連線
+            connection.commit()
+            connection.close()
+
+            # 返回成功訊息作為 JSON
+            return jsonify({"status": "success", "message": "送出成功!"})
         
-        #關閉資料庫連線 
-        connection.commit()
-        connection.close()
-        
-        # 使用 JavaScript 彈跳視窗顯示成功消息
-        success_message = "送出成功!"
-        return f'''
-            <script>
-                alert("{success_message}");
-                window.location.replace("/feedback/create/form");
-            </script>
-        '''
+        except Exception as e:
+            # 捕捉例外情況，並返回錯誤訊息
+            print(f"Error: {e}")
+            return jsonify({"status": "error", "message": "提交失敗，請稍後再試!"})
+    
     else:
-        # 使用 JavaScript 彈跳視窗顯示失敗消息
-        error_message = "送出失敗!"
-        return f'''
-            <script>
-                alert("{error_message}");
-                window.location.replace("/feedback/create/form");
-            </script>
-        '''
+        # 如果 feedback_content 為空或無法獲取 user_id
+        return jsonify({"status": "error", "message": "內容不能為空!"})
         
 #回饋紀錄
 @feedback_bp.route('/feedback_history')

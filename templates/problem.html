@@ -32,7 +32,7 @@
             }
         };
 
-        
+
     </script>
 
     <title>{{data[0][0]}} - {{data[0][1]}}</title>
@@ -169,7 +169,6 @@
                                     d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0m6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0" />
                             </svg>測試</button>
                         <!-- Modal -->
-                        <!-- 進度條視窗 -->
                         <!-- 正常上傳 -->
                         <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false"
                             tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
@@ -220,14 +219,19 @@
                     </div>
                     {% if source=='main' %}
                     <p></p>
-                    <a href="/dolos?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
-                        aria-disabled="true" id="analyze_code_btn">程式碼相似度分析</a>
+                    <div class="row d-flex justify-content-center"><a href="/dolos?problem_id={{data[0][0]}}"
+                            class="btn btn-primary" role="button" aria-disabled="true"
+                            id="analyze_code_btn">程式碼相似度分析</a></div>
+
                     <p></p>
-                    <a href="/code_analyse?problem_id={{data[0][0]}}" class="btn btn-primary w-70" role="button"
-                    aria-disabled="true" id="analyze_code_btn">程式碼效能分析</a>
+                    <div class="row d-flex justify-content-center"><a href="/code_analyse?problem_id={{data[0][0]}}"
+                            class="btn btn-primary w-60" role="button" aria-disabled="true"
+                            id="analyze_code_btn">程式碼效能分析</a></div>
+
                     <p></p>
-                    <a href='./answer_record?problem_id={{data[0][0]}}' class="btn btn-primary w-70" role="button"
-                        aria-disabled="true">作答情況</a>
+                    <div class="row d-flex justify-content-center"><a href='./answer_record?problem_id={{data[0][0]}}'
+                            class="btn btn-primary w-60" role="button" aria-disabled="true">作答情況</a></div>
+
                     {% endif %}
                     <!-- 程式輸入框 -->
                     <div class="row border border-3 round rounded-2 mt-5">
