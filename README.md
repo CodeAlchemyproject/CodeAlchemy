@@ -18,6 +18,7 @@ git clone https://github.com/CodeAlchemyproject/CodeAlchemy.git
   MAIL_PASSWORD=''
   JUDGE_HOST=''
   JUDGE_PORT=''
+  gemini_api_key=''
   ```
 DB_HOST、DB_USER、DB_PASS、DB_NAME為資料庫IP、用戶、密碼、名稱  
 GOOGLE_CELENT_ID、GOOGLE_CELENT_SERRET申請請見[串接 Google OAuth 2.0 實現第三方登入](https://growingdna.com/google-oauth-2-0-for-3rd-party-login/)  
